@@ -29,6 +29,7 @@ export type AuditLog = Tables<"audit_logs">;
 export type Faq = Tables<"faqs">;
 export type ContactSubmission = Tables<"contact_submissions">;
 export type ContactSubmissionInsert = TablesInsert<"contact_submissions">;
+export type EmailTemplate = Tables<"email_templates">;
 
 export type EventStatus = Enums<"event_status">;
 export type WinnerPosition = Enums<"winner_position">;

@@ -194,24 +194,30 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          is_read: boolean
           message: string
           name: string
+          read_at: string | null
           subject: string | null
         }
         Insert: {
           created_at?: string
           email: string
           id?: string
+          is_read?: boolean
           message: string
           name: string
+          read_at?: string | null
           subject?: string | null
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
+          is_read?: boolean
           message?: string
           name?: string
+          read_at?: string | null
           subject?: string | null
         }
         Relationships: []
@@ -288,6 +294,42 @@ export type Database = {
         }
         Relationships: []
       }
+      email_templates: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          is_active: boolean
+          key: string
+          name: string
+          subject: string
+          updated_at: string
+          variables: Json
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          key: string
+          name: string
+          subject: string
+          updated_at?: string
+          variables?: Json
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          key?: string
+          name?: string
+          subject?: string
+          updated_at?: string
+          variables?: Json
+        }
+        Relationships: []
+      }
       evaluations: {
         Row: {
           created_at: string
@@ -357,6 +399,7 @@ export type Database = {
           description: string | null
           event_date: string | null
           id: string
+          is_archived: boolean
           is_published: boolean
           max_participants: number | null
           max_team_size: number
@@ -377,6 +420,7 @@ export type Database = {
           description?: string | null
           event_date?: string | null
           id?: string
+          is_archived?: boolean
           is_published?: boolean
           max_participants?: number | null
           max_team_size?: number
@@ -397,6 +441,7 @@ export type Database = {
           description?: string | null
           event_date?: string | null
           id?: string
+          is_archived?: boolean
           is_published?: boolean
           max_participants?: number | null
           max_team_size?: number
@@ -1069,6 +1114,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_stats: { Args: never; Returns: Json }
       event_capacity: { Args: { _event_id: string }; Returns: Json }
       generate_registration_code: { Args: never; Returns: string }
       lookup_registration_by_code: { Args: { _code: string }; Returns: Json }

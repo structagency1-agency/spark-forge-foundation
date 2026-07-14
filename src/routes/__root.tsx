@@ -3,6 +3,7 @@ import {
   Outlet,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -127,6 +128,11 @@ function RootShell({ children }: { children: ReactNode }) {
 function LayoutChrome({ children }: { children: ReactNode }) {
   const { data: settings } = useSuspenseQuery(settingsQueryOptions);
   const siteName = pickString(settings, "site", "name", SITE_FALLBACK.name);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isAdmin = pathname === "/admin" || pathname.startsWith("/admin/");
+  if (isAdmin) {
+    return <div className="min-h-screen bg-background text-foreground">{children}</div>;
+  }
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <SiteHeader siteName={siteName} />
