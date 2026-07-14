@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ConfirmButton } from "@/components/admin/ConfirmButton";
 import { writeAuditLog } from "@/services/admin";
-import { listAllUsers, grantRoleByEmail } from "@/services/userManagement.functions";
+import { listAllUsers, grantRoleByEmail, deleteUser } from "@/services/userManagement.functions";
 
 export const Route = createFileRoute("/admin/user-management")({
   head: () => ({ meta: [{ title: "User Management — SPARK TANK 4.0" }, { name: "robots", content: "noindex, nofollow" }] }),
