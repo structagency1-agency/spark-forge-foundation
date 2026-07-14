@@ -101,8 +101,8 @@ function CertificatesAdmin() {
                 key: "bg",
                 header: "Background",
                 render: (r) =>
-                  r.background_url ? (
-                    <a href={r.background_url} target="_blank" rel="noreferrer" className="text-accent underline">
+                  r.background_image_url ? (
+                    <a href={r.background_image_url} target="_blank" rel="noreferrer" className="text-accent underline">
                       Open
                     </a>
                   ) : (
