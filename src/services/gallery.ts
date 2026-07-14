@@ -19,11 +19,14 @@ async function fetchGallery(limit?: number): Promise<GalleryItemWithContext[]> {
     .select(GALLERY_SELECT)
     .eq("status", "active")
     .eq("media_type", "image")
+    .not("url", "is", null)
     .order("uploaded_at", { ascending: false });
   if (limit) q = q.limit(limit);
   const { data, error } = await q;
   if (error) throw error;
-  return (data as GalleryItemWithContext[] | null) ?? [];
+  return ((data as GalleryItemWithContext[] | null) ?? []).filter(
+    (item) => typeof item.url === "string" && item.url.trim().length > 0,
+  );
 }
 
 async function fetchGalleryForEvent(eventId: string, limit = 8): Promise<GalleryItemWithContext[]> {
