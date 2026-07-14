@@ -196,13 +196,13 @@ function CertificatesAdmin() {
               </select>
             </FieldRow>
             <FieldRow label="Background image URL">
-              <Input value={(values.background_url as string) ?? ""} onChange={(e) => setValue("background_url", e.target.value)} />
+              <Input value={(values.background_image_url as string) ?? ""} onChange={(e) => setValue("background_image_url", e.target.value)} />
             </FieldRow>
             <FieldRow label="Logo URL">
               <Input value={(values.logo_url as string) ?? ""} onChange={(e) => setValue("logo_url", e.target.value)} />
             </FieldRow>
             <FieldRow label="Signature URL">
-              <Input value={(values.signature_url as string) ?? ""} onChange={(e) => setValue("signature_url", e.target.value)} />
+              <Input value={(values.signature_image_url as string) ?? ""} onChange={(e) => setValue("signature_image_url", e.target.value)} />
             </FieldRow>
             <FieldRow label="Fields (JSON)">
               <Textarea
