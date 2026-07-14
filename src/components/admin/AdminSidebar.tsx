@@ -14,6 +14,7 @@ import {
   Inbox,
   Settings,
   ScrollText,
+  QrCode,
 } from "lucide-react";
 import {
   Sidebar,
