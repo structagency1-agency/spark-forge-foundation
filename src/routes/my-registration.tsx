@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Search as SearchIcon, Loader2, Download } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
