@@ -67,7 +67,7 @@ export function SiteHeader({ siteName = SITE_FALLBACK.name }: SiteHeaderProps) {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search…"
               aria-label="Search the site"
-              className="w-28 lg:w-32 xl:w-36 2xl:w-44 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+              className="w-28 lg:w-24 xl:w-36 2xl:w-44 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
           </form>
           <Link
