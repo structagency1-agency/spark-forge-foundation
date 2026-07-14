@@ -39,6 +39,9 @@ export interface RegisterTeamResult {
  */
 export const REGISTRATION_ERROR_MESSAGES: Record<string, string> = {
   invalid_event: "This event is no longer available for registration.",
+  invalid_project_track: "Please select Software or Hardware.",
+  invalid_idea_title: "Please provide a valid idea title.",
+  invalid_abstract: "Abstract should be at least 30 characters.",
   registration_not_started: "Registration hasn't opened yet for this event.",
   registration_closed: "Registration for this event has closed.",
   event_full: "This event is fully booked. Try another arena.",
