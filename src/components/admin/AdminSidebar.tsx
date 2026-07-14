@@ -63,6 +63,7 @@ const items: Array<{ title: string; url: string; icon: typeof LayoutDashboard; e
   { title: "Contact Messages", url: "/admin/contact-messages", icon: Inbox },
   { title: "Website Settings", url: "/admin/settings", icon: Settings },
   { title: "Database Health", url: "/admin/db-health", icon: Activity },
+  { title: "User Management", url: "/admin/user-management", icon: UsersRound },
   { title: "Audit Logs", url: "/admin/audit-logs", icon: ScrollText },
 ];
 
