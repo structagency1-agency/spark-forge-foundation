@@ -99,7 +99,7 @@ export function AdminSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>{isAdmin ? "SPARK TANK 4.0 Admin" : "SPARK TANK 4.0 Jury"}</SidebarGroupLabel>
+          <SidebarGroupLabel>{sidebarLabel}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {visibleItems.map((item) => (
