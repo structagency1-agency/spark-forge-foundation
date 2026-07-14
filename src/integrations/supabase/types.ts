@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          created_at: string
+          description: string
+          display_location: string
+          ends_at: string | null
+          id: string
+          metadata: Json
+          priority: Database["public"]["Enums"]["announcement_priority"]
+          starts_at: string | null
+          status: Database["public"]["Enums"]["announcement_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          display_location?: string
+          ends_at?: string | null
+          id?: string
+          metadata?: Json
+          priority?: Database["public"]["Enums"]["announcement_priority"]
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["announcement_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          display_location?: string
+          ends_at?: string | null
+          id?: string
+          metadata?: Json
+          priority?: Database["public"]["Enums"]["announcement_priority"]
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["announcement_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       attendance: {
         Row: {
           checked_in_at: string
@@ -176,6 +218,8 @@ export type Database = {
         Row: {
           certificate_code: string | null
           created_at: string
+          download_count: number
+          downloaded_at: string | null
           event_id: string
           id: string
           issued_at: string
@@ -188,10 +232,14 @@ export type Database = {
           type: string
           updated_at: string
           url: string | null
+          verification_count: number
+          verified_at: string | null
         }
         Insert: {
           certificate_code?: string | null
           created_at?: string
+          download_count?: number
+          downloaded_at?: string | null
           event_id: string
           id?: string
           issued_at?: string
@@ -204,10 +252,14 @@ export type Database = {
           type?: string
           updated_at?: string
           url?: string | null
+          verification_count?: number
+          verified_at?: string | null
         }
         Update: {
           certificate_code?: string | null
           created_at?: string
+          download_count?: number
+          downloaded_at?: string | null
           event_id?: string
           id?: string
           issued_at?: string
@@ -220,6 +272,8 @@ export type Database = {
           type?: string
           updated_at?: string
           url?: string | null
+          verification_count?: number
+          verified_at?: string | null
         }
         Relationships: [
           {
@@ -926,6 +980,45 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          kind: Database["public"]["Enums"]["notification_kind"]
+          message: string | null
+          metadata: Json
+          module: string
+          read_at: string | null
+          related_id: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          kind?: Database["public"]["Enums"]["notification_kind"]
+          message?: string | null
+          metadata?: Json
+          module?: string
+          read_at?: string | null
+          related_id?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          kind?: Database["public"]["Enums"]["notification_kind"]
+          message?: string | null
+          metadata?: Json
+          module?: string
+          read_at?: string | null
+          related_id?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       participants: {
         Row: {
           created_at: string
@@ -1540,10 +1633,20 @@ export type Database = {
     }
     Functions: {
       admin_stats: { Args: never; Returns: Json }
+      analytics_by_department: {
+        Args: { _department_id?: string }
+        Returns: Json
+      }
+      analytics_by_event: { Args: never; Returns: Json }
+      analytics_overview: { Args: never; Returns: Json }
       archive_results: { Args: { _event_id: string }; Returns: undefined }
+      attendance_analytics: { Args: never; Returns: Json }
       attendance_stats: { Args: { _event_id?: string }; Returns: Json }
       auto_assign_teams: { Args: { _event_id: string }; Returns: Json }
+      certificate_analytics: { Args: never; Returns: Json }
+      db_health: { Args: never; Returns: Json }
       downloads_lookup: { Args: { _query: string }; Returns: Json }
+      evaluation_analytics: { Args: never; Returns: Json }
       evaluation_stats: { Args: { _event_id?: string }; Returns: Json }
       event_capacity: { Args: { _event_id: string }; Returns: Json }
       event_leaderboard: { Args: { _event_id?: string }; Returns: Json }
@@ -1584,6 +1687,7 @@ export type Database = {
         Returns: undefined
       }
       register_team: { Args: { payload: Json }; Returns: Json }
+      registration_trends: { Args: { _days?: number }; Returns: Json }
       save_evaluation_score: {
         Args: {
           _criterion_id: string
@@ -1605,6 +1709,14 @@ export type Database = {
         }
         Returns: Json
       }
+      track_certificate_download: {
+        Args: { _code: string }
+        Returns: undefined
+      }
+      track_certificate_verification: {
+        Args: { _code: string }
+        Returns: undefined
+      }
       unpublish_results: { Args: { _event_id: string }; Returns: undefined }
       upsert_evaluation: {
         Args: {
@@ -1618,6 +1730,8 @@ export type Database = {
       verify_certificate: { Args: { _code: string }; Returns: Json }
     }
     Enums: {
+      announcement_priority: "low" | "normal" | "high" | "urgent"
+      announcement_status: "draft" | "published" | "archived"
       attendance_method: "qr" | "manual" | "import"
       content_status: "active" | "inactive"
       email_status: "pending" | "sent" | "failed"
@@ -1644,6 +1758,7 @@ export type Database = {
         | "completed"
       jury_status: "active" | "inactive"
       media_type: "image" | "video"
+      notification_kind: "info" | "success" | "warning" | "error"
       registration_status:
         | "pending"
         | "confirmed"
@@ -1791,6 +1906,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      announcement_priority: ["low", "normal", "high", "urgent"],
+      announcement_status: ["draft", "published", "archived"],
       attendance_method: ["qr", "manual", "import"],
       content_status: ["active", "inactive"],
       email_status: ["pending", "sent", "failed"],
@@ -1820,6 +1937,7 @@ export const Constants = {
       ],
       jury_status: ["active", "inactive"],
       media_type: ["image", "video"],
+      notification_kind: ["info", "success", "warning", "error"],
       registration_status: [
         "pending",
         "confirmed",

@@ -25,6 +25,12 @@ const KIND_LABEL: Record<SearchResult["kind"], string> = {
   event: "Event",
   problem: "Problem statement",
   gallery: "Gallery",
+  team: "Team",
+  registration: "Registration",
+  participant: "Participant",
+  result: "Result",
+  certificate: "Certificate",
+  announcement: "Announcement",
 };
 
 function SearchPage() {
