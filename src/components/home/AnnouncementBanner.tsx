@@ -1,5 +1,6 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { activeAnnouncementsQO } from "@/services/announcements";
+
 import { Megaphone, AlertTriangle, Info, Bell } from "lucide-react";
 
 const priorityStyles: Record<string, { icon: typeof Info; className: string }> = {
