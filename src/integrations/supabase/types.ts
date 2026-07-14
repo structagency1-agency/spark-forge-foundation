@@ -1115,11 +1115,14 @@ export type Database = {
       }
       registrations: {
         Row: {
+          abstract: string | null
           created_at: string
           email_status: string
           event_id: string
           id: string
+          idea_title: string | null
           metadata: Json
+          project_track: Database["public"]["Enums"]["project_track"] | null
           qr_token: string | null
           registered_at: string
           registration_code: string | null
@@ -1128,11 +1131,14 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          abstract?: string | null
           created_at?: string
           email_status?: string
           event_id: string
           id?: string
+          idea_title?: string | null
           metadata?: Json
+          project_track?: Database["public"]["Enums"]["project_track"] | null
           qr_token?: string | null
           registered_at?: string
           registration_code?: string | null
@@ -1141,11 +1147,14 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          abstract?: string | null
           created_at?: string
           email_status?: string
           event_id?: string
           id?: string
+          idea_title?: string | null
           metadata?: Json
+          project_track?: Database["public"]["Enums"]["project_track"] | null
           qr_token?: string | null
           registered_at?: string
           registration_code?: string | null
@@ -1789,6 +1798,7 @@ export type Database = {
       jury_status: "active" | "inactive"
       media_type: "image" | "video"
       notification_kind: "info" | "success" | "warning" | "error"
+      project_track: "software" | "hardware"
       registration_status:
         | "pending"
         | "confirmed"
@@ -1969,6 +1979,7 @@ export const Constants = {
       jury_status: ["active", "inactive"],
       media_type: ["image", "video"],
       notification_kind: ["info", "success", "warning", "error"],
+      project_track: ["software", "hardware"],
       registration_status: [
         "pending",
         "confirmed",
