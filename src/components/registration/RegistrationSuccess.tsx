@@ -60,6 +60,44 @@ export function RegistrationSuccess({ code }: { code: string }) {
   }
 
   return (
+    <div className="space-y-8">
+      <div
+        ref={qrRef}
+        className="surface-panel flex flex-col items-center gap-4 border-emerald-400/40 p-6 text-center md:p-8"
+      >
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-[11px] uppercase tracking-widest text-emerald-300">
+          <ScanLine className="h-3.5 w-3.5" /> Your attendance QR
+        </div>
+        <p className="max-w-md text-sm text-muted-foreground">
+          Show this QR at the venue — organisers will scan it to mark attendance.
+          Save it now; it's also on its way to your team leader's email.
+        </p>
+        {qr ? (
+          <img
+            src={qr}
+            alt={`QR code for ${data.registration_code}`}
+            className="rounded-2xl border border-border/60 bg-white p-3"
+            width={260}
+            height={260}
+          />
+        ) : (
+          <div className="flex h-[260px] w-[260px] items-center justify-center rounded-2xl border border-border/60 bg-muted/30">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        )}
+        <p className="font-mono text-xs text-muted-foreground">{data.registration_code}</p>
+        <button
+          type="button"
+          disabled={!qr}
+          onClick={() =>
+            qr && downloadDataUrl(qr, `sparktank-${data.registration_code}.png`)
+          }
+          className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm text-accent-foreground shadow-[var(--shadow-glow)] disabled:opacity-50"
+        >
+          <Download className="h-4 w-4" /> Download QR
+        </button>
+      </div>
+
     <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
       <div className="surface-panel p-8">
         <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs uppercase tracking-widest text-emerald-300">
