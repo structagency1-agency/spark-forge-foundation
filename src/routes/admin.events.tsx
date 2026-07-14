@@ -155,11 +155,20 @@ function EventsAdmin() {
         initial={dlg.row ?? {
           min_team_size: 1,
           max_team_size: 4,
-          is_published: false,
+          is_published: true,
           is_archived: false,
           status: "upcoming",
         }}
         onSubmit={async (values) => {
+          if (!values.event_date || !values.registration_start || !values.registration_close) {
+            toast.error("Please set the event date and both registration open/close dates.");
+            throw new Error("Missing required dates");
+          }
+          const rs = new Date(values.registration_start as string).getTime();
+          const rc = new Date(values.registration_close as string).getTime();
+          const ed = new Date(values.event_date as string).getTime();
+          if (rc <= rs) { toast.error("Registration close must be after registration open."); throw new Error("Invalid dates"); }
+          if (ed < rs) { toast.error("Event date should be on/after registration opens."); throw new Error("Invalid dates"); }
           if (dlg.row) await update.mutateAsync({ id: dlg.row.id, values });
           else await create.mutateAsync(values);
         }}
