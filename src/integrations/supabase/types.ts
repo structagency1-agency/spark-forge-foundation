@@ -22,7 +22,11 @@ export type Database = {
           id: string
           metadata: Json
           method: Database["public"]["Enums"]["attendance_method"]
-          participant_id: string
+          participant_id: string | null
+          registration_id: string | null
+          remarks: string | null
+          status: string
+          team_id: string | null
           updated_at: string
         }
         Insert: {
@@ -32,7 +36,11 @@ export type Database = {
           id?: string
           metadata?: Json
           method?: Database["public"]["Enums"]["attendance_method"]
-          participant_id: string
+          participant_id?: string | null
+          registration_id?: string | null
+          remarks?: string | null
+          status?: string
+          team_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -42,7 +50,11 @@ export type Database = {
           id?: string
           metadata?: Json
           method?: Database["public"]["Enums"]["attendance_method"]
-          participant_id?: string
+          participant_id?: string | null
+          registration_id?: string | null
+          remarks?: string | null
+          status?: string
+          team_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -58,6 +70,20 @@ export type Database = {
             columns: ["participant_id"]
             isOneToOne: false
             referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "registrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
             referencedColumns: ["id"]
           },
         ]
@@ -1115,10 +1141,26 @@ export type Database = {
     }
     Functions: {
       admin_stats: { Args: never; Returns: Json }
+      attendance_stats: { Args: { _event_id?: string }; Returns: Json }
       event_capacity: { Args: { _event_id: string }; Returns: Json }
       generate_registration_code: { Args: never; Returns: string }
       lookup_registration_by_code: { Args: { _code: string }; Returns: Json }
       lookup_registrations_by_email: { Args: { _email: string }; Returns: Json }
+      mark_attendance_by_qr: {
+        Args: {
+          _event_id: string
+          _method?: Database["public"]["Enums"]["attendance_method"]
+          _qr_token: string
+        }
+        Returns: Json
+      }
+      mark_attendance_manual: {
+        Args: {
+          _method?: Database["public"]["Enums"]["attendance_method"]
+          _registration_id: string
+        }
+        Returns: Json
+      }
       register_team: { Args: { payload: Json }; Returns: Json }
     }
     Enums: {
