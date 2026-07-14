@@ -155,11 +155,20 @@ function EventsAdmin() {
         initial={dlg.row ?? {
           min_team_size: 1,
           max_team_size: 4,
-          is_published: false,
+          is_published: true,
           is_archived: false,
           status: "upcoming",
         }}
         onSubmit={async (values) => {
+          if (!values.event_date || !values.registration_start || !values.registration_close) {
+            toast.error("Please set the event date and both registration open/close dates.");
+            throw new Error("Missing required dates");
+          }
+          const rs = new Date(values.registration_start as string).getTime();
+          const rc = new Date(values.registration_close as string).getTime();
+          const ed = new Date(values.event_date as string).getTime();
+          if (rc <= rs) { toast.error("Registration close must be after registration open."); throw new Error("Invalid dates"); }
+          if (ed < rs) { toast.error("Event date should be on/after registration opens."); throw new Error("Invalid dates"); }
           if (dlg.row) await update.mutateAsync({ id: dlg.row.id, values });
           else await create.mutateAsync(values);
         }}
@@ -196,19 +205,22 @@ function EventsAdmin() {
               <Input value={(values.banner_url as string) ?? ""} onChange={(e) => setValue("banner_url", e.target.value)} />
             </FieldRow>
             <div className="grid grid-cols-3 gap-3">
-              <FieldRow label="Event date">
-                <Input type="datetime-local" value={toLocalInput(values.event_date as string | null)}
+              <FieldRow label="Event date *">
+                <Input type="datetime-local" required value={toLocalInput(values.event_date as string | null)}
                   onChange={(e) => setValue("event_date", e.target.value ? new Date(e.target.value).toISOString() : null)} />
               </FieldRow>
-              <FieldRow label="Registration opens">
-                <Input type="datetime-local" value={toLocalInput(values.registration_start as string | null)}
+              <FieldRow label="Registration opens *">
+                <Input type="datetime-local" required value={toLocalInput(values.registration_start as string | null)}
                   onChange={(e) => setValue("registration_start", e.target.value ? new Date(e.target.value).toISOString() : null)} />
               </FieldRow>
-              <FieldRow label="Registration closes">
-                <Input type="datetime-local" value={toLocalInput(values.registration_close as string | null)}
+              <FieldRow label="Registration closes *">
+                <Input type="datetime-local" required value={toLocalInput(values.registration_close as string | null)}
                   onChange={(e) => setValue("registration_close", e.target.value ? new Date(e.target.value).toISOString() : null)} />
               </FieldRow>
             </div>
+            <p className="-mt-2 text-xs text-muted-foreground">
+              Times are in your local timezone. Registration must open before it closes, and the event date should be on/after registration opens.
+            </p>
             <div className="grid grid-cols-3 gap-3">
               <FieldRow label="Min team size">
                 <Input type="number" min={1} value={(values.min_team_size as number) ?? 1}
