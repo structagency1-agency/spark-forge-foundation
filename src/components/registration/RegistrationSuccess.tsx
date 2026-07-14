@@ -13,6 +13,11 @@ export function RegistrationSuccess({ code }: { code: string }) {
   });
 
   const [qr, setQr] = useState<string | null>(null);
+  const qrRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   useEffect(() => {
     if (!data) return;
