@@ -234,6 +234,7 @@ function EventsAdmin() {
                   <option value="registration_open">registration_open</option>
                   <option value="registration_closed">registration_closed</option>
                   <option value="ongoing">ongoing</option>
+                  <option value="evaluation">evaluation</option>
                   <option value="completed">completed</option>
                 </select>
               </FieldRow>
