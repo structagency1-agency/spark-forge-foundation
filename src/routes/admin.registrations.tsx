@@ -195,6 +195,13 @@ function RegistrationsAdmin() {
                   <div><strong>Email:</strong> {detail.email_status}</div>
                   <div><strong>QR Token:</strong> <span className="font-mono text-xs">{detail.qr_token}</span></div>
                   <div><strong>Academic year:</strong> {detail.teams?.academic_year ?? "—"}</div>
+                  <div><strong>Track:</strong> {detail.project_track ? detail.project_track.toUpperCase() : "—"}</div>
+                </div>
+                <div className="rounded-md border border-accent/40 bg-accent/5 p-3 text-sm">
+                  <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-accent">Idea</div>
+                  <div className="font-medium text-foreground">{detail.idea_title ?? "—"}</div>
+                  <div className="mt-2 text-xs font-semibold uppercase tracking-wider text-accent">Abstract</div>
+                  <p className="whitespace-pre-wrap text-sm text-muted-foreground">{detail.abstract ?? "—"}</p>
                 </div>
                 <div>
                   <h3 className="mb-2 text-sm font-semibold">Members ({detail.teams?.team_members.length ?? 0})</h3>
