@@ -90,7 +90,7 @@ function TimelineAdmin() {
             <FieldRow label="Status">
               <select
                 className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm"
-                value={(values.status as string) ?? "published"}
+                value={(values.status as string) ?? "active"}
                 onChange={(e) => setValue("status", e.target.value as TimelineEntry["status"])}
               >
                 <option value="active">active</option>
