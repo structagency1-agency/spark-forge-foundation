@@ -886,6 +886,7 @@ export type Database = {
           organization: string | null
           status: Database["public"]["Enums"]["jury_status"]
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -899,6 +900,7 @@ export type Database = {
           organization?: string | null
           status?: Database["public"]["Enums"]["jury_status"]
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -912,6 +914,7 @@ export type Database = {
           organization?: string | null
           status?: Database["public"]["Enums"]["jury_status"]
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1692,6 +1695,7 @@ export type Database = {
       }
       hide_results: { Args: { _event_id: string }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
+      is_admin_or_jury: { Args: never; Returns: boolean }
       lookup_registration_by_code: { Args: { _code: string }; Returns: Json }
       lookup_registrations_by_email: { Args: { _email: string }; Returns: Json }
       mark_attendance_by_qr: {
