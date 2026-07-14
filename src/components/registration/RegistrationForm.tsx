@@ -180,9 +180,30 @@ export function RegistrationForm({
   }
 
   const errorCount = Object.keys(errors).length;
+  const errorList = buildErrorList(errors);
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-8">
+      {errorCount > 0 && (
+        <div
+          data-registration-error="true"
+          role="alert"
+          aria-live="polite"
+          className="rounded-xl border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive-foreground"
+        >
+          <div className="font-semibold">
+            Please fix {errorCount} issue{errorCount === 1 ? "" : "s"} before confirming your registration:
+          </div>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            {errorList.map((e) => (
+              <li key={e.key}>
+                <span className="font-medium">{e.label}:</span> {e.message}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <Section title="Team information">
         <div className="grid gap-4 md:grid-cols-2">
           <Field label="Team name" required error={errors["team.name"]}>
