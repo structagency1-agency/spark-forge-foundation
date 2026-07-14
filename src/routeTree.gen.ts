@@ -38,6 +38,7 @@ import { Route as AdminDepartmentsRouteImport } from './routes/admin.departments
 import { Route as AdminContactMessagesRouteImport } from './routes/admin.contact-messages'
 import { Route as AdminCertificatesRouteImport } from './routes/admin.certificates'
 import { Route as AdminAuditLogsRouteImport } from './routes/admin.audit-logs'
+import { Route as AdminAttendanceRouteImport } from './routes/admin.attendance'
 
 const SponsorsRoute = SponsorsRouteImport.update({
   id: '/sponsors',
@@ -184,6 +185,11 @@ const AdminAuditLogsRoute = AdminAuditLogsRouteImport.update({
   path: '/audit-logs',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAttendanceRoute = AdminAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -199,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
+  '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/contact-messages': typeof AdminContactMessagesRoute
@@ -229,6 +236,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
+  '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/contact-messages': typeof AdminContactMessagesRoute
@@ -261,6 +269,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
+  '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/contact-messages': typeof AdminContactMessagesRoute
@@ -294,6 +303,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/sitemap.xml'
     | '/sponsors'
+    | '/admin/attendance'
     | '/admin/audit-logs'
     | '/admin/certificates'
     | '/admin/contact-messages'
@@ -324,6 +334,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/sitemap.xml'
     | '/sponsors'
+    | '/admin/attendance'
     | '/admin/audit-logs'
     | '/admin/certificates'
     | '/admin/contact-messages'
@@ -355,6 +366,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/sitemap.xml'
     | '/sponsors'
+    | '/admin/attendance'
     | '/admin/audit-logs'
     | '/admin/certificates'
     | '/admin/contact-messages'
@@ -594,10 +606,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuditLogsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/attendance': {
+      id: '/admin/attendance'
+      path: '/attendance'
+      fullPath: '/admin/attendance'
+      preLoaderRoute: typeof AdminAttendanceRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminAttendanceRoute: typeof AdminAttendanceRoute
   AdminAuditLogsRoute: typeof AdminAuditLogsRoute
   AdminCertificatesRoute: typeof AdminCertificatesRoute
   AdminContactMessagesRoute: typeof AdminContactMessagesRoute
@@ -615,6 +635,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAttendanceRoute: AdminAttendanceRoute,
   AdminAuditLogsRoute: AdminAuditLogsRoute,
   AdminCertificatesRoute: AdminCertificatesRoute,
   AdminContactMessagesRoute: AdminContactMessagesRoute,
