@@ -81,6 +81,7 @@ export function AdminSidebar() {
     "/admin/db-health",
     "/admin/email-templates",
     "/admin/website",
+    "/admin/user-management",
   ]);
 
   const visibleItems = isAdmin
