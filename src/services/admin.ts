@@ -26,9 +26,16 @@ export interface AdminStats {
   unread_messages: number;
 }
 
+export interface AdminDashboardData {
+  stats: AdminStats;
+  recentRegistrations: unknown[];
+  recentMessages: Array<{ id: string; name: string; subject: string | null; message: string; is_read: boolean }>;
+  recentAuditLogs: AuditLog[];
+}
+
 export const adminDashboardQueryOptions = queryOptions({
   queryKey: ["admin", "dashboard"],
-  queryFn: () => getAdminDashboard(),
+  queryFn: async () => (await getAdminDashboard()) as AdminDashboardData,
   staleTime: 15_000,
   refetchInterval: 30_000,
 });
