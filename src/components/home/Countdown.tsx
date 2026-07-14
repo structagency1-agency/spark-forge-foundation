@@ -58,11 +58,12 @@ export function Countdown({ section }: { section: HomepageSection }) {
         eyebrow="Countdown"
         title={section.title ?? "Registration closes in"}
         description={
-          event
-            ? `${event.name} — closes ${target?.toLocaleString(undefined, {
+          event && target
+            ? `${event.name} — closes ${new Intl.DateTimeFormat("en-US", {
                 dateStyle: "medium",
                 timeStyle: "short",
-              })}`
+                timeZone: "UTC",
+              }).format(target)} UTC`
             : undefined
         }
       />

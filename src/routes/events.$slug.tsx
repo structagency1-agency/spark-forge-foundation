@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { EventCard } from "@/components/common/EventCard";
+import { EventRegisterCta } from "@/components/registration/EventRegisterCta";
 import { buildMeta } from "@/lib/seo";
 import {
   eventBySlugQueryOptions,
@@ -173,17 +174,7 @@ function EventDetailPage() {
             </div>
           )}
 
-          <div className="mt-8 flex flex-wrap gap-3">
-            <button
-              type="button"
-              disabled
-              aria-disabled
-              title="Registration opens later"
-              className="inline-flex cursor-not-allowed items-center rounded-full border border-border/60 bg-muted/30 px-6 py-3 text-sm font-medium text-muted-foreground"
-            >
-              Register (coming soon)
-            </button>
-          </div>
+          <EventRegisterCta event={event} />
         </div>
 
         {problems.length > 0 && (

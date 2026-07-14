@@ -15,11 +15,13 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProblemStatementsRouteImport } from './routes/problem-statements'
+import { Route as MyRegistrationRouteImport } from './routes/my-registration'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RegisterSlugRouteImport } from './routes/register.$slug'
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
 
 const SponsorsRoute = SponsorsRouteImport.update({
@@ -52,6 +54,11 @@ const ProblemStatementsRoute = ProblemStatementsRouteImport.update({
   path: '/problem-statements',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MyRegistrationRoute = MyRegistrationRouteImport.update({
+  id: '/my-registration',
+  path: '/my-registration',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
@@ -77,6 +84,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegisterSlugRoute = RegisterSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => RegisterRoute,
+} as any)
 const EventsSlugRoute = EventsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -89,13 +101,15 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
+  '/my-registration': typeof MyRegistrationRoute
   '/problem-statements': typeof ProblemStatementsRoute
-  '/register': typeof RegisterRoute
+  '/register': typeof RegisterRouteWithChildren
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
   '/events/$slug': typeof EventsSlugRoute
+  '/register/$slug': typeof RegisterSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -103,13 +117,15 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
+  '/my-registration': typeof MyRegistrationRoute
   '/problem-statements': typeof ProblemStatementsRoute
-  '/register': typeof RegisterRoute
+  '/register': typeof RegisterRouteWithChildren
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
   '/events/$slug': typeof EventsSlugRoute
+  '/register/$slug': typeof RegisterSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -118,13 +134,15 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
+  '/my-registration': typeof MyRegistrationRoute
   '/problem-statements': typeof ProblemStatementsRoute
-  '/register': typeof RegisterRoute
+  '/register': typeof RegisterRouteWithChildren
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
   '/events/$slug': typeof EventsSlugRoute
+  '/register/$slug': typeof RegisterSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -134,6 +152,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/events'
     | '/gallery'
+    | '/my-registration'
     | '/problem-statements'
     | '/register'
     | '/results'
@@ -141,6 +160,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/sponsors'
     | '/events/$slug'
+    | '/register/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -148,6 +168,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/events'
     | '/gallery'
+    | '/my-registration'
     | '/problem-statements'
     | '/register'
     | '/results'
@@ -155,6 +176,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/sponsors'
     | '/events/$slug'
+    | '/register/$slug'
   id:
     | '__root__'
     | '/'
@@ -162,6 +184,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/events'
     | '/gallery'
+    | '/my-registration'
     | '/problem-statements'
     | '/register'
     | '/results'
@@ -169,6 +192,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/sponsors'
     | '/events/$slug'
+    | '/register/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -177,8 +201,9 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   EventsRoute: typeof EventsRouteWithChildren
   GalleryRoute: typeof GalleryRoute
+  MyRegistrationRoute: typeof MyRegistrationRoute
   ProblemStatementsRoute: typeof ProblemStatementsRoute
-  RegisterRoute: typeof RegisterRoute
+  RegisterRoute: typeof RegisterRouteWithChildren
   ResultsRoute: typeof ResultsRoute
   SearchRoute: typeof SearchRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -229,6 +254,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProblemStatementsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/my-registration': {
+      id: '/my-registration'
+      path: '/my-registration'
+      fullPath: '/my-registration'
+      preLoaderRoute: typeof MyRegistrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gallery': {
       id: '/gallery'
       path: '/gallery'
@@ -264,6 +296,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/register/$slug': {
+      id: '/register/$slug'
+      path: '/$slug'
+      fullPath: '/register/$slug'
+      preLoaderRoute: typeof RegisterSlugRouteImport
+      parentRoute: typeof RegisterRoute
+    }
     '/events/$slug': {
       id: '/events/$slug'
       path: '/$slug'
@@ -285,14 +324,27 @@ const EventsRouteChildren: EventsRouteChildren = {
 const EventsRouteWithChildren =
   EventsRoute._addFileChildren(EventsRouteChildren)
 
+interface RegisterRouteChildren {
+  RegisterSlugRoute: typeof RegisterSlugRoute
+}
+
+const RegisterRouteChildren: RegisterRouteChildren = {
+  RegisterSlugRoute: RegisterSlugRoute,
+}
+
+const RegisterRouteWithChildren = RegisterRoute._addFileChildren(
+  RegisterRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
   EventsRoute: EventsRouteWithChildren,
   GalleryRoute: GalleryRoute,
+  MyRegistrationRoute: MyRegistrationRoute,
   ProblemStatementsRoute: ProblemStatementsRoute,
-  RegisterRoute: RegisterRoute,
+  RegisterRoute: RegisterRouteWithChildren,
   ResultsRoute: ResultsRoute,
   SearchRoute: SearchRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,

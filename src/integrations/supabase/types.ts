@@ -677,30 +677,39 @@ export type Database = {
       registrations: {
         Row: {
           created_at: string
+          email_status: string
           event_id: string
           id: string
           metadata: Json
+          qr_token: string | null
           registered_at: string
+          registration_code: string | null
           status: Database["public"]["Enums"]["registration_status"]
           team_id: string
           updated_at: string
         }
         Insert: {
           created_at?: string
+          email_status?: string
           event_id: string
           id?: string
           metadata?: Json
+          qr_token?: string | null
           registered_at?: string
+          registration_code?: string | null
           status?: Database["public"]["Enums"]["registration_status"]
           team_id: string
           updated_at?: string
         }
         Update: {
           created_at?: string
+          email_status?: string
           event_id?: string
           id?: string
           metadata?: Json
+          qr_token?: string | null
           registered_at?: string
+          registration_code?: string | null
           status?: Database["public"]["Enums"]["registration_status"]
           team_id?: string
           updated_at?: string
@@ -861,25 +870,34 @@ export type Database = {
       }
       team_members: {
         Row: {
+          academic_year: string | null
+          branch: string | null
           created_at: string
           id: string
           participant_id: string
+          registration_number: string | null
           role: string | null
           team_id: string
           updated_at: string
         }
         Insert: {
+          academic_year?: string | null
+          branch?: string | null
           created_at?: string
           id?: string
           participant_id: string
+          registration_number?: string | null
           role?: string | null
           team_id: string
           updated_at?: string
         }
         Update: {
+          academic_year?: string | null
+          branch?: string | null
           created_at?: string
           id?: string
           participant_id?: string
+          registration_number?: string | null
           role?: string | null
           team_id?: string
           updated_at?: string
@@ -903,7 +921,9 @@ export type Database = {
       }
       teams: {
         Row: {
+          academic_year: string | null
           created_at: string
+          department_id: string | null
           event_id: string
           id: string
           leader_participant_id: string | null
@@ -912,7 +932,9 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          academic_year?: string | null
           created_at?: string
+          department_id?: string | null
           event_id: string
           id?: string
           leader_participant_id?: string | null
@@ -921,7 +943,9 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          academic_year?: string | null
           created_at?: string
+          department_id?: string | null
           event_id?: string
           id?: string
           leader_participant_id?: string | null
@@ -930,6 +954,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "teams_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "teams_event_id_fkey"
             columns: ["event_id"]
@@ -1038,7 +1069,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      event_capacity: { Args: { _event_id: string }; Returns: Json }
+      generate_registration_code: { Args: never; Returns: string }
+      lookup_registration_by_code: { Args: { _code: string }; Returns: Json }
+      lookup_registrations_by_email: { Args: { _email: string }; Returns: Json }
+      register_team: { Args: { payload: Json }; Returns: Json }
     }
     Enums: {
       attendance_method: "qr" | "manual" | "import"
@@ -1059,7 +1094,14 @@ export type Database = {
         | "evaluation"
         | "completed"
       media_type: "image" | "video"
-      registration_status: "pending" | "confirmed" | "cancelled" | "waitlisted"
+      registration_status:
+        | "pending"
+        | "confirmed"
+        | "cancelled"
+        | "waitlisted"
+        | "attended"
+        | "evaluated"
+        | "completed"
       report_type:
         | "registrations"
         | "attendance"
@@ -1218,7 +1260,15 @@ export const Constants = {
         "completed",
       ],
       media_type: ["image", "video"],
-      registration_status: ["pending", "confirmed", "cancelled", "waitlisted"],
+      registration_status: [
+        "pending",
+        "confirmed",
+        "cancelled",
+        "waitlisted",
+        "attended",
+        "evaluated",
+        "completed",
+      ],
       report_type: [
         "registrations",
         "attendance",
