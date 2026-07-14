@@ -17,7 +17,7 @@ export const attendanceStatsQueryOptions = (eventId: string | null) =>
     queryKey: ["admin", "attendance", "stats", eventId],
     queryFn: async () => {
       const { data, error } = await supabase.rpc("attendance_stats", {
-        _event_id: eventId,
+        _event_id: eventId ?? undefined,
       });
       if (error) throw error;
       return (data ?? {}) as unknown as AttendanceStats;
