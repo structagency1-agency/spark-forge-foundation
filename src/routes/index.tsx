@@ -3,6 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { homepageQueryOptions } from "@/services/homepage";
 import { upcomingEventQueryOptions } from "@/services/events";
 import { HomepageSections } from "@/components/home/HomepageSections";
+import { AnnouncementBanner } from "@/components/home/AnnouncementBanner";
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
@@ -16,5 +17,11 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const { data: sections } = useSuspenseQuery(homepageQueryOptions);
-  return <HomepageSections sections={sections} />;
+  return (
+    <>
+      <AnnouncementBanner location="homepage" />
+      <HomepageSections sections={sections} />
+    </>
+  );
 }
+
