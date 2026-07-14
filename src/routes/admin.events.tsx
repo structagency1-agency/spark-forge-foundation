@@ -205,19 +205,22 @@ function EventsAdmin() {
               <Input value={(values.banner_url as string) ?? ""} onChange={(e) => setValue("banner_url", e.target.value)} />
             </FieldRow>
             <div className="grid grid-cols-3 gap-3">
-              <FieldRow label="Event date">
-                <Input type="datetime-local" value={toLocalInput(values.event_date as string | null)}
+              <FieldRow label="Event date *">
+                <Input type="datetime-local" required value={toLocalInput(values.event_date as string | null)}
                   onChange={(e) => setValue("event_date", e.target.value ? new Date(e.target.value).toISOString() : null)} />
               </FieldRow>
-              <FieldRow label="Registration opens">
-                <Input type="datetime-local" value={toLocalInput(values.registration_start as string | null)}
+              <FieldRow label="Registration opens *">
+                <Input type="datetime-local" required value={toLocalInput(values.registration_start as string | null)}
                   onChange={(e) => setValue("registration_start", e.target.value ? new Date(e.target.value).toISOString() : null)} />
               </FieldRow>
-              <FieldRow label="Registration closes">
-                <Input type="datetime-local" value={toLocalInput(values.registration_close as string | null)}
+              <FieldRow label="Registration closes *">
+                <Input type="datetime-local" required value={toLocalInput(values.registration_close as string | null)}
                   onChange={(e) => setValue("registration_close", e.target.value ? new Date(e.target.value).toISOString() : null)} />
               </FieldRow>
             </div>
+            <p className="-mt-2 text-xs text-muted-foreground">
+              Times are in your local timezone. Registration must open before it closes, and the event date should be on/after registration opens.
+            </p>
             <div className="grid grid-cols-3 gap-3">
               <FieldRow label="Min team size">
                 <Input type="number" min={1} value={(values.min_team_size as number) ?? 1}
