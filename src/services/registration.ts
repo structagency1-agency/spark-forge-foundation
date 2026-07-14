@@ -10,11 +10,16 @@ export interface RegistrationMemberInput {
   academic_year: string;
 }
 
+export type ProjectTrack = "software" | "hardware";
+
 export interface RegisterTeamInput {
   event_id: string;
+  idea_title: string;
+  abstract: string;
   team: {
     name: string;
     academic_year: string;
+    project_track: ProjectTrack | "";
     department_id?: string | null;
   };
   leader: RegistrationMemberInput;
