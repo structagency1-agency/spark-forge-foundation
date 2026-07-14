@@ -837,26 +837,39 @@ export type Database = {
       jury_event_assignments: {
         Row: {
           created_at: string
+          department_id: string | null
           event_id: string
           id: string
           jury_id: string
           round: string
+          track: Database["public"]["Enums"]["project_track"] | null
         }
         Insert: {
           created_at?: string
+          department_id?: string | null
           event_id: string
           id?: string
           jury_id: string
           round?: string
+          track?: Database["public"]["Enums"]["project_track"] | null
         }
         Update: {
           created_at?: string
+          department_id?: string | null
           event_id?: string
           id?: string
           jury_id?: string
           round?: string
+          track?: Database["public"]["Enums"]["project_track"] | null
         }
         Relationships: [
+          {
+            foreignKeyName: "jury_event_assignments_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "jury_event_assignments_event_id_fkey"
             columns: ["event_id"]

@@ -437,6 +437,8 @@ function JuryEventAssignmentTab({
   const [selectedJury, setSelectedJury] = useState<string[]>([]);
   const [targetEvent, setTargetEvent] = useState<string>(eventId ?? "");
   const [deptFilter, setDeptFilter] = useState<string>("");
+  const [assignTrack, setAssignTrack] = useState<"" | "software" | "hardware">("");
+  const [assignDept, setAssignDept] = useState<string>("");
 
   const eventsForAssignment = useMemo(
     () => (deptFilter ? allEvents.filter((e) => e.department_id === deptFilter) : allEvents),
@@ -454,10 +456,16 @@ function JuryEventAssignmentTab({
       toast.error("Pick event and at least one jury");
       return;
     }
-    const rows = selectedJury.map((jid) => ({ jury_id: jid, event_id: targetEvent, round: "main" }));
+    const rows = selectedJury.map((jid) => ({
+      jury_id: jid,
+      event_id: targetEvent,
+      round: "main",
+      track: assignTrack || null,
+      department_id: assignDept || null,
+    }));
     const { error } = await supabase.from("jury_event_assignments").upsert(rows as never, {
       onConflict: "jury_id,event_id,round",
-      ignoreDuplicates: true,
+      ignoreDuplicates: false,
     });
     if (error) return toast.error(error.message);
     toast.success(`Assigned ${selectedJury.length} jury`);
@@ -465,7 +473,7 @@ function JuryEventAssignmentTab({
       action: "jury_assign_event",
       module: "evaluation",
       description: `${selectedJury.length} jury → event`,
-      metadata: { event_id: targetEvent, jury_ids: selectedJury },
+      metadata: { event_id: targetEvent, jury_ids: selectedJury, track: assignTrack || null, department_id: assignDept || null },
     });
     setSelectedJury([]);
     await qc.invalidateQueries({ queryKey: ["admin", "evaluation"] });
@@ -495,7 +503,31 @@ function JuryEventAssignmentTab({
               {eventsForAssignment.map((e) => <option key={e.id} value={e.id}>{e.name}</option>)}
             </select>
           </FieldRow>
+          <FieldRow label="Sub-event: Track scope">
+            <select
+              className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm"
+              value={assignTrack}
+              onChange={(e) => setAssignTrack(e.target.value as "" | "software" | "hardware")}
+            >
+              <option value="">Any track</option>
+              <option value="software">Software</option>
+              <option value="hardware">Hardware</option>
+            </select>
+          </FieldRow>
+          <FieldRow label="Sub-event: Department scope">
+            <select
+              className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm"
+              value={assignDept}
+              onChange={(e) => setAssignDept(e.target.value)}
+            >
+              <option value="">Any department</option>
+              {departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+            </select>
+          </FieldRow>
         </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Scope narrows which teams this juror can be auto-assigned to. Leave a field on "Any" for no restriction.
+        </p>
         <div className="mt-3">
           <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">Jury members</p>
           <div className="max-h-56 overflow-y-auto rounded-md border border-border/60 p-2">
@@ -526,9 +558,27 @@ function JuryEventAssignmentTab({
           searchFields={(r) => `${r.jury_members?.full_name ?? ""} ${r.events?.name ?? ""}`}
           columns={[
             { key: "event", header: "Event", render: (r) => r.events?.name ?? "—" },
-            { key: "dept", header: "Department", render: (r) => r.events?.departments?.name ?? "—" },
+            { key: "dept", header: "Event Dept", render: (r) => r.events?.departments?.name ?? "—" },
             { key: "jury", header: "Jury", render: (r) => <span className="font-medium">{r.jury_members?.full_name ?? "—"}</span> },
             { key: "org", header: "Organization", render: (r) => r.jury_members?.organization ?? "—" },
+            {
+              key: "scope_track",
+              header: "Track scope",
+              render: (r) => {
+                const t = (r as unknown as { track: string | null }).track;
+                return <span className="text-xs uppercase">{t ?? "any"}</span>;
+              },
+            },
+            {
+              key: "scope_dept",
+              header: "Dept scope",
+              render: (r) => {
+                const d = (r as unknown as { department_id: string | null }).department_id;
+                if (!d) return <span className="text-xs">any</span>;
+                const name = departments.find((x) => x.id === d)?.name;
+                return <span className="text-xs">{name ?? d.slice(0, 8)}</span>;
+              },
+            },
             { key: "round", header: "Round", render: (r) => r.round },
           ]}
           actions={(r) => <ConfirmButton label="Remove" onConfirm={() => unassign(r.id)} />}
@@ -537,6 +587,7 @@ function JuryEventAssignmentTab({
     </div>
   );
 }
+
 
 // =============================================================================
 // TEAM ASSIGNMENT
