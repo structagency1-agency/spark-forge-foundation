@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ConfirmButton } from "@/components/admin/ConfirmButton";
 import { writeAuditLog } from "@/services/admin";
-import { listAllUsers, grantRoleByEmail } from "@/services/userManagement.functions";
+import { listAllUsers, grantRoleByEmail, deleteUser } from "@/services/userManagement.functions";
 
 export const Route = createFileRoute("/admin/user-management")({
   head: () => ({ meta: [{ title: "User Management — SPARK TANK 4.0" }, { name: "robots", content: "noindex, nofollow" }] }),
@@ -25,6 +25,7 @@ function UserManagementPage() {
   const qc = useQueryClient();
   const listUsersFn = useServerFn(listAllUsers);
   const grantByEmailFn = useServerFn(grantRoleByEmail);
+  const deleteUserFn = useServerFn(deleteUser);
   const [emailToPromote, setEmailToPromote] = useState("");
   const [roleToGrant, setRoleToGrant] = useState<RoleName>("iedc_admin");
   const [assignUserId, setAssignUserId] = useState("");
@@ -168,14 +169,15 @@ function UserManagementPage() {
                 <th className="p-2">User ID</th>
                 <th className="p-2">Roles</th>
                 <th className="p-2">Grant role</th>
+                <th className="p-2 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {usersLoading && (
-                <tr><td colSpan={4} className="p-3 text-muted-foreground">Loading users…</td></tr>
+                <tr><td colSpan={5} className="p-3 text-muted-foreground">Loading users…</td></tr>
               )}
               {!usersLoading && filtered.length === 0 && (
-                <tr><td colSpan={4} className="p-3 text-muted-foreground">No users found.</td></tr>
+                <tr><td colSpan={5} className="p-3 text-muted-foreground">No users found.</td></tr>
               )}
               {filtered.map((u) => (
                 <tr key={u.id}>
@@ -206,6 +208,25 @@ function UserManagementPage() {
                         />
                       ))}
                     </div>
+                  </td>
+                  <td className="p-2 text-right">
+                    <ConfirmButton
+                      label="Delete"
+                      variant="destructive"
+                      message={`Permanently delete ${u.email ?? u.id}? This removes their login and role assignments. This cannot be undone.`}
+                      onConfirm={async () => {
+                        try {
+                          await deleteUserFn({ data: { userId: u.id } });
+                          toast.success("User deleted");
+                          void writeAuditLog({ action: "user_delete", module: "user-management", description: u.email ?? u.id });
+                          await qc.invalidateQueries({ queryKey: ["admin", "all-users"] });
+                          await qc.invalidateQueries({ queryKey: ["admin", "ecell-assignments"] });
+                        } catch (e) {
+                          const msg = e instanceof Response ? await e.text() : (e as Error).message;
+                          toast.error(msg || "Failed to delete user");
+                        }
+                      }}
+                    />
                   </td>
                 </tr>
               ))}
