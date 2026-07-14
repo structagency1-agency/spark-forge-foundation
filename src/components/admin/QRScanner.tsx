@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Html5Qrcode, type CameraDevice } from "html5-qrcode";
 import { Button } from "@/components/ui/button";
 import { Camera, CameraOff } from "lucide-react";
@@ -81,15 +81,15 @@ export function QRScanner({
     }
   }
 
-  async function stop() {
+  const stop = useCallback(async () => {
     const s = scannerRef.current;
     if (s && s.isScanning) await s.stop().catch(() => {});
     setRunning(false);
-  }
+  }, []);
 
   useEffect(() => {
     if (paused && running) void stop();
-  }, [paused, running]);
+  }, [paused, running, stop]);
 
   const secureContext = typeof window !== "undefined" && window.isSecureContext;
 
