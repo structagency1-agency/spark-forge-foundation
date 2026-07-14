@@ -227,7 +227,7 @@ function EventsAdmin() {
               <FieldRow label="Status">
                 <select
                   className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm"
-                  value={(values.status as string) ?? "draft"}
+                  value={(values.status as string) ?? "upcoming"}
                   onChange={(e) => setValue("status", e.target.value as Event["status"])}
                 >
                   <option value="upcoming">upcoming</option>
