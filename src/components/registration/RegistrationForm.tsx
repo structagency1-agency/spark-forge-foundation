@@ -64,11 +64,16 @@ export function RegistrationForm({
   submitError,
   onSubmit,
 }: Props) {
-  const [team, setTeam] = useState({
+  const [team, setTeam] = useState<{
+    name: string;
+    academic_year: string;
+    project_track: ProjectTrack | "";
+  }>({
     name: "",
     academic_year: "",
-    department_id: event.department_id ?? "",
+    project_track: "",
   });
+  const [idea, setIdea] = useState({ idea_title: "", abstract: "" });
   const [leader, setLeader] = useState<RegistrationMemberInput>({ ...defaultMember });
   const [members, setMembers] = useState<RegistrationMemberInput[]>(
     event.min_team_size > 1
@@ -81,7 +86,8 @@ export function RegistrationForm({
   const canAdd = totalSize < event.max_team_size;
   const canRemove = totalSize > event.min_team_size;
 
-  const departmentOptions = useMemo(() => departments, [departments]);
+  // departments retained on props for schema compatibility but not shown in the form
+  void useMemo(() => departments, [departments]);
 
   function updateMember(index: number, patch: Partial<RegistrationMemberInput>) {
     setMembers((prev) => prev.map((m, i) => (i === index ? { ...m, ...patch } : m)));
@@ -93,6 +99,12 @@ export function RegistrationForm({
     if (!teamRes.success) {
       for (const issue of teamRes.error.issues) {
         next[`team.${String(issue.path[0])}`] = issue.message;
+      }
+    }
+    const ideaRes = ideaSchema.safeParse(idea);
+    if (!ideaRes.success) {
+      for (const issue of ideaRes.error.issues) {
+        next[`idea.${String(issue.path[0])}`] = issue.message;
       }
     }
     const leaderRes = memberSchema.safeParse(leader);
@@ -110,7 +122,6 @@ export function RegistrationForm({
       }
     });
 
-    // Duplicate detection across leader + members
     const emails = [leader.email, ...members.map((m) => m.email)].map((e) =>
       e.trim().toLowerCase(),
     );
@@ -144,7 +155,14 @@ export function RegistrationForm({
     if (submitting) return;
     if (!validate()) return;
     onSubmit({
-      team,
+      idea_title: idea.idea_title.trim(),
+      abstract: idea.abstract.trim(),
+      team: {
+        name: team.name,
+        academic_year: team.academic_year,
+        project_track: team.project_track,
+        department_id: event.department_id ?? null,
+      },
       leader,
       members,
     });
@@ -168,22 +186,52 @@ export function RegistrationForm({
               onChange={(v) => setTeam({ ...team, academic_year: v })}
             />
           </Field>
-          <Field label="Department" required error={errors["team.department_id"]}>
+          <Field label="Track" required error={errors["team.project_track"]}>
             <select
-              value={team.department_id}
-              onChange={(e) => setTeam({ ...team, department_id: e.target.value })}
+              value={team.project_track}
+              onChange={(e) =>
+                setTeam({ ...team, project_track: e.target.value as ProjectTrack | "" })
+              }
               className={inputCls}
             >
-              <option value="">Select department</option>
-              {departmentOptions.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
-              ))}
+              <option value="">Select track</option>
+              <option value="software">Software</option>
+              <option value="hardware">Hardware</option>
             </select>
           </Field>
         </div>
       </Section>
+
+      <Section
+        title="Your idea"
+        hint="Give us a short pitch. You can refine this later."
+      >
+        <div className="space-y-4">
+          <Field label="Idea title" required error={errors["idea.idea_title"]}>
+            <input
+              value={idea.idea_title}
+              onChange={(e) => setIdea({ ...idea, idea_title: e.target.value })}
+              maxLength={160}
+              placeholder="e.g. AI-powered campus navigation for accessibility"
+              className={inputCls}
+            />
+          </Field>
+          <Field label="Abstract" required error={errors["idea.abstract"]}>
+            <textarea
+              value={idea.abstract}
+              onChange={(e) => setIdea({ ...idea, abstract: e.target.value })}
+              maxLength={2000}
+              rows={6}
+              placeholder="Describe the problem, your solution, and the impact (min. 30 characters)."
+              className={`${inputCls} min-h-[140px] resize-y`}
+            />
+            <span className="mt-1 block text-[11px] text-muted-foreground">
+              {idea.abstract.trim().length}/2000
+            </span>
+          </Field>
+        </div>
+      </Section>
+
 
       <Section
         title="Team leader"
