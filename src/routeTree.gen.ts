@@ -37,6 +37,7 @@ import { Route as EventsSlugRouteImport } from './routes/events.$slug'
 import { Route as CertificateCodeRouteImport } from './routes/certificate.$code'
 import { Route as AdminWinnersRouteImport } from './routes/admin.winners'
 import { Route as AdminWebsiteRouteImport } from './routes/admin.website'
+import { Route as AdminUserManagementRouteImport } from './routes/admin.user-management'
 import { Route as AdminTimelineRouteImport } from './routes/admin.timeline'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminScorecardsRouteImport } from './routes/admin.scorecards'
@@ -199,6 +200,11 @@ const AdminWebsiteRoute = AdminWebsiteRouteImport.update({
   path: '/website',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminUserManagementRoute = AdminUserManagementRouteImport.update({
+  id: '/user-management',
+  path: '/user-management',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminTimelineRoute = AdminTimelineRouteImport.update({
   id: '/timeline',
   path: '/timeline',
@@ -346,6 +352,7 @@ export interface FileRoutesByFullPath {
   '/admin/scorecards': typeof AdminScorecardsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/timeline': typeof AdminTimelineRoute
+  '/admin/user-management': typeof AdminUserManagementRoute
   '/admin/website': typeof AdminWebsiteRoute
   '/admin/winners': typeof AdminWinnersRoute
   '/certificate/$code': typeof CertificateCodeRoute
@@ -395,6 +402,7 @@ export interface FileRoutesByTo {
   '/admin/scorecards': typeof AdminScorecardsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/timeline': typeof AdminTimelineRoute
+  '/admin/user-management': typeof AdminUserManagementRoute
   '/admin/website': typeof AdminWebsiteRoute
   '/admin/winners': typeof AdminWinnersRoute
   '/certificate/$code': typeof CertificateCodeRoute
@@ -447,6 +455,7 @@ export interface FileRoutesById {
   '/admin/scorecards': typeof AdminScorecardsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/timeline': typeof AdminTimelineRoute
+  '/admin/user-management': typeof AdminUserManagementRoute
   '/admin/website': typeof AdminWebsiteRoute
   '/admin/winners': typeof AdminWinnersRoute
   '/certificate/$code': typeof CertificateCodeRoute
@@ -500,6 +509,7 @@ export interface FileRouteTypes {
     | '/admin/scorecards'
     | '/admin/settings'
     | '/admin/timeline'
+    | '/admin/user-management'
     | '/admin/website'
     | '/admin/winners'
     | '/certificate/$code'
@@ -549,6 +559,7 @@ export interface FileRouteTypes {
     | '/admin/scorecards'
     | '/admin/settings'
     | '/admin/timeline'
+    | '/admin/user-management'
     | '/admin/website'
     | '/admin/winners'
     | '/certificate/$code'
@@ -600,6 +611,7 @@ export interface FileRouteTypes {
     | '/admin/scorecards'
     | '/admin/settings'
     | '/admin/timeline'
+    | '/admin/user-management'
     | '/admin/website'
     | '/admin/winners'
     | '/certificate/$code'
@@ -833,6 +845,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminWebsiteRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/user-management': {
+      id: '/admin/user-management'
+      path: '/user-management'
+      fullPath: '/admin/user-management'
+      preLoaderRoute: typeof AdminUserManagementRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/timeline': {
       id: '/admin/timeline'
       path: '/timeline'
@@ -1005,6 +1024,7 @@ interface AdminRouteChildren {
   AdminScorecardsRoute: typeof AdminScorecardsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminTimelineRoute: typeof AdminTimelineRoute
+  AdminUserManagementRoute: typeof AdminUserManagementRoute
   AdminWebsiteRoute: typeof AdminWebsiteRoute
   AdminWinnersRoute: typeof AdminWinnersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -1032,6 +1052,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminScorecardsRoute: AdminScorecardsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminTimelineRoute: AdminTimelineRoute,
+  AdminUserManagementRoute: AdminUserManagementRoute,
   AdminWebsiteRoute: AdminWebsiteRoute,
   AdminWinnersRoute: AdminWinnersRoute,
   AdminIndexRoute: AdminIndexRoute,
