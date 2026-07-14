@@ -1,11 +1,9 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 /**
- * The bare /register URL has no event context. Direct users to browse events
- * and start registration from an event card.
+ * Registration layout. Event-specific registration pages render inside this
+ * parent route; the bare /register redirect lives in register.index.tsx.
  */
 export const Route = createFileRoute("/register")({
-  beforeLoad: () => {
-    throw redirect({ to: "/events" });
-  },
+  component: Outlet,
 });
