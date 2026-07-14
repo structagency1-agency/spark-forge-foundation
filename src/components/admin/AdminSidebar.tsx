@@ -18,6 +18,12 @@ import {
   Gavel,
   Medal,
   BarChart3,
+  LineChart,
+  FileSpreadsheet,
+  Megaphone,
+  Globe,
+  Activity,
+  Bell,
 } from "lucide-react";
 import {
   Sidebar,
@@ -32,7 +38,12 @@ import {
 
 const items: Array<{ title: string; url: string; icon: typeof LayoutDashboard; exact?: boolean }> = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard, exact: true },
+  { title: "Analytics", url: "/admin/analytics", icon: LineChart },
+  { title: "Reports", url: "/admin/reports", icon: FileSpreadsheet },
+  { title: "Notifications", url: "/admin/notifications", icon: Bell },
+  { title: "Announcements", url: "/admin/announcements", icon: Megaphone },
   { title: "Homepage", url: "/admin/homepage", icon: Home },
+  { title: "Website Management", url: "/admin/website", icon: Globe },
   { title: "Events", url: "/admin/events", icon: CalendarDays },
   { title: "Registrations", url: "/admin/registrations", icon: Users },
   { title: "Attendance", url: "/admin/attendance", icon: QrCode },
@@ -48,8 +59,10 @@ const items: Array<{ title: string; url: string; icon: typeof LayoutDashboard; e
   { title: "Email Templates", url: "/admin/email-templates", icon: Mail },
   { title: "Contact Messages", url: "/admin/contact-messages", icon: Inbox },
   { title: "Website Settings", url: "/admin/settings", icon: Settings },
+  { title: "Database Health", url: "/admin/db-health", icon: Activity },
   { title: "Audit Logs", url: "/admin/audit-logs", icon: ScrollText },
 ];
+
 
 export function AdminSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
