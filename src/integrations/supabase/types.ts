@@ -1770,7 +1770,7 @@ export type Database = {
     Enums: {
       announcement_priority: "low" | "normal" | "high" | "urgent"
       announcement_status: "draft" | "published" | "archived"
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "jury"
       attendance_method: "qr" | "manual" | "import"
       content_status: "active" | "inactive"
       email_status: "pending" | "sent" | "failed"
@@ -1948,7 +1948,7 @@ export const Constants = {
     Enums: {
       announcement_priority: ["low", "normal", "high", "urgent"],
       announcement_status: ["draft", "published", "archived"],
-      app_role: ["admin", "user"],
+      app_role: ["admin", "user", "jury"],
       attendance_method: ["qr", "manual", "import"],
       content_status: ["active", "inactive"],
       email_status: ["pending", "sent", "failed"],
