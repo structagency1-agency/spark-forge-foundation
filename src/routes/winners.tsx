@@ -30,7 +30,7 @@ type Row = {
   citation: string | null;
 };
 
-const ICON: Record<string, JSX.Element> = {
+const ICON: Record<string, React.ReactNode> = {
   winner: <Trophy className="h-5 w-5" />,
   runner_up: <Medal className="h-5 w-5" />,
   second_runner_up: <Medal className="h-5 w-5" />,
