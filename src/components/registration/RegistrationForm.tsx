@@ -478,3 +478,41 @@ function YearSelect({ value, onChange }: { value: string; onChange: (v: string) 
 
 const inputCls =
   "w-full rounded-lg border border-border/60 bg-background/60 px-3 py-2 text-sm text-foreground outline-none focus:border-accent";
+
+const FIELD_LABELS: Record<string, string> = {
+  full_name: "Full name",
+  registration_number: "Registration number",
+  email: "Email",
+  phone: "Phone",
+  branch: "Branch",
+  academic_year: "Academic year",
+  name: "Team name",
+  project_track: "Track (Software / Hardware)",
+  idea_title: "Idea title",
+  abstract: "Abstract",
+  size: "Team size",
+};
+
+function labelForKey(key: string): string {
+  const parts = key.split(".");
+  const field = parts[parts.length - 1] ?? key;
+  const fieldLabel = FIELD_LABELS[field] ?? field;
+  if (parts[0] === "team") return `Team — ${fieldLabel}`;
+  if (parts[0] === "idea") return fieldLabel;
+  if (parts[0] === "leader") return `Team leader — ${fieldLabel}`;
+  if (parts[0] === "member") {
+    const idx = Number(parts[1] ?? "0");
+    return `Member ${idx + 2} — ${fieldLabel}`;
+  }
+  return fieldLabel;
+}
+
+function buildErrorList(
+  errors: Record<string, string>,
+): Array<{ key: string; label: string; message: string }> {
+  return Object.entries(errors).map(([key, message]) => ({
+    key,
+    label: labelForKey(key),
+    message,
+  }));
+}
