@@ -18,7 +18,7 @@ export function ConfirmButton({
   variant = "destructive",
   size = "sm",
 }: {
-  onConfirm: () => void | Promise<void>;
+  onConfirm: () => unknown | Promise<unknown>;
   label?: string;
   message?: string;
   variant?: "default" | "destructive" | "outline" | "ghost";
