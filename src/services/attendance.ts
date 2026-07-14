@@ -124,9 +124,25 @@ export const attendanceEventsQueryOptions = queryOptions({
   },
 });
 
+function extractQrToken(scannedValue: string) {
+  const value = scannedValue.trim();
+  if (!value) return value;
+
+  try {
+    const payload = JSON.parse(value) as { t?: unknown; qr_token?: unknown };
+    const token = typeof payload.t === "string" ? payload.t : payload.qr_token;
+    if (typeof token === "string" && token.trim()) return token.trim();
+  } catch {
+    // Existing/manual QR values may already be the raw token.
+  }
+
+  return value;
+}
+
 export async function markAttendanceByQr(qrToken: string, eventId: string) {
+  const normalizedToken = extractQrToken(qrToken);
   const { data, error } = await supabase.rpc("mark_attendance_by_qr", {
-    _qr_token: qrToken,
+    _qr_token: normalizedToken,
     _event_id: eventId,
     _method: "qr",
   });
