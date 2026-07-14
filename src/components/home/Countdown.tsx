@@ -37,7 +37,7 @@ export function Countdown({ section }: { section: HomepageSection }) {
       <SectionHeading
         eyebrow="Countdown"
         title={section.title ?? "Countdown"}
-        description={event.name}
+        description={event?.name}
       />
       <div className="surface-panel grid grid-cols-2 gap-4 p-8 md:grid-cols-4 md:p-12">
         {cells.map(([label, value]) => (
