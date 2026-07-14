@@ -26,6 +26,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RegisterIndexRouteImport } from './routes/register.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as VerifyCertificateCodeRouteImport } from './routes/verify-certificate.$code'
 import { Route as ScorecardCodeRouteImport } from './routes/scorecard.$code'
@@ -140,6 +141,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterIndexRoute = RegisterIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RegisterRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -334,6 +340,7 @@ export interface FileRoutesByFullPath {
   '/scorecard/$code': typeof ScorecardCodeRoute
   '/verify-certificate/$code': typeof VerifyCertificateCodeRoute
   '/admin/': typeof AdminIndexRoute
+  '/register/': typeof RegisterIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -345,7 +352,6 @@ export interface FileRoutesByTo {
   '/gallery': typeof GalleryRoute
   '/my-registration': typeof MyRegistrationRoute
   '/problem-statements': typeof ProblemStatementsRoute
-  '/register': typeof RegisterRouteWithChildren
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -381,6 +387,7 @@ export interface FileRoutesByTo {
   '/scorecard/$code': typeof ScorecardCodeRoute
   '/verify-certificate/$code': typeof VerifyCertificateCodeRoute
   '/admin': typeof AdminIndexRoute
+  '/register': typeof RegisterIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -430,6 +437,7 @@ export interface FileRoutesById {
   '/scorecard/$code': typeof ScorecardCodeRoute
   '/verify-certificate/$code': typeof VerifyCertificateCodeRoute
   '/admin/': typeof AdminIndexRoute
+  '/register/': typeof RegisterIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -480,6 +488,7 @@ export interface FileRouteTypes {
     | '/scorecard/$code'
     | '/verify-certificate/$code'
     | '/admin/'
+    | '/register/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -491,7 +500,6 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/my-registration'
     | '/problem-statements'
-    | '/register'
     | '/results'
     | '/search'
     | '/sitemap.xml'
@@ -527,6 +535,7 @@ export interface FileRouteTypes {
     | '/scorecard/$code'
     | '/verify-certificate/$code'
     | '/admin'
+    | '/register'
   id:
     | '__root__'
     | '/'
@@ -575,6 +584,7 @@ export interface FileRouteTypes {
     | '/scorecard/$code'
     | '/verify-certificate/$code'
     | '/admin/'
+    | '/register/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -719,6 +729,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/register/': {
+      id: '/register/'
+      path: '/'
+      fullPath: '/register/'
+      preLoaderRoute: typeof RegisterIndexRouteImport
+      parentRoute: typeof RegisterRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -995,10 +1012,12 @@ const EventsRouteWithChildren =
 
 interface RegisterRouteChildren {
   RegisterSlugRoute: typeof RegisterSlugRoute
+  RegisterIndexRoute: typeof RegisterIndexRoute
 }
 
 const RegisterRouteChildren: RegisterRouteChildren = {
   RegisterSlugRoute: RegisterSlugRoute,
+  RegisterIndexRoute: RegisterIndexRoute,
 }
 
 const RegisterRouteWithChildren = RegisterRoute._addFileChildren(
@@ -1040,3 +1059,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

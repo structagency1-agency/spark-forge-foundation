@@ -20,7 +20,7 @@ import { RegistrationForm } from "@/components/registration/RegistrationForm";
 import { RegistrationSummary } from "@/components/registration/RegistrationSummary";
 
 const searchSchema = z.object({
-  code: fallback(z.string(), "").default(""),
+  code: fallback(z.string().optional(), undefined),
 });
 
 export const Route = createFileRoute("/register/$slug")({
