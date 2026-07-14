@@ -4,6 +4,7 @@ import { Plus, Trash2, Loader2 } from "lucide-react";
 import type { EventWithDepartment } from "@/services/events";
 import type { Department } from "@/models/db";
 import type {
+  ProjectTrack,
   RegisterTeamInput,
   RegistrationMemberInput,
 } from "@/services/registration";
@@ -32,7 +33,18 @@ const memberSchema = z.object({
 const teamSchema = z.object({
   name: z.string().trim().min(2, "Team name is too short").max(120),
   academic_year: z.string().trim().min(1, "Academic year is required").max(40),
-  department_id: z.string().trim().min(1, "Department is required"),
+  project_track: z.enum(["software", "hardware"], {
+    message: "Select Software or Hardware",
+  }),
+});
+
+const ideaSchema = z.object({
+  idea_title: z.string().trim().min(3, "Idea title is required").max(160),
+  abstract: z
+    .string()
+    .trim()
+    .min(30, "Abstract should be at least 30 characters")
+    .max(2000, "Abstract is too long (max 2000 chars)"),
 });
 
 interface Props {
