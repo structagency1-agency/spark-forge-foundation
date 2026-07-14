@@ -20,6 +20,7 @@ import { Route as ProblemStatementsRouteImport } from './routes/problem-statemen
 import { Route as MyRegistrationRouteImport } from './routes/my-registration'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as EcellAttendanceRouteImport } from './routes/ecell-attendance'
 import { Route as DownloadsRouteImport } from './routes/downloads'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -110,6 +111,11 @@ const GalleryRoute = GalleryRouteImport.update({
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EcellAttendanceRoute = EcellAttendanceRouteImport.update({
+  id: '/ecell-attendance',
+  path: '/ecell-attendance',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DownloadsRoute = DownloadsRouteImport.update({
@@ -300,6 +306,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/downloads': typeof DownloadsRoute
+  '/ecell-attendance': typeof EcellAttendanceRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
   '/my-registration': typeof MyRegistrationRoute
@@ -348,6 +355,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/downloads': typeof DownloadsRoute
+  '/ecell-attendance': typeof EcellAttendanceRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
   '/my-registration': typeof MyRegistrationRoute
@@ -397,6 +405,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/downloads': typeof DownloadsRoute
+  '/ecell-attendance': typeof EcellAttendanceRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
   '/my-registration': typeof MyRegistrationRoute
@@ -448,6 +457,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/downloads'
+    | '/ecell-attendance'
     | '/events'
     | '/gallery'
     | '/my-registration'
@@ -496,6 +506,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/downloads'
+    | '/ecell-attendance'
     | '/events'
     | '/gallery'
     | '/my-registration'
@@ -544,6 +555,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/downloads'
+    | '/ecell-attendance'
     | '/events'
     | '/gallery'
     | '/my-registration'
@@ -594,6 +606,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   DownloadsRoute: typeof DownloadsRoute
+  EcellAttendanceRoute: typeof EcellAttendanceRoute
   EventsRoute: typeof EventsRouteWithChildren
   GalleryRoute: typeof GalleryRoute
   MyRegistrationRoute: typeof MyRegistrationRoute
@@ -686,6 +699,13 @@ declare module '@tanstack/react-router' {
       path: '/events'
       fullPath: '/events'
       preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ecell-attendance': {
+      id: '/ecell-attendance'
+      path: '/ecell-attendance'
+      fullPath: '/ecell-attendance'
+      preLoaderRoute: typeof EcellAttendanceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/downloads': {
@@ -1042,6 +1062,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   DownloadsRoute: DownloadsRoute,
+  EcellAttendanceRoute: EcellAttendanceRoute,
   EventsRoute: EventsRouteWithChildren,
   GalleryRoute: GalleryRoute,
   MyRegistrationRoute: MyRegistrationRoute,

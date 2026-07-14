@@ -211,7 +211,7 @@ function EcellAttendancePage() {
           <div className="grid gap-4 lg:grid-cols-2">
             <Card className="p-4">
               <h2 className="mb-3 font-display text-lg">QR Scanner</h2>
-              <QRScanner onScan={onScan} paused={busy} />
+              <QRScanner onDecode={onScan} paused={busy} />
               {last && (
                 <div className={`mt-3 rounded-md border p-3 text-sm ${last.ok ? "border-emerald-500/40 bg-emerald-500/10" : "border-red-500/40 bg-red-500/10"}`}>
                   {last.ok ? <CheckCircle2 className="mr-1 inline h-4 w-4" /> : <XCircle className="mr-1 inline h-4 w-4" />}
