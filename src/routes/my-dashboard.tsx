@@ -1,6 +1,6 @@
 import { createFileRoute, redirect, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LogOut, Download, QrCode as QrIcon, FileText, Award, CalendarCheck } from "lucide-react";
+import { LogOut, Download, QrCode as QrIcon, FileText, CalendarCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -59,7 +59,7 @@ function MyDashboardPage() {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b border-border bg-background/95 px-4 backdrop-blur">
         <span className="font-display text-sm">SPARK TANK 4.0 · My Dashboard</span>
-        <span className="ml-2 text-xs text-muted-foreground">{email}</span>
+        <span className="ml-2 truncate text-xs text-muted-foreground">{email}</span>
         <Button size="sm" variant="ghost" className="ml-auto" onClick={signOut}>
           <LogOut className="mr-2 h-4 w-4" /> Sign out
         </Button>
@@ -73,9 +73,11 @@ function MyDashboardPage() {
               We couldn't find any registration for <strong>{email}</strong>. Make sure you signed up with
               the same email used as the team leader when registering.
             </p>
-            <div className="mt-3 flex gap-2">
+            <div className="mt-3 flex gap-3">
               <Link to="/events" className="text-sm text-accent underline">Browse events</Link>
-              <Link to="/my-registration" className="text-sm text-accent underline">Lookup by code</Link>
+              <Link to="/my-registration" search={{ q: email }} className="text-sm text-accent underline">
+                Search by code
+              </Link>
             </div>
           </Card>
         )}
@@ -92,20 +94,28 @@ function RegistrationCard({ reg }: { reg: RegistrationDetail }) {
   const [qr, setQr] = useState<string | null>(null);
   useEffect(() => {
     if (!reg.qr_token) return;
-    renderQrDataUrl(buildQrPayload(reg.qr_token)).then(setQr).catch(() => setQr(null));
-  }, [reg.qr_token]);
+    renderQrDataUrl(
+      buildQrPayload({
+        registration_id: reg.registration_id,
+        registration_code: reg.registration_code,
+        event_id: reg.event.id,
+        team_id: reg.team.id,
+        qr_token: reg.qr_token,
+      }),
+    ).then(setQr).catch(() => setQr(null));
+  }, [reg]);
 
   return (
     <Card className="p-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="text-xs uppercase text-muted-foreground">{reg.event_name}</div>
-          <h2 className="font-display text-xl">{reg.team_name}</h2>
+          <div className="text-xs uppercase text-muted-foreground">{reg.event.name}</div>
+          <h2 className="font-display text-xl">{reg.team.name}</h2>
           <div className="mt-1 text-sm text-muted-foreground">
             Code: <strong>{reg.registration_code}</strong>
           </div>
           <div className="mt-1 text-sm">
-            Status: <span className="rounded-full bg-accent/15 px-2 py-0.5 text-xs uppercase">{reg.result_status ?? "pending"}</span>
+            Status: <span className="rounded-full bg-accent/15 px-2 py-0.5 text-xs uppercase">{reg.status}</span>
           </div>
         </div>
         {qr && (
@@ -121,38 +131,32 @@ function RegistrationCard({ reg }: { reg: RegistrationDetail }) {
       <div className="mt-4 grid gap-2 sm:grid-cols-2 md:grid-cols-4">
         <Link
           to="/my-registration"
-          search={{ q: reg.registration_code ?? "" }}
+          search={{ q: reg.registration_code }}
           className="flex items-center gap-2 rounded-md border border-border/60 p-3 text-sm hover:border-accent"
         >
           <QrIcon className="h-4 w-4" /> My QR & team
         </Link>
-        {reg.scorecard && (
-          <Link
-            to="/scorecard/$code"
-            params={{ code: reg.registration_code ?? "" }}
-            className="flex items-center gap-2 rounded-md border border-border/60 p-3 text-sm hover:border-accent"
-          >
-            <FileText className="h-4 w-4" /> Scorecard
-          </Link>
-        )}
-        {(reg.certificates ?? []).length > 0 && (
-          <div className="rounded-md border border-border/60 p-3 text-sm">
-            <div className="mb-1 flex items-center gap-2"><Award className="h-4 w-4" /> Certificates</div>
-            <ul className="space-y-1">
-              {(reg.certificates ?? []).map((c) => (
-                <li key={c.certificate_code}>
-                  <Link to="/certificate/$code" params={{ code: c.certificate_code }} className="text-accent underline">
-                    {c.type} · {c.certificate_code}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <Link
+          to="/scorecard/$code"
+          params={{ code: reg.registration_code }}
+          className="flex items-center gap-2 rounded-md border border-border/60 p-3 text-sm hover:border-accent"
+        >
+          <FileText className="h-4 w-4" /> Scorecard
+        </Link>
+        <Link
+          to="/results"
+          className="flex items-center gap-2 rounded-md border border-border/60 p-3 text-sm hover:border-accent"
+        >
+          <FileText className="h-4 w-4" /> Results
+        </Link>
         <div className="flex items-center gap-2 rounded-md border border-border/60 p-3 text-sm">
           <CalendarCheck className="h-4 w-4" />
-          Attendance: {reg.scorecard ? "on record" : "check on event day"}
+          Attendance: {reg.status === "attended" ? "Checked in" : "Pending"}
         </div>
+      </div>
+
+      <div className="mt-4 text-xs text-muted-foreground">
+        {reg.members.length} team member{reg.members.length === 1 ? "" : "s"} · {reg.event.venue ?? "Venue TBA"}
       </div>
     </Card>
   );
