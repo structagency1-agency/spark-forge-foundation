@@ -19,7 +19,8 @@ export const Route = createFileRoute("/admin/user-management")({
 });
 
 type RoleName = "admin" | "iedc_admin" | "ecell_member" | "participant" | "jury";
-const ROLES: RoleName[] = ["admin", "iedc_admin", "ecell_member", "participant", "jury"];
+// Participant is auto-granted on signup when the email matches a team registration — not grantable here.
+const GRANTABLE_ROLES: RoleName[] = ["admin", "iedc_admin", "ecell_member", "jury"];
 
 function UserManagementPage() {
   const qc = useQueryClient();
@@ -143,7 +144,7 @@ function UserManagementPage() {
             value={roleToGrant}
             onChange={(e) => setRoleToGrant(e.target.value as RoleName)}
           >
-            {ROLES.map((r) => (
+            {GRANTABLE_ROLES.map((r) => (
               <option key={r} value={r}>{r}</option>
             ))}
           </select>
@@ -198,7 +199,7 @@ function UserManagementPage() {
                   </td>
                   <td className="p-2">
                     <div className="flex flex-wrap gap-1">
-                      {ROLES.filter((r) => !u.roles.includes(r)).map((r) => (
+                      {GRANTABLE_ROLES.filter((r) => !u.roles.includes(r)).map((r) => (
                         <ConfirmButton
                           key={r}
                           label={`+ ${r}`}
