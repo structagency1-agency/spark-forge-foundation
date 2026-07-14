@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Download, Loader2, Mail, ScanLine } from "lucide-react";
-import { lookupRegistrationByCode } from "@/services/registration";
-import { renderQrDataUrl, buildQrPayload, downloadDataUrl } from "@/lib/qr";
+import { lookupRegistrationByCode, type LookupMember } from "@/services/registration";
+import { renderQrDataUrl, buildMemberQrPayload, buildQrPayload, downloadDataUrl } from "@/lib/qr";
 
 export function RegistrationSuccess({ code }: { code: string }) {
   const { data, isLoading, error } = useQuery({
@@ -12,33 +12,9 @@ export function RegistrationSuccess({ code }: { code: string }) {
     staleTime: 30 * 1000,
   });
 
-  const [qr, setQr] = useState<string | null>(null);
-  const qrRef = useRef<HTMLDivElement | null>(null);
-
   useEffect(() => {
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
-
-  useEffect(() => {
-    if (!data) return;
-    let cancelled = false;
-    renderQrDataUrl(
-      buildQrPayload({
-        registration_id: data.registration_id,
-        registration_code: data.registration_code,
-        event_id: data.event.id,
-        team_id: data.team.id,
-        qr_token: data.qr_token,
-      }),
-    )
-      .then((url) => {
-        if (!cancelled) setQr(url);
-      })
-      .catch(() => setQr(null));
-    return () => {
-      cancelled = true;
-    };
-  }, [data]);
 
   if (isLoading) {
     return (
@@ -61,41 +37,31 @@ export function RegistrationSuccess({ code }: { code: string }) {
 
   return (
     <div className="space-y-8">
-      <div
-        ref={qrRef}
-        className="surface-panel flex flex-col items-center gap-4 border-emerald-400/40 p-6 text-center md:p-8"
-      >
-        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-[11px] uppercase tracking-widest text-emerald-300">
-          <ScanLine className="h-3.5 w-3.5" /> Your attendance QR
-        </div>
-        <p className="max-w-md text-sm text-muted-foreground">
-          Show this QR at the venue — organisers will scan it to mark attendance.
-          Save it now; it's also on its way to your team leader's email.
-        </p>
-        {qr ? (
-          <img
-            src={qr}
-            alt={`QR code for ${data.registration_code}`}
-            className="rounded-2xl border border-border/60 bg-white p-3"
-            width={260}
-            height={260}
-          />
-        ) : (
-          <div className="flex h-[260px] w-[260px] items-center justify-center rounded-2xl border border-border/60 bg-muted/30">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      <div className="surface-panel border-emerald-400/40 p-6 md:p-8">
+        <div className="flex flex-col items-center gap-2 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-[11px] uppercase tracking-widest text-emerald-300">
+            <ScanLine className="h-3.5 w-3.5" /> Each team member has their own QR
           </div>
-        )}
-        <p className="font-mono text-xs text-muted-foreground">{data.registration_code}</p>
-        <button
-          type="button"
-          disabled={!qr}
-          onClick={() =>
-            qr && downloadDataUrl(qr, `sparktank-${data.registration_code}.png`)
-          }
-          className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm text-accent-foreground shadow-[var(--shadow-glow)] disabled:opacity-50"
-        >
-          <Download className="h-4 w-4" /> Download QR
-        </button>
+          <p className="max-w-xl text-sm text-muted-foreground">
+            Attendance is marked <strong>per member</strong>. Every teammate must show
+            their personal QR at the venue — <strong>only members whose attendance is
+            marked will receive a certificate</strong>.
+          </p>
+        </div>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {data.members.map((m) => (
+            <MemberQrCard
+              key={m.team_member_id ?? m.email}
+              member={m}
+              eventId={data.event.id}
+              teamId={data.team.id}
+              registrationId={data.registration_id}
+              registrationCode={data.registration_code}
+              fallbackToken={data.qr_token}
+            />
+          ))}
+        </div>
       </div>
 
       <div className="surface-panel p-8">
@@ -120,35 +86,6 @@ export function RegistrationSuccess({ code }: { code: string }) {
           <Row label="Email status" value={data.email_status} />
         </dl>
 
-        <div className="mt-8">
-          <h3 className="font-display text-sm uppercase tracking-widest text-muted-foreground">
-            Team members
-          </h3>
-          <ul className="mt-3 divide-y divide-border/60 rounded-xl border border-border/60">
-            {data.members.map((m) => (
-              <li key={`${m.email}`} className="flex flex-wrap items-center justify-between gap-2 p-4 text-sm">
-                <div>
-                  <div className="font-medium text-foreground">
-                    {m.full_name}{" "}
-                    {m.role === "leader" && (
-                      <span className="ml-2 rounded-full border border-accent/40 px-2 py-0.5 text-[10px] uppercase tracking-widest text-accent">
-                        Leader
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {m.registration_number} · {m.branch} · {m.academic_year}
-                  </div>
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {m.email}
-                  {m.phone && <span className="ml-2">{m.phone}</span>}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
             to="/my-registration"
@@ -169,14 +106,98 @@ export function RegistrationSuccess({ code }: { code: string }) {
   );
 }
 
+function MemberQrCard({
+  member,
+  eventId,
+  teamId,
+  registrationId,
+  registrationCode,
+  fallbackToken,
+}: {
+  member: LookupMember;
+  eventId: string;
+  teamId: string;
+  registrationId: string;
+  registrationCode: string;
+  fallbackToken: string;
+}) {
+  const payload = useMemo(() => {
+    if (member.qr_token && member.team_member_id && member.participant_id) {
+      return buildMemberQrPayload({
+        registration_code: registrationCode,
+        event_id: eventId,
+        team_id: teamId,
+        team_member_id: member.team_member_id,
+        participant_id: member.participant_id,
+        qr_token: member.qr_token,
+      });
+    }
+    // Legacy fallback: team-level QR
+    return buildQrPayload({
+      registration_id: registrationId,
+      registration_code: registrationCode,
+      event_id: eventId,
+      team_id: teamId,
+      qr_token: fallbackToken,
+    });
+  }, [member, eventId, teamId, registrationId, registrationCode, fallbackToken]);
+
+  const [qr, setQr] = useState<string | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    renderQrDataUrl(payload, 260)
+      .then((url) => !cancelled && setQr(url))
+      .catch(() => setQr(null));
+    return () => {
+      cancelled = true;
+    };
+  }, [payload]);
+
+  const filename = `sparktank-${registrationCode}-${(member.full_name || "member").replace(/\s+/g, "_")}.png`;
+
+  return (
+    <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/60 bg-card/30 p-4 text-center">
+      <div className="flex flex-col items-center gap-1">
+        <div className="text-sm font-medium text-foreground">{member.full_name}</div>
+        <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+          {member.role === "leader" ? "Team Leader" : "Member"}
+        </div>
+      </div>
+      {qr ? (
+        <img
+          src={qr}
+          alt={`Attendance QR for ${member.full_name}`}
+          className="rounded-xl border border-border/60 bg-white p-2"
+          width={200}
+          height={200}
+        />
+      ) : (
+        <div className="flex h-[200px] w-[200px] items-center justify-center rounded-xl border border-border/60 bg-muted/30">
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        </div>
+      )}
+      <div className="text-[11px] text-muted-foreground truncate max-w-[220px]">
+        {member.email}
+      </div>
+      <button
+        type="button"
+        disabled={!qr}
+        onClick={() => qr && downloadDataUrl(qr, filename)}
+        className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-1.5 text-xs text-accent-foreground disabled:opacity-50"
+      >
+        <Download className="h-3.5 w-3.5" /> Download
+      </button>
+    </div>
+  );
+}
+
 function Row({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <div className="rounded-lg border border-border/60 bg-card/30 p-3">
       <dt className="text-[11px] uppercase tracking-widest text-muted-foreground">{label}</dt>
       <dd
         className={
-          "mt-1 text-foreground " +
-          (mono ? "font-mono text-sm" : "text-sm capitalize")
+          "mt-1 text-foreground " + (mono ? "font-mono text-sm" : "text-sm capitalize")
         }
       >
         {value}

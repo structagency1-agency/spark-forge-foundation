@@ -38,6 +38,27 @@ export function buildQrPayload(input: {
   });
 }
 
+/** Per-member QR payload — the scanner extracts `t` and marks that member. */
+export function buildMemberQrPayload(input: {
+  registration_code: string;
+  event_id: string;
+  team_id: string;
+  team_member_id: string;
+  participant_id: string;
+  qr_token: string;
+}) {
+  return JSON.stringify({
+    v: 2,
+    kind: "member",
+    code: input.registration_code,
+    eid: input.event_id,
+    tid: input.team_id,
+    mid: input.team_member_id,
+    pid: input.participant_id,
+    t: input.qr_token,
+  });
+}
+
 /** Trigger a browser download of a data URL. */
 export function downloadDataUrl(dataUrl: string, filename: string) {
   const a = document.createElement("a");
