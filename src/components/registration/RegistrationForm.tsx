@@ -153,7 +153,18 @@ export function RegistrationForm({
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (submitting) return;
-    if (!validate()) return;
+    if (!validate()) {
+      // Surface the first error so users understand why nothing happened.
+      if (typeof window !== "undefined") {
+        window.requestAnimationFrame(() => {
+          const el = document.querySelector<HTMLElement>(
+            "[data-registration-error='true']",
+          );
+          el?.scrollIntoView({ behavior: "smooth", block: "center" });
+        });
+      }
+      return;
+    }
     onSubmit({
       idea_title: idea.idea_title.trim(),
       abstract: idea.abstract.trim(),
@@ -167,6 +178,8 @@ export function RegistrationForm({
       members,
     });
   }
+
+  const errorCount = Object.keys(errors).length;
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-8">
@@ -303,6 +316,15 @@ export function RegistrationForm({
           )}
         </div>
       </Section>
+
+      {errorCount > 0 && (
+        <div
+          data-registration-error="true"
+          className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive-foreground"
+        >
+          Please fix {errorCount} field{errorCount === 1 ? "" : "s"} highlighted above before confirming your registration.
+        </div>
+      )}
 
       {submitError && (
         <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive-foreground">
