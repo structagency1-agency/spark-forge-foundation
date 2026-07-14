@@ -53,7 +53,9 @@ export const Route = createFileRoute("/admin")({
         || path.startsWith("/admin/audit-logs")
         || path.startsWith("/admin/settings")
         || path.startsWith("/admin/db-health")
-        || path.startsWith("/admin/email-templates");
+        || path.startsWith("/admin/email-templates")
+        || path.startsWith("/admin/user-management")
+        || path.startsWith("/admin/website");
       if (blocked) throw redirect({ to: "/admin" });
       return { user: session.user, isAdmin: false, isJury: false, isIedcAdmin: true };
     }
