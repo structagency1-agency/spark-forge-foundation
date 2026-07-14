@@ -19,7 +19,8 @@ export const Route = createFileRoute("/admin/user-management")({
 });
 
 type RoleName = "admin" | "iedc_admin" | "ecell_member" | "participant" | "jury";
-const ROLES: RoleName[] = ["admin", "iedc_admin", "ecell_member", "participant", "jury"];
+// Participant is auto-granted on signup when the email matches a team registration — not grantable here.
+const GRANTABLE_ROLES: RoleName[] = ["admin", "iedc_admin", "ecell_member", "jury"];
 
 function UserManagementPage() {
   const qc = useQueryClient();
