@@ -25,6 +25,7 @@ function UserManagementPage() {
   const qc = useQueryClient();
   const listUsersFn = useServerFn(listAllUsers);
   const grantByEmailFn = useServerFn(grantRoleByEmail);
+  const deleteUserFn = useServerFn(deleteUser);
   const [emailToPromote, setEmailToPromote] = useState("");
   const [roleToGrant, setRoleToGrant] = useState<RoleName>("iedc_admin");
   const [assignUserId, setAssignUserId] = useState("");
