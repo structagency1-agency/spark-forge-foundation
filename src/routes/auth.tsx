@@ -35,8 +35,10 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: search.redirect ?? "/admin", replace: true });
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (!data.session) return;
+      const dest = search.redirect ?? (await destinationForUser(data.session.user.id));
+      navigate({ to: dest, replace: true });
     });
   }, [navigate, search.redirect]);
 
