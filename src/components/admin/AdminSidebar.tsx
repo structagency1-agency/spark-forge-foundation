@@ -1,4 +1,6 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState, getRouteApi } from "@tanstack/react-router";
+const Route = getRouteApi("/admin");
+
 import {
   LayoutDashboard,
   Home,
@@ -66,6 +68,9 @@ const items: Array<{ title: string; url: string; icon: typeof LayoutDashboard; e
 
 export function AdminSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const ctx = Route.useRouteContext();
+  const isAdmin = ctx?.isAdmin ?? false;
+  const visibleItems = isAdmin ? items : items.filter((i) => i.url === "/admin/evaluation");
   const isActive = (url: string, exact?: boolean) =>
     exact ? pathname === url : pathname === url || pathname.startsWith(url + "/");
 
@@ -73,10 +78,10 @@ export function AdminSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>SPARK TANK 4.0 Admin</SidebarGroupLabel>
+          <SidebarGroupLabel>{isAdmin ? "SPARK TANK 4.0 Admin" : "SPARK TANK 4.0 Jury"}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {visibleItems.map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton asChild isActive={isActive(item.url, item.exact)}>
                     <Link to={item.url} className="flex items-center gap-2">
@@ -93,3 +98,4 @@ export function AdminSidebar() {
     </Sidebar>
   );
 }
+
