@@ -345,11 +345,6 @@ export function RegistrationForm({
       )}
 
 
-      {submitError && (
-        <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive-foreground">
-          {submitError}
-        </div>
-      )}
 
       <button
         type="submit"
