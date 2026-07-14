@@ -26,14 +26,28 @@ export const Route = createFileRoute("/admin")({
       .from("user_roles")
       .select("role")
       .eq("user_id", session.user.id);
-    if (error || !roles?.some((r) => r.role === "admin")) {
+    if (error) {
       await supabase.auth.signOut();
       throw redirect({ to: "/auth", search: { redirect: location.href } });
     }
-    return { user: session.user };
+    const isAdmin = roles?.some((r) => r.role === "admin") ?? false;
+    const isJury = roles?.some((r) => r.role === "jury") ?? false;
+    const path = location.pathname;
+    const isEvaluationPath = path === "/admin/evaluation" || path.startsWith("/admin/evaluation/");
+
+    if (!isAdmin && !(isJury && isEvaluationPath)) {
+      // Jury landing on any other admin path → redirect to their allowed page
+      if (isJury) {
+        throw redirect({ to: "/admin/evaluation" });
+      }
+      await supabase.auth.signOut();
+      throw redirect({ to: "/auth", search: { redirect: location.href } });
+    }
+    return { user: session.user, isAdmin, isJury };
   },
   component: AdminLayout,
 });
+
 
 function AdminLayout() {
   const navigate = useNavigate();
