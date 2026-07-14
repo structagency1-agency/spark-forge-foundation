@@ -176,10 +176,18 @@ function EventsAdmin() {
           <>
             <div className="grid grid-cols-2 gap-3">
               <FieldRow label="Name">
-                <Input required value={(values.name as string) ?? ""} onChange={(e) => setValue("name", e.target.value)} />
+                <Input required value={(values.name as string) ?? ""} onChange={(e) => {
+                  const name = e.target.value;
+                  setValue("name", name);
+                  if (!dlg.row) {
+                    const auto = name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+                    setValue("slug", auto);
+                  }
+                }} />
               </FieldRow>
-              <FieldRow label="Slug">
-                <Input required value={(values.slug as string) ?? ""} onChange={(e) => setValue("slug", e.target.value)} />
+              <FieldRow label="Slug (URL-safe: letters, numbers, hyphens)">
+                <Input required pattern="[a-z0-9\-]+" value={(values.slug as string) ?? ""}
+                  onChange={(e) => setValue("slug", e.target.value.toLowerCase().replace(/[^a-z0-9\-]+/g, "-"))} />
               </FieldRow>
             </div>
             <FieldRow label="Description">
