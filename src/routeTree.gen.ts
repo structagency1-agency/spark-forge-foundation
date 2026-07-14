@@ -48,6 +48,7 @@ import { Route as AdminContactMessagesRouteImport } from './routes/admin.contact
 import { Route as AdminCertificatesRouteImport } from './routes/admin.certificates'
 import { Route as AdminAuditLogsRouteImport } from './routes/admin.audit-logs'
 import { Route as AdminAttendanceRouteImport } from './routes/admin.attendance'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 
 const WinnersRoute = WinnersRouteImport.update({
   id: '/winners',
@@ -244,6 +245,11 @@ const AdminAttendanceRoute = AdminAttendanceRouteImport.update({
   path: '/attendance',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -262,6 +268,7 @@ export interface FileRoutesByFullPath {
   '/sponsors': typeof SponsorsRoute
   '/verify-certificate': typeof VerifyCertificateRouteWithChildren
   '/winners': typeof WinnersRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/certificates': typeof AdminCertificatesRoute
@@ -302,6 +309,7 @@ export interface FileRoutesByTo {
   '/sponsors': typeof SponsorsRoute
   '/verify-certificate': typeof VerifyCertificateRouteWithChildren
   '/winners': typeof WinnersRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/certificates': typeof AdminCertificatesRoute
@@ -344,6 +352,7 @@ export interface FileRoutesById {
   '/sponsors': typeof SponsorsRoute
   '/verify-certificate': typeof VerifyCertificateRouteWithChildren
   '/winners': typeof WinnersRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/certificates': typeof AdminCertificatesRoute
@@ -387,6 +396,7 @@ export interface FileRouteTypes {
     | '/sponsors'
     | '/verify-certificate'
     | '/winners'
+    | '/admin/analytics'
     | '/admin/attendance'
     | '/admin/audit-logs'
     | '/admin/certificates'
@@ -427,6 +437,7 @@ export interface FileRouteTypes {
     | '/sponsors'
     | '/verify-certificate'
     | '/winners'
+    | '/admin/analytics'
     | '/admin/attendance'
     | '/admin/audit-logs'
     | '/admin/certificates'
@@ -468,6 +479,7 @@ export interface FileRouteTypes {
     | '/sponsors'
     | '/verify-certificate'
     | '/winners'
+    | '/admin/analytics'
     | '/admin/attendance'
     | '/admin/audit-logs'
     | '/admin/certificates'
@@ -789,10 +801,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAttendanceRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminAttendanceRoute: typeof AdminAttendanceRoute
   AdminAuditLogsRoute: typeof AdminAuditLogsRoute
   AdminCertificatesRoute: typeof AdminCertificatesRoute
@@ -814,6 +834,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminAttendanceRoute: AdminAttendanceRoute,
   AdminAuditLogsRoute: AdminAuditLogsRoute,
   AdminCertificatesRoute: AdminCertificatesRoute,
