@@ -67,15 +67,16 @@ export function SiteHeader({ siteName = SITE_FALLBACK.name }: SiteHeaderProps) {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search…"
               aria-label="Search the site"
-              className="w-28 xl:w-44 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+              className="w-28 lg:w-32 xl:w-36 2xl:w-44 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
           </form>
           <Link
             to={CTA_ITEM.to}
             className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent px-4 py-2 text-sm font-medium text-accent-foreground whitespace-nowrap shadow-[var(--shadow-glow)] transition-all hover:brightness-110"
           >
-            {CTA_ITEM.label}
-            <span aria-hidden>→</span>
+            <span className="inline 2xl:hidden">{CTA_ITEM.shortLabel ?? CTA_ITEM.label}</span>
+            <span className="hidden 2xl:inline">{CTA_ITEM.label}</span>
+            <span className="hidden 2xl:inline" aria-hidden>→</span>
           </Link>
         </div>
 
