@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Download, Loader2, Mail } from "lucide-react";
+import { Download, Loader2, Mail, ScanLine } from "lucide-react";
 import { lookupRegistrationByCode } from "@/services/registration";
 import { renderQrDataUrl, buildQrPayload, downloadDataUrl } from "@/lib/qr";
 
