@@ -15,6 +15,7 @@ import {
   Settings,
   ScrollText,
   QrCode,
+  Gavel,
 } from "lucide-react";
 import {
   Sidebar,
