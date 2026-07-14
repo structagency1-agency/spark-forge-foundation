@@ -107,6 +107,9 @@ export const eventCapacityQueryOptions = (eventId: string) =>
 // -------- Lookup --------
 
 export interface LookupMember {
+  team_member_id?: string;
+  participant_id?: string;
+  qr_token?: string;
   role: "leader" | "member" | string;
   full_name: string;
   email: string;
