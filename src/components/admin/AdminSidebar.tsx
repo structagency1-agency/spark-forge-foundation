@@ -1,4 +1,6 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState, getRouteApi } from "@tanstack/react-router";
+const Route = getRouteApi("/admin");
+
 import {
   LayoutDashboard,
   Home,
