@@ -26,11 +26,17 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as RegisterSlugRouteImport } from './routes/register.$slug'
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
 import { Route as AdminTimelineRouteImport } from './routes/admin.timeline'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminResultsRouteImport } from './routes/admin.results'
+import { Route as AdminRegistrationsRouteImport } from './routes/admin.registrations'
 import { Route as AdminProblemStatementsRouteImport } from './routes/admin.problem-statements'
+import { Route as AdminHomepageRouteImport } from './routes/admin.homepage'
 import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
+import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminEmailTemplatesRouteImport } from './routes/admin.email-templates'
 import { Route as AdminDepartmentsRouteImport } from './routes/admin.departments'
 import { Route as AdminContactMessagesRouteImport } from './routes/admin.contact-messages'
+import { Route as AdminCertificatesRouteImport } from './routes/admin.certificates'
 import { Route as AdminAuditLogsRouteImport } from './routes/admin.audit-logs'
 
 const SponsorsRoute = SponsorsRouteImport.update({
@@ -118,14 +124,39 @@ const AdminTimelineRoute = AdminTimelineRouteImport.update({
   path: '/timeline',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminResultsRoute = AdminResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRegistrationsRoute = AdminRegistrationsRouteImport.update({
+  id: '/registrations',
+  path: '/registrations',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminProblemStatementsRoute = AdminProblemStatementsRouteImport.update({
   id: '/problem-statements',
   path: '/problem-statements',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminHomepageRoute = AdminHomepageRouteImport.update({
+  id: '/homepage',
+  path: '/homepage',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminGalleryRoute = AdminGalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEventsRoute = AdminEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminEmailTemplatesRoute = AdminEmailTemplatesRouteImport.update({
@@ -141,6 +172,11 @@ const AdminDepartmentsRoute = AdminDepartmentsRouteImport.update({
 const AdminContactMessagesRoute = AdminContactMessagesRouteImport.update({
   id: '/contact-messages',
   path: '/contact-messages',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCertificatesRoute = AdminCertificatesRouteImport.update({
+  id: '/certificates',
+  path: '/certificates',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAuditLogsRoute = AdminAuditLogsRouteImport.update({
@@ -164,11 +200,17 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
+  '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/contact-messages': typeof AdminContactMessagesRoute
   '/admin/departments': typeof AdminDepartmentsRoute
   '/admin/email-templates': typeof AdminEmailTemplatesRoute
+  '/admin/events': typeof AdminEventsRoute
   '/admin/gallery': typeof AdminGalleryRoute
+  '/admin/homepage': typeof AdminHomepageRoute
   '/admin/problem-statements': typeof AdminProblemStatementsRoute
+  '/admin/registrations': typeof AdminRegistrationsRoute
+  '/admin/results': typeof AdminResultsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/timeline': typeof AdminTimelineRoute
   '/events/$slug': typeof EventsSlugRoute
   '/register/$slug': typeof RegisterSlugRoute
@@ -188,11 +230,17 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
+  '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/contact-messages': typeof AdminContactMessagesRoute
   '/admin/departments': typeof AdminDepartmentsRoute
   '/admin/email-templates': typeof AdminEmailTemplatesRoute
+  '/admin/events': typeof AdminEventsRoute
   '/admin/gallery': typeof AdminGalleryRoute
+  '/admin/homepage': typeof AdminHomepageRoute
   '/admin/problem-statements': typeof AdminProblemStatementsRoute
+  '/admin/registrations': typeof AdminRegistrationsRoute
+  '/admin/results': typeof AdminResultsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/timeline': typeof AdminTimelineRoute
   '/events/$slug': typeof EventsSlugRoute
   '/register/$slug': typeof RegisterSlugRoute
@@ -214,11 +262,17 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
+  '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/contact-messages': typeof AdminContactMessagesRoute
   '/admin/departments': typeof AdminDepartmentsRoute
   '/admin/email-templates': typeof AdminEmailTemplatesRoute
+  '/admin/events': typeof AdminEventsRoute
   '/admin/gallery': typeof AdminGalleryRoute
+  '/admin/homepage': typeof AdminHomepageRoute
   '/admin/problem-statements': typeof AdminProblemStatementsRoute
+  '/admin/registrations': typeof AdminRegistrationsRoute
+  '/admin/results': typeof AdminResultsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/timeline': typeof AdminTimelineRoute
   '/events/$slug': typeof EventsSlugRoute
   '/register/$slug': typeof RegisterSlugRoute
@@ -241,11 +295,17 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/sponsors'
     | '/admin/audit-logs'
+    | '/admin/certificates'
     | '/admin/contact-messages'
     | '/admin/departments'
     | '/admin/email-templates'
+    | '/admin/events'
     | '/admin/gallery'
+    | '/admin/homepage'
     | '/admin/problem-statements'
+    | '/admin/registrations'
+    | '/admin/results'
+    | '/admin/settings'
     | '/admin/timeline'
     | '/events/$slug'
     | '/register/$slug'
@@ -265,11 +325,17 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/sponsors'
     | '/admin/audit-logs'
+    | '/admin/certificates'
     | '/admin/contact-messages'
     | '/admin/departments'
     | '/admin/email-templates'
+    | '/admin/events'
     | '/admin/gallery'
+    | '/admin/homepage'
     | '/admin/problem-statements'
+    | '/admin/registrations'
+    | '/admin/results'
+    | '/admin/settings'
     | '/admin/timeline'
     | '/events/$slug'
     | '/register/$slug'
@@ -290,11 +356,17 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/sponsors'
     | '/admin/audit-logs'
+    | '/admin/certificates'
     | '/admin/contact-messages'
     | '/admin/departments'
     | '/admin/email-templates'
+    | '/admin/events'
     | '/admin/gallery'
+    | '/admin/homepage'
     | '/admin/problem-statements'
+    | '/admin/registrations'
+    | '/admin/results'
+    | '/admin/settings'
     | '/admin/timeline'
     | '/events/$slug'
     | '/register/$slug'
@@ -438,6 +510,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTimelineRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/results': {
+      id: '/admin/results'
+      path: '/results'
+      fullPath: '/admin/results'
+      preLoaderRoute: typeof AdminResultsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/registrations': {
+      id: '/admin/registrations'
+      path: '/registrations'
+      fullPath: '/admin/registrations'
+      preLoaderRoute: typeof AdminRegistrationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/problem-statements': {
       id: '/admin/problem-statements'
       path: '/problem-statements'
@@ -445,11 +538,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProblemStatementsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/homepage': {
+      id: '/admin/homepage'
+      path: '/homepage'
+      fullPath: '/admin/homepage'
+      preLoaderRoute: typeof AdminHomepageRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/gallery': {
       id: '/admin/gallery'
       path: '/gallery'
       fullPath: '/admin/gallery'
       preLoaderRoute: typeof AdminGalleryRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/events': {
+      id: '/admin/events'
+      path: '/events'
+      fullPath: '/admin/events'
+      preLoaderRoute: typeof AdminEventsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/email-templates': {
@@ -473,6 +580,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContactMessagesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/certificates': {
+      id: '/admin/certificates'
+      path: '/certificates'
+      fullPath: '/admin/certificates'
+      preLoaderRoute: typeof AdminCertificatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/audit-logs': {
       id: '/admin/audit-logs'
       path: '/audit-logs'
@@ -485,22 +599,34 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAuditLogsRoute: typeof AdminAuditLogsRoute
+  AdminCertificatesRoute: typeof AdminCertificatesRoute
   AdminContactMessagesRoute: typeof AdminContactMessagesRoute
   AdminDepartmentsRoute: typeof AdminDepartmentsRoute
   AdminEmailTemplatesRoute: typeof AdminEmailTemplatesRoute
+  AdminEventsRoute: typeof AdminEventsRoute
   AdminGalleryRoute: typeof AdminGalleryRoute
+  AdminHomepageRoute: typeof AdminHomepageRoute
   AdminProblemStatementsRoute: typeof AdminProblemStatementsRoute
+  AdminRegistrationsRoute: typeof AdminRegistrationsRoute
+  AdminResultsRoute: typeof AdminResultsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
   AdminTimelineRoute: typeof AdminTimelineRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAuditLogsRoute: AdminAuditLogsRoute,
+  AdminCertificatesRoute: AdminCertificatesRoute,
   AdminContactMessagesRoute: AdminContactMessagesRoute,
   AdminDepartmentsRoute: AdminDepartmentsRoute,
   AdminEmailTemplatesRoute: AdminEmailTemplatesRoute,
+  AdminEventsRoute: AdminEventsRoute,
   AdminGalleryRoute: AdminGalleryRoute,
+  AdminHomepageRoute: AdminHomepageRoute,
   AdminProblemStatementsRoute: AdminProblemStatementsRoute,
+  AdminRegistrationsRoute: AdminRegistrationsRoute,
+  AdminResultsRoute: AdminResultsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
   AdminTimelineRoute: AdminTimelineRoute,
   AdminIndexRoute: AdminIndexRoute,
 }

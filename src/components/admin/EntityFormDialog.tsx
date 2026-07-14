@@ -29,7 +29,7 @@ export function EntityFormDialog<T extends Record<string, unknown>>({
   title: string;
   description?: string;
   initial: Partial<T>;
-  onSubmit: (values: Partial<T>) => Promise<void>;
+  onSubmit: (values: Partial<T>) => Promise<unknown> | unknown;
   render: (props: EntityFormRenderProps<T>) => ReactNode;
   submitLabel?: string;
 }) {
