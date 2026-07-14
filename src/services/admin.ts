@@ -26,16 +26,26 @@ export interface AdminStats {
   unread_messages: number;
 }
 
+export interface RecentRegistrationRow {
+  id: string;
+  registration_code: string | null;
+  registered_at: string;
+  status: string;
+  email_status: string | null;
+  events: { name: string; slug: string } | null;
+  teams: { name: string } | null;
+}
+
 export interface AdminDashboardData {
   stats: AdminStats;
-  recentRegistrations: unknown[];
+  recentRegistrations: RecentRegistrationRow[];
   recentMessages: Array<{ id: string; name: string; subject: string | null; message: string; is_read: boolean }>;
   recentAuditLogs: AuditLog[];
 }
 
 export const adminDashboardQueryOptions = queryOptions({
   queryKey: ["admin", "dashboard"],
-  queryFn: async () => (await getAdminDashboard()) as AdminDashboardData,
+  queryFn: async () => (await getAdminDashboard()) as unknown as AdminDashboardData,
   staleTime: 15_000,
   refetchInterval: 30_000,
 });
