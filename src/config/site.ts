@@ -15,14 +15,12 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { label: "Events", to: "/events" },
   { label: "Problem Statements", to: "/problem-statements" },
   { label: "Gallery", to: "/gallery" },
-  { label: "Results", to: "/results" },
-  { label: "Sponsors", to: "/sponsors" },
   { label: "Contact", to: "/contact" },
 ] as const;
 
 export const CTA_ITEM: NavItem = {
-  label: "Register",
-  to: "/register",
+  label: "Explore Events",
+  to: "/events",
   cta: true,
 };
 

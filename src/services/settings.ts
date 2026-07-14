@@ -32,3 +32,12 @@ export function pickString(
   const value = settings[group]?.[key];
   return typeof value === "string" && value.length > 0 ? value : fallback;
 }
+
+export function pickArray<T = unknown>(
+  settings: SettingsMap,
+  group: string,
+  key: string,
+): T[] {
+  const value = settings[group]?.[key];
+  return Array.isArray(value) ? (value as T[]) : [];
+}

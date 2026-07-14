@@ -32,14 +32,12 @@ export function SiteFooter({ settings = {} }: SiteFooterProps) {
             <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-accent" />
             <span className="font-display text-sm tracking-[0.2em] uppercase">{siteName}</span>
           </div>
-          <p className="max-w-md text-sm text-muted-foreground">
-            {tagline}
-          </p>
+          <p className="max-w-md text-sm text-muted-foreground">{tagline}</p>
         </div>
 
         <div>
           <h4 className="mb-4 text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            Navigate
+            Quick Links
           </h4>
           <ul className="space-y-2 text-sm">
             {NAV_ITEMS.map((item) => (
@@ -60,8 +58,20 @@ export function SiteFooter({ settings = {} }: SiteFooterProps) {
             Reach us
           </h4>
           <ul className="space-y-2 text-sm text-foreground/80">
-            {email && <li><a href={`mailto:${email}`} className="hover:text-accent">{email}</a></li>}
-            {phone && <li><a href={`tel:${phone}`} className="hover:text-accent">{phone}</a></li>}
+            {email && (
+              <li>
+                <a href={`mailto:${email}`} className="hover:text-accent">
+                  {email}
+                </a>
+              </li>
+            )}
+            {phone && (
+              <li>
+                <a href={`tel:${phone}`} className="hover:text-accent">
+                  {phone}
+                </a>
+              </li>
+            )}
             {address && <li className="text-muted-foreground">{address}</li>}
           </ul>
           {socials.length > 0 && (
@@ -83,9 +93,8 @@ export function SiteFooter({ settings = {} }: SiteFooterProps) {
       </div>
 
       <div className="border-t border-border/60">
-        <div className="container-page flex flex-col items-start justify-between gap-2 py-6 text-xs text-muted-foreground md:flex-row md:items-center">
+        <div className="container-page py-6 text-xs text-muted-foreground">
           <span>{copyright}</span>
-          <span className="font-mono uppercase tracking-widest">Stage 1 • Foundation</span>
         </div>
       </div>
     </footer>
