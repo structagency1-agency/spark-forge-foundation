@@ -218,6 +218,8 @@ export type Database = {
         Row: {
           certificate_code: string | null
           created_at: string
+          download_count: number
+          downloaded_at: string | null
           event_id: string
           id: string
           issued_at: string
@@ -230,10 +232,14 @@ export type Database = {
           type: string
           updated_at: string
           url: string | null
+          verification_count: number
+          verified_at: string | null
         }
         Insert: {
           certificate_code?: string | null
           created_at?: string
+          download_count?: number
+          downloaded_at?: string | null
           event_id: string
           id?: string
           issued_at?: string
@@ -246,10 +252,14 @@ export type Database = {
           type?: string
           updated_at?: string
           url?: string | null
+          verification_count?: number
+          verified_at?: string | null
         }
         Update: {
           certificate_code?: string | null
           created_at?: string
+          download_count?: number
+          downloaded_at?: string | null
           event_id?: string
           id?: string
           issued_at?: string
@@ -262,6 +272,8 @@ export type Database = {
           type?: string
           updated_at?: string
           url?: string | null
+          verification_count?: number
+          verified_at?: string | null
         }
         Relationships: [
           {
@@ -1696,6 +1708,14 @@ export type Database = {
           _recommendation?: string
         }
         Returns: Json
+      }
+      track_certificate_download: {
+        Args: { _code: string }
+        Returns: undefined
+      }
+      track_certificate_verification: {
+        Args: { _code: string }
+        Returns: undefined
       }
       unpublish_results: { Args: { _event_id: string }; Returns: undefined }
       upsert_evaluation: {
