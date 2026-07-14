@@ -16,6 +16,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { label: "Problem Statements", to: "/problem-statements" },
   { label: "Gallery", to: "/gallery" },
   { label: "Contact", to: "/contact" },
+  { label: "My Registration", to: "/my-registration" },
 ] as const;
 
 export const CTA_ITEM: NavItem = {

@@ -1,7 +1,10 @@
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { CalendarDays, MapPin } from "lucide-react";
 import type { EventWithDepartment } from "@/services/events";
 import { computeEventStatus, EVENT_STATUS_LABEL } from "@/lib/status";
+import { eventCapacityQueryOptions } from "@/services/registration";
+import { computeRegistrationButtonState } from "@/lib/registrationButton";
 
 const STATUS_ACCENT: Record<string, string> = {
   registration_open: "border-emerald-400/40 bg-emerald-400/10 text-emerald-300",
@@ -14,11 +17,12 @@ const STATUS_ACCENT: Record<string, string> = {
 
 function fmtDate(d?: string | null) {
   if (!d) return "TBA";
-  return new Date(d).toLocaleDateString(undefined, {
+  return new Intl.DateTimeFormat("en-US", {
     day: "2-digit",
     month: "short",
     year: "numeric",
-  });
+    timeZone: "UTC",
+  }).format(new Date(d));
 }
 
 interface EventCardProps {
@@ -29,7 +33,11 @@ interface EventCardProps {
 export function EventCard({ event, showActions = true }: EventCardProps) {
   const status = computeEventStatus(event);
   const statusClass = STATUS_ACCENT[status] ?? STATUS_ACCENT.upcoming;
-  const registrationDisabled = true; // Stage 2: no registration flow
+  const { data: capacity } = useQuery({
+    ...eventCapacityQueryOptions(event.id),
+    enabled: showActions,
+  });
+  const btn = computeRegistrationButtonState(event, capacity ?? null);
 
   return (
     <article className="surface-panel group flex h-full flex-col overflow-hidden transition-transform hover:-translate-y-1">
@@ -85,15 +93,22 @@ export function EventCard({ event, showActions = true }: EventCardProps) {
         </dl>
         {showActions && (
           <div className="mt-auto flex items-center gap-3 pt-6">
-            <button
-              type="button"
-              disabled={registrationDisabled}
-              aria-disabled={registrationDisabled}
-              title="Registration opens later"
-              className="inline-flex flex-1 items-center justify-center rounded-full border border-border/60 bg-muted/30 px-4 py-2 text-xs font-medium text-muted-foreground cursor-not-allowed"
-            >
-              Register
-            </button>
+            {btn.disabled ? (
+              <span
+                className="inline-flex flex-1 items-center justify-center rounded-full border border-border/60 bg-muted/30 px-4 py-2 text-xs font-medium text-muted-foreground"
+                title={btn.hint}
+              >
+                {btn.label}
+              </span>
+            ) : (
+              <Link
+                to="/register/$slug"
+                params={{ slug: event.slug }}
+                className="inline-flex flex-1 items-center justify-center rounded-full border border-accent/40 bg-accent/10 px-4 py-2 text-xs font-medium text-accent hover:bg-accent hover:text-accent-foreground"
+              >
+                {btn.label}
+              </Link>
+            )}
             <Link
               to="/events/$slug"
               params={{ slug: event.slug }}
