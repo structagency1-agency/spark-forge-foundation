@@ -1576,6 +1576,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       winner_list: {
         Row: {
           citation: string | null
@@ -1653,7 +1674,15 @@ export type Database = {
       generate_certificates: { Args: { _event_id: string }; Returns: number }
       generate_registration_code: { Args: never; Returns: string }
       generate_scorecards: { Args: { _event_id: string }; Returns: number }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       hide_results: { Args: { _event_id: string }; Returns: undefined }
+      is_admin: { Args: never; Returns: boolean }
       lookup_registration_by_code: { Args: { _code: string }; Returns: Json }
       lookup_registrations_by_email: { Args: { _email: string }; Returns: Json }
       mark_attendance_by_qr: {
@@ -1732,6 +1761,7 @@ export type Database = {
     Enums: {
       announcement_priority: "low" | "normal" | "high" | "urgent"
       announcement_status: "draft" | "published" | "archived"
+      app_role: "admin" | "user"
       attendance_method: "qr" | "manual" | "import"
       content_status: "active" | "inactive"
       email_status: "pending" | "sent" | "failed"
@@ -1908,6 +1938,7 @@ export const Constants = {
     Enums: {
       announcement_priority: ["low", "normal", "high", "urgent"],
       announcement_status: ["draft", "published", "archived"],
+      app_role: ["admin", "user"],
       attendance_method: ["qr", "manual", "import"],
       content_status: ["active", "inactive"],
       email_status: ["pending", "sent", "failed"],
