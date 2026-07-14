@@ -1492,6 +1492,7 @@ export type Database = {
           created_at: string
           id: string
           participant_id: string
+          qr_token: string
           registration_number: string | null
           role: string | null
           team_id: string
@@ -1503,6 +1504,7 @@ export type Database = {
           created_at?: string
           id?: string
           participant_id: string
+          qr_token?: string
           registration_number?: string | null
           role?: string | null
           team_id: string
@@ -1514,6 +1516,7 @@ export type Database = {
           created_at?: string
           id?: string
           participant_id?: string
+          qr_token?: string
           registration_number?: string | null
           role?: string | null
           team_id?: string
