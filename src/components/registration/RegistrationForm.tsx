@@ -467,7 +467,7 @@ function YearSelect({ value, onChange }: { value: string; onChange: (v: string) 
   return (
     <select value={value} onChange={(e) => onChange(e.target.value)} className={inputCls}>
       <option value="">Select year</option>
-      {["1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year", "Postgraduate"].map((o) => (
+      {["1st Year", "2nd Year", "3rd Year", "4th Year"].map((o) => (
         <option key={o} value={o}>
           {o}
         </option>
