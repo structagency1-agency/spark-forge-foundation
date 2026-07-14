@@ -27,7 +27,7 @@ export function computeRegistrationButtonState(
       label: "Registration Opens Soon",
       disabled: true,
       hint: start
-        ? `Registration opens on ${start.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" })}.`
+        ? `Registration opens on ${new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" }).format(start)}.`
         : "Registration dates will be announced soon.",
     };
   }
