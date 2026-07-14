@@ -22,6 +22,8 @@ export type EvaluationStatus = Enums<"evaluation_status">;
 export type EvaluationRecommendation = Enums<"evaluation_recommendation">;
 export type CertificateTemplate = Tables<"certificate_templates">;
 export type Certificate = Tables<"certificates">;
+export type Scorecard = Tables<"scorecards">;
+export type ResultPublication = Tables<"result_publications">;
 export type ProblemStatement = Tables<"problem_statements">;
 export type GalleryItem = Tables<"gallery">;
 export type Sponsor = Tables<"sponsors">;
@@ -42,5 +44,6 @@ export type EventStatus = Enums<"event_status">;
 export type WinnerPosition = Enums<"winner_position">;
 export type MediaType = Enums<"media_type">;
 export type ContentStatus = Enums<"content_status">;
+export type ResultStatus = Enums<"result_status">;
 
 export type { Tables, TablesInsert, TablesUpdate, Enums };

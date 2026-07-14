@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WinnersRouteImport } from './routes/winners'
+import { Route as VerifyCertificateRouteImport } from './routes/verify-certificate'
 import { Route as SponsorsRouteImport } from './routes/sponsors'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SearchRouteImport } from './routes/search'
@@ -18,15 +20,21 @@ import { Route as ProblemStatementsRouteImport } from './routes/problem-statemen
 import { Route as MyRegistrationRouteImport } from './routes/my-registration'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as DownloadsRouteImport } from './routes/downloads'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as VerifyCertificateCodeRouteImport } from './routes/verify-certificate.$code'
+import { Route as ScorecardCodeRouteImport } from './routes/scorecard.$code'
 import { Route as RegisterSlugRouteImport } from './routes/register.$slug'
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
+import { Route as CertificateCodeRouteImport } from './routes/certificate.$code'
+import { Route as AdminWinnersRouteImport } from './routes/admin.winners'
 import { Route as AdminTimelineRouteImport } from './routes/admin.timeline'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminScorecardsRouteImport } from './routes/admin.scorecards'
 import { Route as AdminResultsRouteImport } from './routes/admin.results'
 import { Route as AdminRegistrationsRouteImport } from './routes/admin.registrations'
 import { Route as AdminProblemStatementsRouteImport } from './routes/admin.problem-statements'
@@ -41,6 +49,16 @@ import { Route as AdminCertificatesRouteImport } from './routes/admin.certificat
 import { Route as AdminAuditLogsRouteImport } from './routes/admin.audit-logs'
 import { Route as AdminAttendanceRouteImport } from './routes/admin.attendance'
 
+const WinnersRoute = WinnersRouteImport.update({
+  id: '/winners',
+  path: '/winners',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyCertificateRoute = VerifyCertificateRouteImport.update({
+  id: '/verify-certificate',
+  path: '/verify-certificate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SponsorsRoute = SponsorsRouteImport.update({
   id: '/sponsors',
   path: '/sponsors',
@@ -86,6 +104,11 @@ const EventsRoute = EventsRouteImport.update({
   path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DownloadsRoute = DownloadsRouteImport.update({
+  id: '/downloads',
+  path: '/downloads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -111,6 +134,16 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const VerifyCertificateCodeRoute = VerifyCertificateCodeRouteImport.update({
+  id: '/$code',
+  path: '/$code',
+  getParentRoute: () => VerifyCertificateRoute,
+} as any)
+const ScorecardCodeRoute = ScorecardCodeRouteImport.update({
+  id: '/scorecard/$code',
+  path: '/scorecard/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterSlugRoute = RegisterSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -121,6 +154,16 @@ const EventsSlugRoute = EventsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => EventsRoute,
 } as any)
+const CertificateCodeRoute = CertificateCodeRouteImport.update({
+  id: '/certificate/$code',
+  path: '/certificate/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminWinnersRoute = AdminWinnersRouteImport.update({
+  id: '/winners',
+  path: '/winners',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminTimelineRoute = AdminTimelineRouteImport.update({
   id: '/timeline',
   path: '/timeline',
@@ -129,6 +172,11 @@ const AdminTimelineRoute = AdminTimelineRouteImport.update({
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminScorecardsRoute = AdminScorecardsRouteImport.update({
+  id: '/scorecards',
+  path: '/scorecards',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminResultsRoute = AdminResultsRouteImport.update({
@@ -202,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
+  '/downloads': typeof DownloadsRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
   '/my-registration': typeof MyRegistrationRoute
@@ -211,6 +260,8 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
+  '/verify-certificate': typeof VerifyCertificateRouteWithChildren
+  '/winners': typeof WinnersRoute
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/certificates': typeof AdminCertificatesRoute
@@ -224,16 +275,22 @@ export interface FileRoutesByFullPath {
   '/admin/problem-statements': typeof AdminProblemStatementsRoute
   '/admin/registrations': typeof AdminRegistrationsRoute
   '/admin/results': typeof AdminResultsRoute
+  '/admin/scorecards': typeof AdminScorecardsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/timeline': typeof AdminTimelineRoute
+  '/admin/winners': typeof AdminWinnersRoute
+  '/certificate/$code': typeof CertificateCodeRoute
   '/events/$slug': typeof EventsSlugRoute
   '/register/$slug': typeof RegisterSlugRoute
+  '/scorecard/$code': typeof ScorecardCodeRoute
+  '/verify-certificate/$code': typeof VerifyCertificateCodeRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/downloads': typeof DownloadsRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
   '/my-registration': typeof MyRegistrationRoute
@@ -243,6 +300,8 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
+  '/verify-certificate': typeof VerifyCertificateRouteWithChildren
+  '/winners': typeof WinnersRoute
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/certificates': typeof AdminCertificatesRoute
@@ -256,10 +315,15 @@ export interface FileRoutesByTo {
   '/admin/problem-statements': typeof AdminProblemStatementsRoute
   '/admin/registrations': typeof AdminRegistrationsRoute
   '/admin/results': typeof AdminResultsRoute
+  '/admin/scorecards': typeof AdminScorecardsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/timeline': typeof AdminTimelineRoute
+  '/admin/winners': typeof AdminWinnersRoute
+  '/certificate/$code': typeof CertificateCodeRoute
   '/events/$slug': typeof EventsSlugRoute
   '/register/$slug': typeof RegisterSlugRoute
+  '/scorecard/$code': typeof ScorecardCodeRoute
+  '/verify-certificate/$code': typeof VerifyCertificateCodeRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
@@ -268,6 +332,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
+  '/downloads': typeof DownloadsRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
   '/my-registration': typeof MyRegistrationRoute
@@ -277,6 +342,8 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
+  '/verify-certificate': typeof VerifyCertificateRouteWithChildren
+  '/winners': typeof WinnersRoute
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/certificates': typeof AdminCertificatesRoute
@@ -290,10 +357,15 @@ export interface FileRoutesById {
   '/admin/problem-statements': typeof AdminProblemStatementsRoute
   '/admin/registrations': typeof AdminRegistrationsRoute
   '/admin/results': typeof AdminResultsRoute
+  '/admin/scorecards': typeof AdminScorecardsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/timeline': typeof AdminTimelineRoute
+  '/admin/winners': typeof AdminWinnersRoute
+  '/certificate/$code': typeof CertificateCodeRoute
   '/events/$slug': typeof EventsSlugRoute
   '/register/$slug': typeof RegisterSlugRoute
+  '/scorecard/$code': typeof ScorecardCodeRoute
+  '/verify-certificate/$code': typeof VerifyCertificateCodeRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -303,6 +375,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/contact'
+    | '/downloads'
     | '/events'
     | '/gallery'
     | '/my-registration'
@@ -312,6 +385,8 @@ export interface FileRouteTypes {
     | '/search'
     | '/sitemap.xml'
     | '/sponsors'
+    | '/verify-certificate'
+    | '/winners'
     | '/admin/attendance'
     | '/admin/audit-logs'
     | '/admin/certificates'
@@ -325,16 +400,22 @@ export interface FileRouteTypes {
     | '/admin/problem-statements'
     | '/admin/registrations'
     | '/admin/results'
+    | '/admin/scorecards'
     | '/admin/settings'
     | '/admin/timeline'
+    | '/admin/winners'
+    | '/certificate/$code'
     | '/events/$slug'
     | '/register/$slug'
+    | '/scorecard/$code'
+    | '/verify-certificate/$code'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/contact'
+    | '/downloads'
     | '/events'
     | '/gallery'
     | '/my-registration'
@@ -344,6 +425,8 @@ export interface FileRouteTypes {
     | '/search'
     | '/sitemap.xml'
     | '/sponsors'
+    | '/verify-certificate'
+    | '/winners'
     | '/admin/attendance'
     | '/admin/audit-logs'
     | '/admin/certificates'
@@ -357,10 +440,15 @@ export interface FileRouteTypes {
     | '/admin/problem-statements'
     | '/admin/registrations'
     | '/admin/results'
+    | '/admin/scorecards'
     | '/admin/settings'
     | '/admin/timeline'
+    | '/admin/winners'
+    | '/certificate/$code'
     | '/events/$slug'
     | '/register/$slug'
+    | '/scorecard/$code'
+    | '/verify-certificate/$code'
     | '/admin'
   id:
     | '__root__'
@@ -368,6 +456,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/contact'
+    | '/downloads'
     | '/events'
     | '/gallery'
     | '/my-registration'
@@ -377,6 +466,8 @@ export interface FileRouteTypes {
     | '/search'
     | '/sitemap.xml'
     | '/sponsors'
+    | '/verify-certificate'
+    | '/winners'
     | '/admin/attendance'
     | '/admin/audit-logs'
     | '/admin/certificates'
@@ -390,10 +481,15 @@ export interface FileRouteTypes {
     | '/admin/problem-statements'
     | '/admin/registrations'
     | '/admin/results'
+    | '/admin/scorecards'
     | '/admin/settings'
     | '/admin/timeline'
+    | '/admin/winners'
+    | '/certificate/$code'
     | '/events/$slug'
     | '/register/$slug'
+    | '/scorecard/$code'
+    | '/verify-certificate/$code'
     | '/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -402,6 +498,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
+  DownloadsRoute: typeof DownloadsRoute
   EventsRoute: typeof EventsRouteWithChildren
   GalleryRoute: typeof GalleryRoute
   MyRegistrationRoute: typeof MyRegistrationRoute
@@ -411,10 +508,28 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SponsorsRoute: typeof SponsorsRoute
+  VerifyCertificateRoute: typeof VerifyCertificateRouteWithChildren
+  WinnersRoute: typeof WinnersRoute
+  CertificateCodeRoute: typeof CertificateCodeRoute
+  ScorecardCodeRoute: typeof ScorecardCodeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/winners': {
+      id: '/winners'
+      path: '/winners'
+      fullPath: '/winners'
+      preLoaderRoute: typeof WinnersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-certificate': {
+      id: '/verify-certificate'
+      path: '/verify-certificate'
+      fullPath: '/verify-certificate'
+      preLoaderRoute: typeof VerifyCertificateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sponsors': {
       id: '/sponsors'
       path: '/sponsors'
@@ -478,6 +593,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/downloads': {
+      id: '/downloads'
+      path: '/downloads'
+      fullPath: '/downloads'
+      preLoaderRoute: typeof DownloadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -513,6 +635,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/verify-certificate/$code': {
+      id: '/verify-certificate/$code'
+      path: '/$code'
+      fullPath: '/verify-certificate/$code'
+      preLoaderRoute: typeof VerifyCertificateCodeRouteImport
+      parentRoute: typeof VerifyCertificateRoute
+    }
+    '/scorecard/$code': {
+      id: '/scorecard/$code'
+      path: '/scorecard/$code'
+      fullPath: '/scorecard/$code'
+      preLoaderRoute: typeof ScorecardCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register/$slug': {
       id: '/register/$slug'
       path: '/$slug'
@@ -527,6 +663,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsSlugRouteImport
       parentRoute: typeof EventsRoute
     }
+    '/certificate/$code': {
+      id: '/certificate/$code'
+      path: '/certificate/$code'
+      fullPath: '/certificate/$code'
+      preLoaderRoute: typeof CertificateCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/winners': {
+      id: '/admin/winners'
+      path: '/winners'
+      fullPath: '/admin/winners'
+      preLoaderRoute: typeof AdminWinnersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/timeline': {
       id: '/admin/timeline'
       path: '/timeline'
@@ -539,6 +689,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/admin/settings'
       preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/scorecards': {
+      id: '/admin/scorecards'
+      path: '/scorecards'
+      fullPath: '/admin/scorecards'
+      preLoaderRoute: typeof AdminScorecardsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/results': {
@@ -649,8 +806,10 @@ interface AdminRouteChildren {
   AdminProblemStatementsRoute: typeof AdminProblemStatementsRoute
   AdminRegistrationsRoute: typeof AdminRegistrationsRoute
   AdminResultsRoute: typeof AdminResultsRoute
+  AdminScorecardsRoute: typeof AdminScorecardsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminTimelineRoute: typeof AdminTimelineRoute
+  AdminWinnersRoute: typeof AdminWinnersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -668,8 +827,10 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminProblemStatementsRoute: AdminProblemStatementsRoute,
   AdminRegistrationsRoute: AdminRegistrationsRoute,
   AdminResultsRoute: AdminResultsRoute,
+  AdminScorecardsRoute: AdminScorecardsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminTimelineRoute: AdminTimelineRoute,
+  AdminWinnersRoute: AdminWinnersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
@@ -698,11 +859,23 @@ const RegisterRouteWithChildren = RegisterRoute._addFileChildren(
   RegisterRouteChildren,
 )
 
+interface VerifyCertificateRouteChildren {
+  VerifyCertificateCodeRoute: typeof VerifyCertificateCodeRoute
+}
+
+const VerifyCertificateRouteChildren: VerifyCertificateRouteChildren = {
+  VerifyCertificateCodeRoute: VerifyCertificateCodeRoute,
+}
+
+const VerifyCertificateRouteWithChildren =
+  VerifyCertificateRoute._addFileChildren(VerifyCertificateRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
+  DownloadsRoute: DownloadsRoute,
   EventsRoute: EventsRouteWithChildren,
   GalleryRoute: GalleryRoute,
   MyRegistrationRoute: MyRegistrationRoute,
@@ -712,6 +885,10 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SponsorsRoute: SponsorsRoute,
+  VerifyCertificateRoute: VerifyCertificateRouteWithChildren,
+  WinnersRoute: WinnersRoute,
+  CertificateCodeRoute: CertificateCodeRoute,
+  ScorecardCodeRoute: ScorecardCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
