@@ -61,7 +61,7 @@ function TimelineAdmin() {
         open={dlg.open}
         onOpenChange={(v) => setDlg({ open: v })}
         title={dlg.row ? "Edit milestone" : "New milestone"}
-        initial={dlg.row ?? { sequence_order: rows.length + 1, status: "published" }}
+        initial={dlg.row ?? { sequence_order: rows.length + 1, status: "active" }}
         onSubmit={async (values) => {
           if (dlg.row) await update.mutateAsync({ id: dlg.row.id, values });
           else await create.mutateAsync(values);
@@ -93,9 +93,8 @@ function TimelineAdmin() {
                 value={(values.status as string) ?? "published"}
                 onChange={(e) => setValue("status", e.target.value as TimelineEntry["status"])}
               >
-                <option value="draft">draft</option>
-                <option value="published">published</option>
-                <option value="archived">archived</option>
+                <option value="active">active</option>
+                <option value="inactive">inactive</option>
               </select>
             </FieldRow>
           </>

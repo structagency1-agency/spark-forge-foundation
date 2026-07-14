@@ -74,7 +74,7 @@ function PSAdmin() {
         open={dlg.open}
         onOpenChange={(v) => setDlg({ open: v })}
         title={dlg.row ? "Edit brief" : "New brief"}
-        initial={dlg.row ?? { sort_order: rows.length + 1, status: "published" }}
+        initial={dlg.row ?? { sort_order: rows.length + 1, status: "active" }}
         onSubmit={async (values) => {
           if (dlg.row) await update.mutateAsync({ id: dlg.row.id, values });
           else await create.mutateAsync(values);
@@ -109,9 +109,8 @@ function PSAdmin() {
                 value={(values.status as string) ?? "published"}
                 onChange={(e) => setValue("status", e.target.value as ProblemStatement["status"])}
               >
-                <option value="draft">draft</option>
-                <option value="published">published</option>
-                <option value="archived">archived</option>
+                <option value="active">active</option>
+                <option value="inactive">inactive</option>
               </select>
             </FieldRow>
           </>
