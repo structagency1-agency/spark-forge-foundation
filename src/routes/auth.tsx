@@ -35,8 +35,10 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: search.redirect ?? "/admin", replace: true });
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (!data.session) return;
+      const dest = search.redirect ?? (await destinationForUser(data.session.user.id));
+      navigate({ to: dest, replace: true });
     });
   }, [navigate, search.redirect]);
 
@@ -53,10 +55,11 @@ function AuthPage() {
         if (error) throw error;
         toast.success("Account created. Signing you in…");
       }
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) throw signInError;
       toast.success("Welcome back.");
-      navigate({ to: search.redirect ?? "/admin", replace: true });
+      const dest = search.redirect ?? (signInData.user ? await destinationForUser(signInData.user.id) : "/");
+      navigate({ to: dest, replace: true });
     } catch (err) {
       toast.error((err as Error).message);
     } finally {
@@ -122,4 +125,14 @@ function AuthPage() {
       <Toaster />
     </div>
   );
+}
+
+async function destinationForUser(userId: string): Promise<string> {
+  const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+  const roles = new Set((data ?? []).map((r) => r.role));
+  if (roles.has("admin") || roles.has("iedc_admin")) return "/admin";
+  if (roles.has("jury")) return "/admin/evaluation";
+  if (roles.has("ecell_member")) return "/ecell-attendance";
+  if (roles.has("participant")) return "/my-dashboard";
+  return "/";
 }

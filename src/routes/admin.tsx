@@ -30,20 +30,44 @@ export const Route = createFileRoute("/admin")({
       await supabase.auth.signOut();
       throw redirect({ to: "/auth", search: { redirect: location.href } });
     }
-    const isAdmin = roles?.some((r) => r.role === "admin") ?? false;
-    const isJury = roles?.some((r) => r.role === "jury") ?? false;
+    const roleSet = new Set((roles ?? []).map((r) => r.role));
+    const isAdmin = roleSet.has("admin");
+    const isJury = roleSet.has("jury");
+    const isIedcAdmin = roleSet.has("iedc_admin");
+    const isEcell = roleSet.has("ecell_member");
     const path = location.pathname;
     const isEvaluationPath = path === "/admin/evaluation" || path.startsWith("/admin/evaluation/");
 
-    if (!isAdmin && !(isJury && isEvaluationPath)) {
-      // Jury landing on any other admin path → redirect to their allowed page
-      if (isJury) {
-        throw redirect({ to: "/admin/evaluation" });
-      }
-      await supabase.auth.signOut();
-      throw redirect({ to: "/auth", search: { redirect: location.href } });
+    // Super admin: full access
+    if (isAdmin) return { user: session.user, isAdmin, isJury, isIedcAdmin: false };
+
+    // Jury: only evaluation
+    if (isJury) {
+      if (!isEvaluationPath) throw redirect({ to: "/admin/evaluation" });
+      return { user: session.user, isAdmin: false, isJury: true, isIedcAdmin: false };
     }
-    return { user: session.user, isAdmin, isJury };
+
+    // IEDC admin: everything except evaluation and system settings
+    if (isIedcAdmin) {
+      const blocked = isEvaluationPath
+        || path.startsWith("/admin/audit-logs")
+        || path.startsWith("/admin/settings")
+        || path.startsWith("/admin/db-health")
+        || path.startsWith("/admin/email-templates")
+        || path.startsWith("/admin/user-management")
+        || path.startsWith("/admin/website");
+      if (blocked) throw redirect({ to: "/admin" });
+      return { user: session.user, isAdmin: false, isJury: false, isIedcAdmin: true };
+    }
+
+    // E-cell members should go to /ecell-attendance
+    if (isEcell) throw redirect({ to: "/ecell-attendance" });
+
+    // Participants → their dashboard
+    if (roleSet.has("participant")) throw redirect({ to: "/my-dashboard" });
+
+    await supabase.auth.signOut();
+    throw redirect({ to: "/auth", search: { redirect: location.href } });
   },
   component: AdminLayout,
 });

@@ -379,6 +379,35 @@ export type Database = {
         }
         Relationships: []
       }
+      ecell_event_assignments: {
+        Row: {
+          assigned_at: string
+          event_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          event_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          assigned_at?: string
+          event_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecell_event_assignments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_logs: {
         Row: {
           created_at: string
@@ -1690,6 +1719,10 @@ export type Database = {
       attendance_stats: { Args: { _event_id?: string }; Returns: Json }
       auto_assign_teams: { Args: { _event_id: string }; Returns: Json }
       certificate_analytics: { Args: never; Returns: Json }
+      current_user_roles: {
+        Args: never
+        Returns: Database["public"]["Enums"]["app_role"][]
+      }
       db_health: { Args: never; Returns: Json }
       downloads_lookup: { Args: { _query: string }; Returns: Json }
       evaluation_analytics: { Args: never; Returns: Json }
@@ -1787,7 +1820,13 @@ export type Database = {
     Enums: {
       announcement_priority: "low" | "normal" | "high" | "urgent"
       announcement_status: "draft" | "published" | "archived"
-      app_role: "admin" | "user" | "jury"
+      app_role:
+        | "admin"
+        | "user"
+        | "jury"
+        | "iedc_admin"
+        | "ecell_member"
+        | "participant"
       attendance_method: "qr" | "manual" | "import"
       content_status: "active" | "inactive"
       email_status: "pending" | "sent" | "failed"
@@ -1965,7 +2004,14 @@ export const Constants = {
     Enums: {
       announcement_priority: ["low", "normal", "high", "urgent"],
       announcement_status: ["draft", "published", "archived"],
-      app_role: ["admin", "user", "jury"],
+      app_role: [
+        "admin",
+        "user",
+        "jury",
+        "iedc_admin",
+        "ecell_member",
+        "participant",
+      ],
       attendance_method: ["qr", "manual", "import"],
       content_status: ["active", "inactive"],
       email_status: ["pending", "sent", "failed"],

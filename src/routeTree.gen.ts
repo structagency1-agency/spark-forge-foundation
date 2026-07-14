@@ -18,8 +18,10 @@ import { Route as ResultsRouteImport } from './routes/results'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProblemStatementsRouteImport } from './routes/problem-statements'
 import { Route as MyRegistrationRouteImport } from './routes/my-registration'
+import { Route as MyDashboardRouteImport } from './routes/my-dashboard'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as EcellAttendanceRouteImport } from './routes/ecell-attendance'
 import { Route as DownloadsRouteImport } from './routes/downloads'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -35,6 +37,7 @@ import { Route as EventsSlugRouteImport } from './routes/events.$slug'
 import { Route as CertificateCodeRouteImport } from './routes/certificate.$code'
 import { Route as AdminWinnersRouteImport } from './routes/admin.winners'
 import { Route as AdminWebsiteRouteImport } from './routes/admin.website'
+import { Route as AdminUserManagementRouteImport } from './routes/admin.user-management'
 import { Route as AdminTimelineRouteImport } from './routes/admin.timeline'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminScorecardsRouteImport } from './routes/admin.scorecards'
@@ -102,6 +105,11 @@ const MyRegistrationRoute = MyRegistrationRouteImport.update({
   path: '/my-registration',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MyDashboardRoute = MyDashboardRouteImport.update({
+  id: '/my-dashboard',
+  path: '/my-dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
@@ -110,6 +118,11 @@ const GalleryRoute = GalleryRouteImport.update({
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EcellAttendanceRoute = EcellAttendanceRouteImport.update({
+  id: '/ecell-attendance',
+  path: '/ecell-attendance',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DownloadsRoute = DownloadsRouteImport.update({
@@ -185,6 +198,11 @@ const AdminWinnersRoute = AdminWinnersRouteImport.update({
 const AdminWebsiteRoute = AdminWebsiteRouteImport.update({
   id: '/website',
   path: '/website',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUserManagementRoute = AdminUserManagementRouteImport.update({
+  id: '/user-management',
+  path: '/user-management',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminTimelineRoute = AdminTimelineRouteImport.update({
@@ -300,8 +318,10 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/downloads': typeof DownloadsRoute
+  '/ecell-attendance': typeof EcellAttendanceRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
+  '/my-dashboard': typeof MyDashboardRoute
   '/my-registration': typeof MyRegistrationRoute
   '/problem-statements': typeof ProblemStatementsRoute
   '/register': typeof RegisterRouteWithChildren
@@ -332,6 +352,7 @@ export interface FileRoutesByFullPath {
   '/admin/scorecards': typeof AdminScorecardsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/timeline': typeof AdminTimelineRoute
+  '/admin/user-management': typeof AdminUserManagementRoute
   '/admin/website': typeof AdminWebsiteRoute
   '/admin/winners': typeof AdminWinnersRoute
   '/certificate/$code': typeof CertificateCodeRoute
@@ -348,8 +369,10 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/downloads': typeof DownloadsRoute
+  '/ecell-attendance': typeof EcellAttendanceRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
+  '/my-dashboard': typeof MyDashboardRoute
   '/my-registration': typeof MyRegistrationRoute
   '/problem-statements': typeof ProblemStatementsRoute
   '/results': typeof ResultsRoute
@@ -379,6 +402,7 @@ export interface FileRoutesByTo {
   '/admin/scorecards': typeof AdminScorecardsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/timeline': typeof AdminTimelineRoute
+  '/admin/user-management': typeof AdminUserManagementRoute
   '/admin/website': typeof AdminWebsiteRoute
   '/admin/winners': typeof AdminWinnersRoute
   '/certificate/$code': typeof CertificateCodeRoute
@@ -397,8 +421,10 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/downloads': typeof DownloadsRoute
+  '/ecell-attendance': typeof EcellAttendanceRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
+  '/my-dashboard': typeof MyDashboardRoute
   '/my-registration': typeof MyRegistrationRoute
   '/problem-statements': typeof ProblemStatementsRoute
   '/register': typeof RegisterRouteWithChildren
@@ -429,6 +455,7 @@ export interface FileRoutesById {
   '/admin/scorecards': typeof AdminScorecardsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/timeline': typeof AdminTimelineRoute
+  '/admin/user-management': typeof AdminUserManagementRoute
   '/admin/website': typeof AdminWebsiteRoute
   '/admin/winners': typeof AdminWinnersRoute
   '/certificate/$code': typeof CertificateCodeRoute
@@ -448,8 +475,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/downloads'
+    | '/ecell-attendance'
     | '/events'
     | '/gallery'
+    | '/my-dashboard'
     | '/my-registration'
     | '/problem-statements'
     | '/register'
@@ -480,6 +509,7 @@ export interface FileRouteTypes {
     | '/admin/scorecards'
     | '/admin/settings'
     | '/admin/timeline'
+    | '/admin/user-management'
     | '/admin/website'
     | '/admin/winners'
     | '/certificate/$code'
@@ -496,8 +526,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/downloads'
+    | '/ecell-attendance'
     | '/events'
     | '/gallery'
+    | '/my-dashboard'
     | '/my-registration'
     | '/problem-statements'
     | '/results'
@@ -527,6 +559,7 @@ export interface FileRouteTypes {
     | '/admin/scorecards'
     | '/admin/settings'
     | '/admin/timeline'
+    | '/admin/user-management'
     | '/admin/website'
     | '/admin/winners'
     | '/certificate/$code'
@@ -544,8 +577,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/downloads'
+    | '/ecell-attendance'
     | '/events'
     | '/gallery'
+    | '/my-dashboard'
     | '/my-registration'
     | '/problem-statements'
     | '/register'
@@ -576,6 +611,7 @@ export interface FileRouteTypes {
     | '/admin/scorecards'
     | '/admin/settings'
     | '/admin/timeline'
+    | '/admin/user-management'
     | '/admin/website'
     | '/admin/winners'
     | '/certificate/$code'
@@ -594,8 +630,10 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   DownloadsRoute: typeof DownloadsRoute
+  EcellAttendanceRoute: typeof EcellAttendanceRoute
   EventsRoute: typeof EventsRouteWithChildren
   GalleryRoute: typeof GalleryRoute
+  MyDashboardRoute: typeof MyDashboardRoute
   MyRegistrationRoute: typeof MyRegistrationRoute
   ProblemStatementsRoute: typeof ProblemStatementsRoute
   RegisterRoute: typeof RegisterRouteWithChildren
@@ -674,6 +712,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyRegistrationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/my-dashboard': {
+      id: '/my-dashboard'
+      path: '/my-dashboard'
+      fullPath: '/my-dashboard'
+      preLoaderRoute: typeof MyDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gallery': {
       id: '/gallery'
       path: '/gallery'
@@ -686,6 +731,13 @@ declare module '@tanstack/react-router' {
       path: '/events'
       fullPath: '/events'
       preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ecell-attendance': {
+      id: '/ecell-attendance'
+      path: '/ecell-attendance'
+      fullPath: '/ecell-attendance'
+      preLoaderRoute: typeof EcellAttendanceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/downloads': {
@@ -791,6 +843,13 @@ declare module '@tanstack/react-router' {
       path: '/website'
       fullPath: '/admin/website'
       preLoaderRoute: typeof AdminWebsiteRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/user-management': {
+      id: '/admin/user-management'
+      path: '/user-management'
+      fullPath: '/admin/user-management'
+      preLoaderRoute: typeof AdminUserManagementRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/timeline': {
@@ -965,6 +1024,7 @@ interface AdminRouteChildren {
   AdminScorecardsRoute: typeof AdminScorecardsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminTimelineRoute: typeof AdminTimelineRoute
+  AdminUserManagementRoute: typeof AdminUserManagementRoute
   AdminWebsiteRoute: typeof AdminWebsiteRoute
   AdminWinnersRoute: typeof AdminWinnersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -992,6 +1052,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminScorecardsRoute: AdminScorecardsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminTimelineRoute: AdminTimelineRoute,
+  AdminUserManagementRoute: AdminUserManagementRoute,
   AdminWebsiteRoute: AdminWebsiteRoute,
   AdminWinnersRoute: AdminWinnersRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -1042,8 +1103,10 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   DownloadsRoute: DownloadsRoute,
+  EcellAttendanceRoute: EcellAttendanceRoute,
   EventsRoute: EventsRouteWithChildren,
   GalleryRoute: GalleryRoute,
+  MyDashboardRoute: MyDashboardRoute,
   MyRegistrationRoute: MyRegistrationRoute,
   ProblemStatementsRoute: ProblemStatementsRoute,
   RegisterRoute: RegisterRouteWithChildren,
