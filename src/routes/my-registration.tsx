@@ -11,8 +11,9 @@ import {
   lookupRegistrationByCode,
   lookupRegistrationsByEmail,
   type RegistrationDetail,
+  type LookupMember,
 } from "@/services/registration";
-import { renderQrDataUrl, buildQrPayload, downloadDataUrl } from "@/lib/qr";
+import { renderQrDataUrl, buildQrPayload, buildMemberQrPayload, downloadDataUrl } from "@/lib/qr";
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
