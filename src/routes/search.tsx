@@ -13,14 +13,11 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/search")({
   validateSearch: zodValidator(searchSchema),
-  head: ({ match }) => {
-    const q = (match.search as { q: string })?.q ?? "";
-    return buildMeta({
-      title: q ? `Search: ${q}` : "Search",
-      description: "Search across SPARK TANK 4.0 events, problem statements and gallery.",
-      path: "/search",
-    });
-  },
+  head: () => buildMeta({
+    title: "Search",
+    description: "Search across SPARK TANK 4.0 events, problem statements and gallery.",
+    path: "/search",
+  }),
   component: SearchPage,
 });
 
