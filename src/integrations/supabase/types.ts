@@ -129,63 +129,93 @@ export type Database = {
       }
       certificate_templates: {
         Row: {
+          background_image_url: string | null
           created_at: string
           fields: Json
           id: string
+          issue_date: string | null
+          logo_url: string | null
           name: string
+          signature_image_url: string | null
           status: Database["public"]["Enums"]["content_status"]
           template_url: string | null
+          type: string
           updated_at: string
         }
         Insert: {
+          background_image_url?: string | null
           created_at?: string
           fields?: Json
           id?: string
+          issue_date?: string | null
+          logo_url?: string | null
           name: string
+          signature_image_url?: string | null
           status?: Database["public"]["Enums"]["content_status"]
           template_url?: string | null
+          type?: string
           updated_at?: string
         }
         Update: {
+          background_image_url?: string | null
           created_at?: string
           fields?: Json
           id?: string
+          issue_date?: string | null
+          logo_url?: string | null
           name?: string
+          signature_image_url?: string | null
           status?: Database["public"]["Enums"]["content_status"]
           template_url?: string | null
+          type?: string
           updated_at?: string
         }
         Relationships: []
       }
       certificates: {
         Row: {
+          certificate_code: string | null
           created_at: string
           event_id: string
           id: string
           issued_at: string
+          metadata: Json
           participant_id: string
+          registration_id: string | null
+          status: string
+          team_id: string | null
           template_id: string | null
           type: string
           updated_at: string
           url: string | null
         }
         Insert: {
+          certificate_code?: string | null
           created_at?: string
           event_id: string
           id?: string
           issued_at?: string
+          metadata?: Json
           participant_id: string
+          registration_id?: string | null
+          status?: string
+          team_id?: string | null
           template_id?: string | null
           type?: string
           updated_at?: string
           url?: string | null
         }
         Update: {
+          certificate_code?: string | null
           created_at?: string
           event_id?: string
           id?: string
           issued_at?: string
+          metadata?: Json
           participant_id?: string
+          registration_id?: string | null
+          status?: string
+          team_id?: string | null
           template_id?: string | null
           type?: string
           updated_at?: string
@@ -204,6 +234,20 @@ export type Database = {
             columns: ["participant_id"]
             isOneToOne: false
             referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "certificates_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "registrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "certificates_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
             referencedColumns: ["id"]
           },
           {
@@ -1063,6 +1107,41 @@ export type Database = {
         }
         Relationships: []
       }
+      result_publications: {
+        Row: {
+          action: string
+          event_id: string
+          id: string
+          metadata: Json
+          performed_at: string
+          scheduled_at: string | null
+        }
+        Insert: {
+          action: string
+          event_id: string
+          id?: string
+          metadata?: Json
+          performed_at?: string
+          scheduled_at?: string | null
+        }
+        Update: {
+          action?: string
+          event_id?: string
+          id?: string
+          metadata?: Json
+          performed_at?: string
+          scheduled_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "result_publications_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       results: {
         Row: {
           created_at: string
@@ -1071,6 +1150,8 @@ export type Database = {
           id: string
           is_published: boolean
           published_at: string | null
+          scheduled_at: string | null
+          status: Database["public"]["Enums"]["result_status"]
           summary: string | null
           updated_at: string
         }
@@ -1081,6 +1162,8 @@ export type Database = {
           id?: string
           is_published?: boolean
           published_at?: string | null
+          scheduled_at?: string | null
+          status?: Database["public"]["Enums"]["result_status"]
           summary?: string | null
           updated_at?: string
         }
@@ -1091,6 +1174,8 @@ export type Database = {
           id?: string
           is_published?: boolean
           published_at?: string | null
+          scheduled_at?: string | null
+          status?: Database["public"]["Enums"]["result_status"]
           summary?: string | null
           updated_at?: string
         }
@@ -1100,6 +1185,89 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: true
             referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scorecards: {
+        Row: {
+          created_at: string
+          department_id: string | null
+          department_rank: number | null
+          event_id: string
+          generated_at: string
+          id: string
+          max_score: number | null
+          overall_rank: number | null
+          percentage: number | null
+          registration_id: string
+          snapshot: Json
+          status: string
+          team_id: string | null
+          total_score: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department_id?: string | null
+          department_rank?: number | null
+          event_id: string
+          generated_at?: string
+          id?: string
+          max_score?: number | null
+          overall_rank?: number | null
+          percentage?: number | null
+          registration_id: string
+          snapshot?: Json
+          status?: string
+          team_id?: string | null
+          total_score?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department_id?: string | null
+          department_rank?: number | null
+          event_id?: string
+          generated_at?: string
+          id?: string
+          max_score?: number | null
+          overall_rank?: number | null
+          percentage?: number | null
+          registration_id?: string
+          snapshot?: Json
+          status?: string
+          team_id?: string | null
+          total_score?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scorecards_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scorecards_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scorecards_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: true
+            referencedRelation: "registrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scorecards_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
             referencedColumns: ["id"]
           },
         ]
@@ -1372,12 +1540,17 @@ export type Database = {
     }
     Functions: {
       admin_stats: { Args: never; Returns: Json }
+      archive_results: { Args: { _event_id: string }; Returns: undefined }
       attendance_stats: { Args: { _event_id?: string }; Returns: Json }
       auto_assign_teams: { Args: { _event_id: string }; Returns: Json }
+      downloads_lookup: { Args: { _query: string }; Returns: Json }
       evaluation_stats: { Args: { _event_id?: string }; Returns: Json }
       event_capacity: { Args: { _event_id: string }; Returns: Json }
       event_leaderboard: { Args: { _event_id?: string }; Returns: Json }
+      generate_certificates: { Args: { _event_id: string }; Returns: number }
       generate_registration_code: { Args: never; Returns: string }
+      generate_scorecards: { Args: { _event_id: string }; Returns: number }
+      hide_results: { Args: { _event_id: string }; Returns: undefined }
       lookup_registration_by_code: { Args: { _code: string }; Returns: Json }
       lookup_registrations_by_email: { Args: { _email: string }; Returns: Json }
       mark_attendance_by_qr: {
@@ -1395,8 +1568,15 @@ export type Database = {
         }
         Returns: Json
       }
+      next_certificate_code: { Args: never; Returns: string }
+      public_results: { Args: { _query?: string }; Returns: Json }
+      public_winners: { Args: { _event_id?: string }; Returns: Json }
       publish_event_evaluations: {
         Args: { _event_id: string; _publish?: boolean }
+        Returns: Json
+      }
+      publish_results: {
+        Args: { _event_id: string; _scheduled_at?: string }
         Returns: Json
       }
       recompute_evaluation_totals: {
@@ -1425,6 +1605,7 @@ export type Database = {
         }
         Returns: Json
       }
+      unpublish_results: { Args: { _event_id: string }; Returns: undefined }
       upsert_evaluation: {
         Args: {
           _event_id: string
@@ -1434,6 +1615,7 @@ export type Database = {
         }
         Returns: string
       }
+      verify_certificate: { Args: { _code: string }; Returns: Json }
     }
     Enums: {
       attendance_method: "qr" | "manual" | "import"
@@ -1476,6 +1658,7 @@ export type Database = {
         | "evaluations"
         | "certificates"
         | "results"
+      result_status: "draft" | "published" | "hidden" | "archived"
       winner_position:
         | "winner"
         | "runner_up"
@@ -1653,6 +1836,7 @@ export const Constants = {
         "certificates",
         "results",
       ],
+      result_status: ["draft", "published", "hidden", "archived"],
       winner_position: [
         "winner",
         "runner_up",
