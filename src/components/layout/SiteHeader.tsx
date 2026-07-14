@@ -38,7 +38,7 @@ export function SiteHeader({ siteName = SITE_FALLBACK.name }: SiteHeaderProps) {
           </span>
         </Link>
 
-        <nav className="hidden lg:flex items-center justify-center gap-1 overflow-hidden">
+        <nav className="hidden lg:flex min-w-0 max-w-full items-center justify-center gap-1 overflow-hidden">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.to}
