@@ -26,6 +26,7 @@ import {
   Globe,
   Activity,
   Bell,
+  UsersRound,
 } from "lucide-react";
 import {
   Sidebar,
