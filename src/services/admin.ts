@@ -8,6 +8,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { AuditLog } from "@/models/db";
+import { getAdminDashboard } from "./admin.functions";
 
 export interface AdminStats {
   total_events: number;
@@ -25,15 +26,16 @@ export interface AdminStats {
   unread_messages: number;
 }
 
-async function fetchAdminStats(): Promise<AdminStats> {
-  const { data, error } = await supabase.rpc("admin_stats");
-  if (error) throw error;
-  return (data ?? {}) as unknown as AdminStats;
-}
+export const adminDashboardQueryOptions = queryOptions({
+  queryKey: ["admin", "dashboard"],
+  queryFn: () => getAdminDashboard(),
+  staleTime: 15_000,
+  refetchInterval: 30_000,
+});
 
 export const adminStatsQueryOptions = queryOptions({
   queryKey: ["admin", "stats"],
-  queryFn: fetchAdminStats,
+  queryFn: async () => ((await getAdminDashboard()).stats ?? {}) as unknown as AdminStats,
   staleTime: 15_000,
   refetchInterval: 30_000,
 });

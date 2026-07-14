@@ -15,27 +15,22 @@ import {
 import { StatCard } from "@/components/admin/StatCard";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import {
-  adminStatsQueryOptions,
-  recentRegistrationsQueryOptions,
-  recentContactMessagesQueryOptions,
-  recentAuditLogsQueryOptions,
+  adminDashboardQueryOptions,
 } from "@/services/admin";
 
 export const Route = createFileRoute("/admin/")({
   loader: ({ context }) => {
-    context.queryClient.ensureQueryData(adminStatsQueryOptions);
-    context.queryClient.ensureQueryData(recentRegistrationsQueryOptions);
-    context.queryClient.ensureQueryData(recentContactMessagesQueryOptions);
-    context.queryClient.ensureQueryData(recentAuditLogsQueryOptions);
+    context.queryClient.ensureQueryData(adminDashboardQueryOptions);
   },
   component: DashboardPage,
 });
 
 function DashboardPage() {
-  const { data: stats } = useSuspenseQuery(adminStatsQueryOptions);
-  const { data: recentRegs } = useSuspenseQuery(recentRegistrationsQueryOptions);
-  const { data: messages } = useSuspenseQuery(recentContactMessagesQueryOptions);
-  const { data: logs } = useSuspenseQuery(recentAuditLogsQueryOptions);
+  const { data: dashboard } = useSuspenseQuery(adminDashboardQueryOptions);
+  const stats = dashboard.stats;
+  const recentRegs = dashboard.recentRegistrations;
+  const messages = dashboard.recentMessages;
+  const logs = dashboard.recentAuditLogs;
 
   return (
     <div>
