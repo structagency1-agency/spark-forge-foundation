@@ -55,10 +55,11 @@ function AuthPage() {
         if (error) throw error;
         toast.success("Account created. Signing you in…");
       }
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) throw signInError;
       toast.success("Welcome back.");
-      navigate({ to: search.redirect ?? "/admin", replace: true });
+      const dest = search.redirect ?? (signInData.user ? await destinationForUser(signInData.user.id) : "/");
+      navigate({ to: dest, replace: true });
     } catch (err) {
       toast.error((err as Error).message);
     } finally {
