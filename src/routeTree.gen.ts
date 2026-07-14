@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SponsorsRouteImport } from './routes/sponsors'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProblemStatementsRouteImport } from './routes/problem-statements'
@@ -29,6 +30,11 @@ const SponsorsRoute = SponsorsRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResultsRoute = ResultsRouteImport.update({
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/problem-statements': typeof ProblemStatementsRoute
   '/register': typeof RegisterRoute
   '/results': typeof ResultsRoute
+  '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
   '/events/$slug': typeof EventsSlugRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/problem-statements': typeof ProblemStatementsRoute
   '/register': typeof RegisterRoute
   '/results': typeof ResultsRoute
+  '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
   '/events/$slug': typeof EventsSlugRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/problem-statements': typeof ProblemStatementsRoute
   '/register': typeof RegisterRoute
   '/results': typeof ResultsRoute
+  '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sponsors': typeof SponsorsRoute
   '/events/$slug': typeof EventsSlugRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/problem-statements'
     | '/register'
     | '/results'
+    | '/search'
     | '/sitemap.xml'
     | '/sponsors'
     | '/events/$slug'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/problem-statements'
     | '/register'
     | '/results'
+    | '/search'
     | '/sitemap.xml'
     | '/sponsors'
     | '/events/$slug'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/problem-statements'
     | '/register'
     | '/results'
+    | '/search'
     | '/sitemap.xml'
     | '/sponsors'
     | '/events/$slug'
@@ -168,6 +180,7 @@ export interface RootRouteChildren {
   ProblemStatementsRoute: typeof ProblemStatementsRoute
   RegisterRoute: typeof RegisterRoute
   ResultsRoute: typeof ResultsRoute
+  SearchRoute: typeof SearchRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SponsorsRoute: typeof SponsorsRoute
 }
@@ -186,6 +199,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/results': {
@@ -274,19 +294,10 @@ const rootRouteChildren: RootRouteChildren = {
   ProblemStatementsRoute: ProblemStatementsRoute,
   RegisterRoute: RegisterRoute,
   ResultsRoute: ResultsRoute,
+  SearchRoute: SearchRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SponsorsRoute: SponsorsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

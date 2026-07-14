@@ -1,6 +1,6 @@
-import { Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useState, type FormEvent } from "react";
+import { Menu, X, Search } from "lucide-react";
 import { NAV_ITEMS, CTA_ITEM, SITE_FALLBACK } from "@/config/site";
 import { cn } from "@/lib/utils";
 
@@ -10,10 +10,20 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ siteName = SITE_FALLBACK.name }: SiteHeaderProps) {
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const navigate = useNavigate();
+
+  function submitSearch(e: FormEvent) {
+    e.preventDefault();
+    const q = query.trim();
+    if (q.length < 2) return;
+    setOpen(false);
+    navigate({ to: "/search", search: { q } });
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl">
-      <div className="container-page flex h-16 items-center justify-between gap-6">
+      <div className="container-page flex h-16 items-center justify-between gap-4">
         <Link to="/" className="group flex items-center gap-2" onClick={() => setOpen(false)}>
           <span
             aria-hidden
@@ -39,7 +49,23 @@ export function SiteHeader({ siteName = SITE_FALLBACK.name }: SiteHeaderProps) {
           ))}
         </nav>
 
-        <div className="hidden lg:block">
+        <div className="hidden lg:flex items-center gap-3">
+          <form
+            role="search"
+            onSubmit={submitSearch}
+            className="flex items-center gap-2 rounded-full border border-border/60 bg-card/40 px-3 py-1.5 text-sm focus-within:border-accent"
+          >
+            <Search className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
+            <input
+              type="search"
+              name="q"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search events, briefs, gallery"
+              aria-label="Search the site"
+              className="w-56 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            />
+          </form>
           <Link
             to={CTA_ITEM.to}
             className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent px-5 py-2 text-sm font-medium text-accent-foreground shadow-[var(--shadow-glow)] transition-all hover:brightness-110"
@@ -61,10 +87,26 @@ export function SiteHeader({ siteName = SITE_FALLBACK.name }: SiteHeaderProps) {
       <div
         className={cn(
           "lg:hidden overflow-hidden border-t border-border/60 bg-background transition-[max-height,opacity]",
-          open ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0",
+          open ? "max-h-[720px] opacity-100" : "max-h-0 opacity-0",
         )}
       >
         <nav className="container-page flex flex-col gap-1 py-4">
+          <form
+            role="search"
+            onSubmit={submitSearch}
+            className="mb-3 flex items-center gap-2 rounded-full border border-border/60 bg-card/40 px-3 py-2 text-sm"
+          >
+            <Search className="h-4 w-4 text-muted-foreground" aria-hidden />
+            <input
+              type="search"
+              name="q"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search…"
+              aria-label="Search the site"
+              className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            />
+          </form>
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.to}
