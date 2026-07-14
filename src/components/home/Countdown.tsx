@@ -28,7 +28,8 @@ export function Countdown({ section }: { section: HomepageSection }) {
   const { data: event } = useSuspenseQuery(nearestRegistrationOpenQueryOptions);
   const { data: hasClosed } = useSuspenseQuery(hasClosedRegistrationsQueryOptions);
   const target = event?.registration_close ? new Date(event.registration_close) : null;
-  const [t, setT] = useState(() => (target ? diff(target) : null));
+  // Do not compute the diff on the server — the ticking value hydration-mismatches.
+  const [t, setT] = useState<ReturnType<typeof diff> | null>(null);
 
   useEffect(() => {
     if (!target) return;
