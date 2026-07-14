@@ -7,6 +7,7 @@ export interface NavItem {
   label: string;
   to: string;
   cta?: boolean;
+  shortLabel?: string;
 }
 
 export const NAV_ITEMS: readonly NavItem[] = [
@@ -21,6 +22,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
 
 export const CTA_ITEM: NavItem = {
   label: "Explore Events",
+  shortLabel: "Explore",
   to: "/events",
   cta: true,
 };
