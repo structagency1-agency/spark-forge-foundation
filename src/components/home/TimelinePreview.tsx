@@ -29,11 +29,12 @@ export function TimelinePreview({ section }: { section: HomepageSection }) {
         {data.map((item, i) => {
           const rightSide = i % 2 === 1;
           const dateLabel = item.event_date
-            ? new Date(item.event_date).toLocaleDateString(undefined, {
+            ? new Intl.DateTimeFormat("en-GB", {
                 day: "2-digit",
                 month: "short",
                 year: "numeric",
-              })
+                timeZone: "UTC",
+              }).format(new Date(item.event_date))
             : "TBA";
           return (
             <li

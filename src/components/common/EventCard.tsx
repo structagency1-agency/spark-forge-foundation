@@ -17,7 +17,7 @@ const STATUS_ACCENT: Record<string, string> = {
 
 function fmtDate(d?: string | null) {
   if (!d) return "TBA";
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("en-GB", {
     day: "2-digit",
     month: "short",
     year: "numeric",
