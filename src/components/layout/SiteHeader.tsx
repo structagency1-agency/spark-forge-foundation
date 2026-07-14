@@ -23,18 +23,22 @@ export function SiteHeader({ siteName = SITE_FALLBACK.name }: SiteHeaderProps) {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl">
-      <div className="container-page flex h-16 items-center justify-between gap-4">
-        <Link to="/" className="group flex items-center gap-2" onClick={() => setOpen(false)}>
+      <div className="container-page grid h-16 grid-cols-[auto_1fr_auto] items-center gap-3">
+        <Link
+          to="/"
+          className="group flex shrink-0 items-center gap-2"
+          onClick={() => setOpen(false)}
+        >
           <span
             aria-hidden
-            className="inline-block h-2.5 w-2.5 rounded-full bg-accent shadow-[0_0_20px_var(--color-accent)]"
+            className="inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-accent shadow-[0_0_20px_var(--color-accent)]"
           />
-          <span className="font-display text-sm tracking-[0.2em] uppercase text-foreground">
+          <span className="font-display text-sm tracking-[0.2em] uppercase text-foreground whitespace-nowrap">
             {siteName}
           </span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden lg:flex items-center justify-center gap-1 overflow-hidden">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.to}
@@ -42,14 +46,14 @@ export function SiteHeader({ siteName = SITE_FALLBACK.name }: SiteHeaderProps) {
               activeOptions={{ exact: item.to === "/" }}
               activeProps={{ className: "text-foreground" }}
               inactiveProps={{ className: "text-muted-foreground hover:text-foreground" }}
-              className="rounded-md px-3 py-2 text-sm transition-colors"
+              className="rounded-md px-2 xl:px-3 py-2 text-xs xl:text-sm whitespace-nowrap transition-colors"
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden lg:flex items-center justify-end gap-2 shrink-0">
           <form
             role="search"
             onSubmit={submitSearch}
@@ -61,14 +65,14 @@ export function SiteHeader({ siteName = SITE_FALLBACK.name }: SiteHeaderProps) {
               name="q"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search events, briefs, gallery"
+              placeholder="Search…"
               aria-label="Search the site"
-              className="w-56 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+              className="w-28 xl:w-44 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
           </form>
           <Link
             to={CTA_ITEM.to}
-            className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent px-5 py-2 text-sm font-medium text-accent-foreground shadow-[var(--shadow-glow)] transition-all hover:brightness-110"
+            className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent px-4 py-2 text-sm font-medium text-accent-foreground whitespace-nowrap shadow-[var(--shadow-glow)] transition-all hover:brightness-110"
           >
             {CTA_ITEM.label}
             <span aria-hidden>→</span>
@@ -76,7 +80,7 @@ export function SiteHeader({ siteName = SITE_FALLBACK.name }: SiteHeaderProps) {
         </div>
 
         <button
-          className="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-md border border-border text-foreground"
+          className="lg:hidden col-start-3 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-border text-foreground"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? "Close menu" : "Open menu"}
         >
