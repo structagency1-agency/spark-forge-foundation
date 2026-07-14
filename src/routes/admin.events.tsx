@@ -157,7 +157,7 @@ function EventsAdmin() {
           max_team_size: 4,
           is_published: false,
           is_archived: false,
-          status: "draft",
+          status: "upcoming",
         }}
         onSubmit={async (values) => {
           if (dlg.row) await update.mutateAsync({ id: dlg.row.id, values });
@@ -230,13 +230,11 @@ function EventsAdmin() {
                   value={(values.status as string) ?? "draft"}
                   onChange={(e) => setValue("status", e.target.value as Event["status"])}
                 >
-                  <option value="draft">draft</option>
                   <option value="upcoming">upcoming</option>
                   <option value="registration_open">registration_open</option>
                   <option value="registration_closed">registration_closed</option>
                   <option value="ongoing">ongoing</option>
                   <option value="completed">completed</option>
-                  <option value="cancelled">cancelled</option>
                 </select>
               </FieldRow>
               <FieldRow label="Published">
