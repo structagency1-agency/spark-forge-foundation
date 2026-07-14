@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Search as SearchIcon, Loader2, Download } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
@@ -11,8 +11,9 @@ import {
   lookupRegistrationByCode,
   lookupRegistrationsByEmail,
   type RegistrationDetail,
+  type LookupMember,
 } from "@/services/registration";
-import { renderQrDataUrl, buildQrPayload, downloadDataUrl } from "@/lib/qr";
+import { renderQrDataUrl, buildQrPayload, buildMemberQrPayload, downloadDataUrl } from "@/lib/qr";
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
@@ -124,99 +125,115 @@ function MyRegistrationPage() {
 }
 
 function RegistrationCard({ r }: { r: RegistrationDetail }) {
-  const [qr, setQr] = useState<string | null>(null);
-  useEffect(() => {
-    let cancelled = false;
-    renderQrDataUrl(
-      buildQrPayload({
-        registration_id: r.registration_id,
+  return (
+    <article className="surface-panel p-6 md:p-8">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <Link
+          to="/events/$slug"
+          params={{ slug: r.event.slug }}
+          className="font-display text-2xl text-foreground hover:text-accent"
+        >
+          {r.event.name}
+        </Link>
+        <span className="rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-[10px] uppercase tracking-widest text-accent">
+          {r.status}
+        </span>
+      </div>
+      <div className="mt-1 text-xs text-muted-foreground">{r.event.department}</div>
+
+      <dl className="mt-4 grid gap-3 text-sm md:grid-cols-2">
+        <Row label="Registration ID" value={r.registration_code} mono />
+        <Row label="Team" value={r.team.name} />
+        <Row label="Registered" value={new Date(r.registered_at).toLocaleString("en-US", { timeZone: "UTC" }) + " UTC"} />
+        <Row label="Email status" value={r.email_status} />
+      </dl>
+
+      <div className="mt-6 rounded-xl border border-emerald-400/30 bg-emerald-400/5 p-4 text-center text-xs text-muted-foreground">
+        Attendance is marked <strong>per member</strong>. Each teammate must show their own QR at the venue — only members whose attendance is marked will receive a certificate.
+      </div>
+
+      <h4 className="mt-6 font-display text-sm uppercase tracking-widest text-muted-foreground">
+        Team members & QR codes
+      </h4>
+      <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {r.members.map((m) => (
+          <MemberQrCard key={(m.team_member_id ?? m.email) + r.registration_id} member={m} r={r} />
+        ))}
+      </div>
+    </article>
+  );
+}
+
+function MemberQrCard({ member, r }: { member: LookupMember; r: RegistrationDetail }) {
+  const payload = useMemo(() => {
+    if (member.qr_token && member.team_member_id && member.participant_id) {
+      return buildMemberQrPayload({
         registration_code: r.registration_code,
         event_id: r.event.id,
         team_id: r.team.id,
-        qr_token: r.qr_token,
-      }),
-      240,
-    ).then((u) => {
-      if (!cancelled) setQr(u);
+        team_member_id: member.team_member_id,
+        participant_id: member.participant_id,
+        qr_token: member.qr_token,
+      });
+    }
+    return buildQrPayload({
+      registration_id: r.registration_id,
+      registration_code: r.registration_code,
+      event_id: r.event.id,
+      team_id: r.team.id,
+      qr_token: r.qr_token,
     });
+  }, [member, r]);
+
+  const [qr, setQr] = useState<string | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    renderQrDataUrl(payload, 220).then((u) => !cancelled && setQr(u));
     return () => {
       cancelled = true;
     };
-  }, [r]);
+  }, [payload]);
+
+  const filename = `sparktank-${r.registration_code}-${(member.full_name || "member").replace(/\s+/g, "_")}.png`;
 
   return (
-    <article className="surface-panel grid gap-8 p-6 md:p-8 lg:grid-cols-[1.6fr_1fr]">
+    <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/60 bg-card/30 p-4 text-center">
       <div>
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <Link
-            to="/events/$slug"
-            params={{ slug: r.event.slug }}
-            className="font-display text-2xl text-foreground hover:text-accent"
-          >
-            {r.event.name}
-          </Link>
-          <span className="rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-[10px] uppercase tracking-widest text-accent">
-            {r.status}
-          </span>
+        <div className="text-sm font-medium text-foreground">
+          {member.full_name}
+          {member.role === "leader" && (
+            <span className="ml-2 rounded-full border border-accent/40 px-2 py-0.5 text-[10px] uppercase tracking-widest text-accent">
+              Leader
+            </span>
+          )}
         </div>
-        <div className="mt-1 text-xs text-muted-foreground">{r.event.department}</div>
-
-        <dl className="mt-4 grid gap-3 text-sm md:grid-cols-2">
-          <Row label="Registration ID" value={r.registration_code} mono />
-          <Row label="Team" value={r.team.name} />
-          <Row label="Registered" value={new Date(r.registered_at).toLocaleString("en-US", { timeZone: "UTC" }) + " UTC"} />
-          <Row label="Email status" value={r.email_status} />
-        </dl>
-
-        <h4 className="mt-6 font-display text-sm uppercase tracking-widest text-muted-foreground">
-          Team members
-        </h4>
-        <ul className="mt-3 divide-y divide-border/60 rounded-xl border border-border/60">
-          {r.members.map((m) => (
-            <li key={m.email} className="flex flex-wrap items-center justify-between gap-2 p-3 text-sm">
-              <div>
-                <div className="font-medium text-foreground">
-                  {m.full_name}
-                  {m.role === "leader" && (
-                    <span className="ml-2 rounded-full border border-accent/40 px-2 py-0.5 text-[10px] uppercase tracking-widest text-accent">
-                      Leader
-                    </span>
-                  )}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {m.registration_number} · {m.branch} · {m.academic_year}
-                </div>
-              </div>
-              <div className="text-xs text-muted-foreground">{m.email}</div>
-            </li>
-          ))}
-        </ul>
+        <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">
+          {member.registration_number} · {member.branch}
+        </div>
       </div>
-
-      <aside className="flex flex-col items-center text-center">
-        {qr ? (
-          <img
-            src={qr}
-            alt={`QR ${r.registration_code}`}
-            className="rounded-xl border border-border/60 bg-white p-2"
-            width={240}
-            height={240}
-          />
-        ) : (
-          <div className="flex h-[240px] w-[240px] items-center justify-center rounded-xl border border-border/60 bg-muted/30">
-            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-          </div>
-        )}
-        <button
-          type="button"
-          disabled={!qr}
-          onClick={() => qr && downloadDataUrl(qr, `sparktank-${r.registration_code}.png`)}
-          className="mt-4 inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-xs text-accent-foreground disabled:opacity-50"
-        >
-          <Download className="h-3 w-3" /> Download QR
-        </button>
-      </aside>
-    </article>
+      {qr ? (
+        <img
+          src={qr}
+          alt={`QR ${member.full_name}`}
+          className="rounded-xl border border-border/60 bg-white p-2"
+          width={180}
+          height={180}
+        />
+      ) : (
+        <div className="flex h-[180px] w-[180px] items-center justify-center rounded-xl border border-border/60 bg-muted/30">
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        </div>
+      )}
+      <div className="text-[11px] text-muted-foreground truncate max-w-[200px]">{member.email}</div>
+      <button
+        type="button"
+        disabled={!qr}
+        onClick={() => qr && downloadDataUrl(qr, filename)}
+        className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-1.5 text-xs text-accent-foreground disabled:opacity-50"
+      >
+        <Download className="h-3.5 w-3.5" /> Download
+      </button>
+    </div>
   );
 }
 
