@@ -1038,7 +1038,7 @@ function LeaderboardTab({ eventId }: { eventId: string | null }) {
       <div className="rounded-lg border border-border bg-card p-4">
         <h3 className="mb-3 font-display text-lg">Overall Leaderboard</h3>
         <DataTable
-          rows={rows}
+          rows={rows.map((r) => ({ ...r, id: `${r.event_id}-${r.team_id}` }))}
           searchFields={(r) => `${r.team_name} ${r.event_name} ${r.department_name ?? ""} ${r.registration_code ?? ""}`}
           columns={[
             { key: "rank", header: "Rank", render: (r) => <span className="font-mono">#{r.overall_rank}</span> },
