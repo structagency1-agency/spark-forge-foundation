@@ -15,6 +15,7 @@ import {
   Settings,
   ScrollText,
   QrCode,
+  Gavel,
 } from "lucide-react";
 import {
   Sidebar,
@@ -33,6 +34,7 @@ const items: Array<{ title: string; url: string; icon: typeof LayoutDashboard; e
   { title: "Events", url: "/admin/events", icon: CalendarDays },
   { title: "Registrations", url: "/admin/registrations", icon: Users },
   { title: "Attendance", url: "/admin/attendance", icon: QrCode },
+  { title: "Evaluation", url: "/admin/evaluation", icon: Gavel },
   { title: "Problem Statements", url: "/admin/problem-statements", icon: FileText },
   { title: "Gallery", url: "/admin/gallery", icon: Image },
   { title: "Timeline", url: "/admin/timeline", icon: ListOrdered },

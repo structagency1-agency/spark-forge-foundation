@@ -33,6 +33,7 @@ import { Route as AdminProblemStatementsRouteImport } from './routes/admin.probl
 import { Route as AdminHomepageRouteImport } from './routes/admin.homepage'
 import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
+import { Route as AdminEvaluationRouteImport } from './routes/admin.evaluation'
 import { Route as AdminEmailTemplatesRouteImport } from './routes/admin.email-templates'
 import { Route as AdminDepartmentsRouteImport } from './routes/admin.departments'
 import { Route as AdminContactMessagesRouteImport } from './routes/admin.contact-messages'
@@ -160,6 +161,11 @@ const AdminEventsRoute = AdminEventsRouteImport.update({
   path: '/events',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminEvaluationRoute = AdminEvaluationRouteImport.update({
+  id: '/evaluation',
+  path: '/evaluation',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEmailTemplatesRoute = AdminEmailTemplatesRouteImport.update({
   id: '/email-templates',
   path: '/email-templates',
@@ -211,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/admin/contact-messages': typeof AdminContactMessagesRoute
   '/admin/departments': typeof AdminDepartmentsRoute
   '/admin/email-templates': typeof AdminEmailTemplatesRoute
+  '/admin/evaluation': typeof AdminEvaluationRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/homepage': typeof AdminHomepageRoute
@@ -242,6 +249,7 @@ export interface FileRoutesByTo {
   '/admin/contact-messages': typeof AdminContactMessagesRoute
   '/admin/departments': typeof AdminDepartmentsRoute
   '/admin/email-templates': typeof AdminEmailTemplatesRoute
+  '/admin/evaluation': typeof AdminEvaluationRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/homepage': typeof AdminHomepageRoute
@@ -275,6 +283,7 @@ export interface FileRoutesById {
   '/admin/contact-messages': typeof AdminContactMessagesRoute
   '/admin/departments': typeof AdminDepartmentsRoute
   '/admin/email-templates': typeof AdminEmailTemplatesRoute
+  '/admin/evaluation': typeof AdminEvaluationRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/homepage': typeof AdminHomepageRoute
@@ -309,6 +318,7 @@ export interface FileRouteTypes {
     | '/admin/contact-messages'
     | '/admin/departments'
     | '/admin/email-templates'
+    | '/admin/evaluation'
     | '/admin/events'
     | '/admin/gallery'
     | '/admin/homepage'
@@ -340,6 +350,7 @@ export interface FileRouteTypes {
     | '/admin/contact-messages'
     | '/admin/departments'
     | '/admin/email-templates'
+    | '/admin/evaluation'
     | '/admin/events'
     | '/admin/gallery'
     | '/admin/homepage'
@@ -372,6 +383,7 @@ export interface FileRouteTypes {
     | '/admin/contact-messages'
     | '/admin/departments'
     | '/admin/email-templates'
+    | '/admin/evaluation'
     | '/admin/events'
     | '/admin/gallery'
     | '/admin/homepage'
@@ -571,6 +583,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEventsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/evaluation': {
+      id: '/admin/evaluation'
+      path: '/evaluation'
+      fullPath: '/admin/evaluation'
+      preLoaderRoute: typeof AdminEvaluationRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/email-templates': {
       id: '/admin/email-templates'
       path: '/email-templates'
@@ -623,6 +642,7 @@ interface AdminRouteChildren {
   AdminContactMessagesRoute: typeof AdminContactMessagesRoute
   AdminDepartmentsRoute: typeof AdminDepartmentsRoute
   AdminEmailTemplatesRoute: typeof AdminEmailTemplatesRoute
+  AdminEvaluationRoute: typeof AdminEvaluationRoute
   AdminEventsRoute: typeof AdminEventsRoute
   AdminGalleryRoute: typeof AdminGalleryRoute
   AdminHomepageRoute: typeof AdminHomepageRoute
@@ -641,6 +661,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminContactMessagesRoute: AdminContactMessagesRoute,
   AdminDepartmentsRoute: AdminDepartmentsRoute,
   AdminEmailTemplatesRoute: AdminEmailTemplatesRoute,
+  AdminEvaluationRoute: AdminEvaluationRoute,
   AdminEventsRoute: AdminEventsRoute,
   AdminGalleryRoute: AdminGalleryRoute,
   AdminHomepageRoute: AdminHomepageRoute,

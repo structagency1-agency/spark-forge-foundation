@@ -356,42 +356,161 @@ export type Database = {
         }
         Relationships: []
       }
+      evaluation_criteria: {
+        Row: {
+          created_at: string
+          description: string | null
+          event_id: string | null
+          id: string
+          max_marks: number
+          name: string
+          sort_order: number
+          status: Database["public"]["Enums"]["jury_status"]
+          updated_at: string
+          weightage: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          event_id?: string | null
+          id?: string
+          max_marks?: number
+          name: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["jury_status"]
+          updated_at?: string
+          weightage?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          event_id?: string | null
+          id?: string
+          max_marks?: number
+          name?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["jury_status"]
+          updated_at?: string
+          weightage?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evaluation_criteria_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evaluation_scores: {
+        Row: {
+          created_at: string
+          criterion_id: string
+          evaluation_id: string
+          id: string
+          marks: number
+          remarks: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          criterion_id: string
+          evaluation_id: string
+          id?: string
+          marks?: number
+          remarks?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          criterion_id?: string
+          evaluation_id?: string
+          id?: string
+          marks?: number
+          remarks?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evaluation_scores_criterion_id_fkey"
+            columns: ["criterion_id"]
+            isOneToOne: false
+            referencedRelation: "evaluation_criteria"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evaluation_scores_evaluation_id_fkey"
+            columns: ["evaluation_id"]
+            isOneToOne: false
+            referencedRelation: "evaluations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evaluations: {
         Row: {
           created_at: string
           event_id: string
           id: string
-          jury_id: string | null
-          remarks: string | null
+          is_locked: boolean
+          jury_id: string
+          max_score: number
+          overall_comments: string | null
+          percentage: number
+          recommendation:
+            | Database["public"]["Enums"]["evaluation_recommendation"]
+            | null
+          registration_id: string | null
           round: string
-          scores: Json
+          status: Database["public"]["Enums"]["evaluation_status"]
+          submitted_at: string | null
           team_id: string
-          total: number | null
+          total_score: number
           updated_at: string
+          weighted_score: number
         }
         Insert: {
           created_at?: string
           event_id: string
           id?: string
-          jury_id?: string | null
-          remarks?: string | null
+          is_locked?: boolean
+          jury_id: string
+          max_score?: number
+          overall_comments?: string | null
+          percentage?: number
+          recommendation?:
+            | Database["public"]["Enums"]["evaluation_recommendation"]
+            | null
+          registration_id?: string | null
           round?: string
-          scores?: Json
+          status?: Database["public"]["Enums"]["evaluation_status"]
+          submitted_at?: string | null
           team_id: string
-          total?: number | null
+          total_score?: number
           updated_at?: string
+          weighted_score?: number
         }
         Update: {
           created_at?: string
           event_id?: string
           id?: string
-          jury_id?: string | null
-          remarks?: string | null
+          is_locked?: boolean
+          jury_id?: string
+          max_score?: number
+          overall_comments?: string | null
+          percentage?: number
+          recommendation?:
+            | Database["public"]["Enums"]["evaluation_recommendation"]
+            | null
+          registration_id?: string | null
           round?: string
-          scores?: Json
+          status?: Database["public"]["Enums"]["evaluation_status"]
+          submitted_at?: string | null
           team_id?: string
-          total?: number | null
+          total_score?: number
           updated_at?: string
+          weighted_score?: number
         }
         Relationships: [
           {
@@ -405,7 +524,14 @@ export type Database = {
             foreignKeyName: "evaluations_jury_id_fkey"
             columns: ["jury_id"]
             isOneToOne: false
-            referencedRelation: "jury_assignments"
+            referencedRelation: "jury_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evaluations_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "registrations"
             referencedColumns: ["id"]
           },
           {
@@ -610,43 +736,148 @@ export type Database = {
         }
         Relationships: []
       }
-      jury_assignments: {
+      jury_event_assignments: {
         Row: {
           created_at: string
           event_id: string
           id: string
-          jury_email: string
-          jury_name: string
-          metadata: Json
+          jury_id: string
           round: string
-          updated_at: string
         }
         Insert: {
           created_at?: string
           event_id: string
           id?: string
-          jury_email: string
-          jury_name: string
-          metadata?: Json
+          jury_id: string
           round?: string
-          updated_at?: string
         }
         Update: {
           created_at?: string
           event_id?: string
           id?: string
-          jury_email?: string
-          jury_name?: string
-          metadata?: Json
+          jury_id?: string
           round?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jury_event_assignments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jury_event_assignments_jury_id_fkey"
+            columns: ["jury_id"]
+            isOneToOne: false
+            referencedRelation: "jury_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jury_members: {
+        Row: {
+          created_at: string
+          designation: string | null
+          email: string
+          expertise: string | null
+          full_name: string
+          id: string
+          metadata: Json
+          mobile: string | null
+          organization: string | null
+          status: Database["public"]["Enums"]["jury_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          designation?: string | null
+          email: string
+          expertise?: string | null
+          full_name: string
+          id?: string
+          metadata?: Json
+          mobile?: string | null
+          organization?: string | null
+          status?: Database["public"]["Enums"]["jury_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          designation?: string | null
+          email?: string
+          expertise?: string | null
+          full_name?: string
+          id?: string
+          metadata?: Json
+          mobile?: string | null
+          organization?: string | null
+          status?: Database["public"]["Enums"]["jury_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      jury_team_assignments: {
+        Row: {
+          assignment_type: string
+          created_at: string
+          event_id: string
+          id: string
+          jury_id: string
+          registration_id: string | null
+          status: Database["public"]["Enums"]["evaluation_status"]
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          assignment_type?: string
+          created_at?: string
+          event_id: string
+          id?: string
+          jury_id: string
+          registration_id?: string | null
+          status?: Database["public"]["Enums"]["evaluation_status"]
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          assignment_type?: string
+          created_at?: string
+          event_id?: string
+          id?: string
+          jury_id?: string
+          registration_id?: string | null
+          status?: Database["public"]["Enums"]["evaluation_status"]
+          team_id?: string
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "jury_assignments_event_id_fkey"
+            foreignKeyName: "jury_team_assignments_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jury_team_assignments_jury_id_fkey"
+            columns: ["jury_id"]
+            isOneToOne: false
+            referencedRelation: "jury_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jury_team_assignments_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "registrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jury_team_assignments_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
             referencedColumns: ["id"]
           },
         ]
@@ -1142,7 +1373,10 @@ export type Database = {
     Functions: {
       admin_stats: { Args: never; Returns: Json }
       attendance_stats: { Args: { _event_id?: string }; Returns: Json }
+      auto_assign_teams: { Args: { _event_id: string }; Returns: Json }
+      evaluation_stats: { Args: { _event_id?: string }; Returns: Json }
       event_capacity: { Args: { _event_id: string }; Returns: Json }
+      event_leaderboard: { Args: { _event_id?: string }; Returns: Json }
       generate_registration_code: { Args: never; Returns: string }
       lookup_registration_by_code: { Args: { _code: string }; Returns: Json }
       lookup_registrations_by_email: { Args: { _email: string }; Returns: Json }
@@ -1161,7 +1395,45 @@ export type Database = {
         }
         Returns: Json
       }
+      publish_event_evaluations: {
+        Args: { _event_id: string; _publish?: boolean }
+        Returns: Json
+      }
+      recompute_evaluation_totals: {
+        Args: { _evaluation_id: string }
+        Returns: undefined
+      }
       register_team: { Args: { payload: Json }; Returns: Json }
+      save_evaluation_score: {
+        Args: {
+          _criterion_id: string
+          _evaluation_id: string
+          _marks: number
+          _remarks?: string
+        }
+        Returns: Json
+      }
+      set_evaluation_lock: {
+        Args: { _evaluation_id: string; _locked: boolean; _reason?: string }
+        Returns: Json
+      }
+      submit_evaluation: {
+        Args: {
+          _comments?: string
+          _evaluation_id: string
+          _recommendation?: string
+        }
+        Returns: Json
+      }
+      upsert_evaluation: {
+        Args: {
+          _event_id: string
+          _jury_id: string
+          _round?: string
+          _team_id: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       attendance_method: "qr" | "manual" | "import"
@@ -1174,6 +1446,13 @@ export type Database = {
         | "winner_announcement"
         | "password_reset"
         | "notification"
+      evaluation_recommendation: "qualified" | "not_qualified" | "needs_review"
+      evaluation_status:
+        | "pending"
+        | "assigned"
+        | "in_progress"
+        | "completed"
+        | "published"
       event_status:
         | "upcoming"
         | "registration_open"
@@ -1181,6 +1460,7 @@ export type Database = {
         | "ongoing"
         | "evaluation"
         | "completed"
+      jury_status: "active" | "inactive"
       media_type: "image" | "video"
       registration_status:
         | "pending"
@@ -1339,6 +1619,14 @@ export const Constants = {
         "password_reset",
         "notification",
       ],
+      evaluation_recommendation: ["qualified", "not_qualified", "needs_review"],
+      evaluation_status: [
+        "pending",
+        "assigned",
+        "in_progress",
+        "completed",
+        "published",
+      ],
       event_status: [
         "upcoming",
         "registration_open",
@@ -1347,6 +1635,7 @@ export const Constants = {
         "evaluation",
         "completed",
       ],
+      jury_status: ["active", "inactive"],
       media_type: ["image", "video"],
       registration_status: [
         "pending",
