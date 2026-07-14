@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Download, Loader2, Mail } from "lucide-react";
+import { Download, Loader2, Mail, ScanLine } from "lucide-react";
 import { lookupRegistrationByCode } from "@/services/registration";
 import { renderQrDataUrl, buildQrPayload, downloadDataUrl } from "@/lib/qr";
 
@@ -13,6 +13,11 @@ export function RegistrationSuccess({ code }: { code: string }) {
   });
 
   const [qr, setQr] = useState<string | null>(null);
+  const qrRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   useEffect(() => {
     if (!data) return;
@@ -55,7 +60,44 @@ export function RegistrationSuccess({ code }: { code: string }) {
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+    <div className="space-y-8">
+      <div
+        ref={qrRef}
+        className="surface-panel flex flex-col items-center gap-4 border-emerald-400/40 p-6 text-center md:p-8"
+      >
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-[11px] uppercase tracking-widest text-emerald-300">
+          <ScanLine className="h-3.5 w-3.5" /> Your attendance QR
+        </div>
+        <p className="max-w-md text-sm text-muted-foreground">
+          Show this QR at the venue — organisers will scan it to mark attendance.
+          Save it now; it's also on its way to your team leader's email.
+        </p>
+        {qr ? (
+          <img
+            src={qr}
+            alt={`QR code for ${data.registration_code}`}
+            className="rounded-2xl border border-border/60 bg-white p-3"
+            width={260}
+            height={260}
+          />
+        ) : (
+          <div className="flex h-[260px] w-[260px] items-center justify-center rounded-2xl border border-border/60 bg-muted/30">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        )}
+        <p className="font-mono text-xs text-muted-foreground">{data.registration_code}</p>
+        <button
+          type="button"
+          disabled={!qr}
+          onClick={() =>
+            qr && downloadDataUrl(qr, `sparktank-${data.registration_code}.png`)
+          }
+          className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm text-accent-foreground shadow-[var(--shadow-glow)] disabled:opacity-50"
+        >
+          <Download className="h-4 w-4" /> Download QR
+        </button>
+      </div>
+
       <div className="surface-panel p-8">
         <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs uppercase tracking-widest text-emerald-300">
           Registration successful
@@ -63,9 +105,12 @@ export function RegistrationSuccess({ code }: { code: string }) {
         <h2 className="mt-4 font-display text-3xl text-gradient-accent">
           {data.event.name}
         </h2>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           A confirmation email is on its way to{" "}
-          <span className="text-foreground">{data.members[0]?.email}</span>.
+          <span className="text-foreground">{data.members[0]?.email}</span>
+          <span className="inline-flex items-center gap-1 text-[11px]">
+            <Mail className="h-3 w-3" /> QR emailed too
+          </span>
         </p>
 
         <dl className="mt-6 grid gap-3 text-sm md:grid-cols-2">
@@ -120,41 +165,6 @@ export function RegistrationSuccess({ code }: { code: string }) {
           </Link>
         </div>
       </div>
-
-      <aside className="surface-panel flex flex-col items-center p-8 text-center">
-        <h3 className="font-display text-sm uppercase tracking-widest text-muted-foreground">
-          Team QR pass
-        </h3>
-        {qr ? (
-          <img
-            src={qr}
-            alt={`QR code for ${data.registration_code}`}
-            className="mt-4 rounded-xl border border-border/60 bg-white p-3"
-            width={280}
-            height={280}
-          />
-        ) : (
-          <div className="mt-4 flex h-[280px] w-[280px] items-center justify-center rounded-xl border border-border/60 bg-muted/30">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-          </div>
-        )}
-        <p className="mt-4 font-mono text-xs text-muted-foreground">
-          {data.registration_code}
-        </p>
-        <button
-          type="button"
-          disabled={!qr}
-          onClick={() =>
-            qr && downloadDataUrl(qr, `sparktank-${data.registration_code}.png`)
-          }
-          className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm text-accent-foreground shadow-[var(--shadow-glow)] disabled:opacity-50"
-        >
-          <Download className="h-4 w-4" /> Download QR
-        </button>
-        <p className="mt-4 flex items-center gap-2 text-[11px] text-muted-foreground">
-          <Mail className="h-3 w-3" /> Also emailed to your team leader
-        </p>
-      </aside>
     </div>
   );
 }
