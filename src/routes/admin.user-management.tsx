@@ -158,7 +158,9 @@ function UserManagementPage() {
                       {ROLES.filter((r) => !roles.includes(r)).map((r) => (
                         <ConfirmButton
                           key={r}
-                          label={r}
+                          label={`+ ${r}`}
+                          variant="outline"
+                          message={`Grant the ${r} role to this user?`}
                           onConfirm={() => grantRoleById(uid, r)}
                         />
                       ))}
