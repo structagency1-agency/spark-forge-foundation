@@ -70,7 +70,28 @@ export function AdminSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const ctx = Route.useRouteContext();
   const isAdmin = ctx?.isAdmin ?? false;
-  const visibleItems = isAdmin ? items : items.filter((i) => i.url === "/admin/evaluation");
+  const isIedcAdmin = (ctx as { isIedcAdmin?: boolean })?.isIedcAdmin ?? false;
+
+  const iedcBlocked = new Set([
+    "/admin/evaluation",
+    "/admin/audit-logs",
+    "/admin/settings",
+    "/admin/db-health",
+    "/admin/email-templates",
+    "/admin/website",
+  ]);
+
+  const visibleItems = isAdmin
+    ? items
+    : isIedcAdmin
+      ? items.filter((i) => !iedcBlocked.has(i.url))
+      : items.filter((i) => i.url === "/admin/evaluation");
+
+  const sidebarLabel = isAdmin
+    ? "SPARK TANK 4.0 Admin"
+    : isIedcAdmin
+      ? "SPARK TANK 4.0 · IEDC"
+      : "SPARK TANK 4.0 Jury";
   const isActive = (url: string, exact?: boolean) =>
     exact ? pathname === url : pathname === url || pathname.startsWith(url + "/");
 
