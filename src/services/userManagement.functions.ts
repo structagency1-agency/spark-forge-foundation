@@ -80,3 +80,20 @@ export const grantRoleByEmail = createServerFn({ method: "POST" })
     if (error && !error.message.includes("duplicate")) throw error;
     return { userId };
   });
+
+export const deleteUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data) => z.object({ userId: z.string().uuid() }).parse(data))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    if (data.userId === context.userId) {
+      throw new Response("You cannot delete your own account.", { status: 400 });
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Clear role rows first (FK cascade may or may not be set)
+    await supabaseAdmin.from("user_roles").delete().eq("user_id", data.userId);
+    await supabaseAdmin.from("ecell_event_assignments").delete().eq("user_id", data.userId);
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
+    if (error) throw new Response(error.message, { status: 500 });
+    return { ok: true };
+  });
