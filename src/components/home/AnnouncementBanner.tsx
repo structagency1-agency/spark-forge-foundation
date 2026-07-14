@@ -11,8 +11,9 @@ const priorityStyles: Record<string, { icon: typeof Info; className: string }> =
 };
 
 export function AnnouncementBanner({ location = "homepage" }: { location?: string }) {
-  const { data } = useSuspenseQuery(activeAnnouncementsQO(location));
-  if (!data.length) return null;
+  const { data } = useQuery(activeAnnouncementsQO(location));
+  if (!data || data.length === 0) return null;
+
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-2 px-4 pt-4">
