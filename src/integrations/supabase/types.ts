@@ -1722,6 +1722,7 @@ export type Database = {
       attendance_stats: { Args: { _event_id?: string }; Returns: Json }
       auto_assign_teams: { Args: { _event_id: string }; Returns: Json }
       certificate_analytics: { Args: never; Returns: Json }
+      current_jury_member_id: { Args: never; Returns: string }
       current_user_roles: {
         Args: never
         Returns: Database["public"]["Enums"]["app_role"][]
@@ -1745,6 +1746,10 @@ export type Database = {
       hide_results: { Args: { _event_id: string }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       is_admin_or_jury: { Args: never; Returns: boolean }
+      is_jury_of_team: {
+        Args: { _event_id: string; _team_id: string }
+        Returns: boolean
+      }
       lookup_registration_by_code: { Args: { _code: string }; Returns: Json }
       lookup_registrations_by_email: { Args: { _email: string }; Returns: Json }
       mark_attendance_by_qr: {
