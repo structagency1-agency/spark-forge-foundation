@@ -212,6 +212,16 @@ function EventsAdmin() {
             <FieldRow label="Banner URL">
               <Input value={(values.banner_url as string) ?? ""} onChange={(e) => setValue("banner_url", e.target.value)} />
             </FieldRow>
+            <FieldRow label="Sub-tracks (comma-separated — teams pick one at registration)">
+              <Input
+                placeholder="software, hardware"
+                value={Array.isArray(values.sub_tracks) ? (values.sub_tracks as string[]).join(", ") : ""}
+                onChange={(e) => {
+                  const list = e.target.value.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
+                  setValue("sub_tracks", list.length > 0 ? list : ["software", "hardware"]);
+                }}
+              />
+            </FieldRow>
             <div className="grid grid-cols-3 gap-3">
               <FieldRow label="Event date *">
                 <Input type="datetime-local" required value={toLocalInput(values.event_date as string | null)}
