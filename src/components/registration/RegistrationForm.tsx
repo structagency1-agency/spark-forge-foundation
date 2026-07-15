@@ -467,12 +467,21 @@ function MemberFields({
   );
 }
 
+const ACADEMIC_YEARS = ["1st Year", "2nd Year", "3rd Year", "4th Year"] as const;
+
 function YearSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
-    <select value={value} onChange={(e) => onChange(e.target.value)} className={inputCls}>
-      <option value="">Select year</option>
-      {["1st Year", "2nd Year", "3rd Year", "4th Year"].map((o) => (
-        <option key={o} value={o}>
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={`${inputCls} appearance-none bg-background text-foreground`}
+      style={{ colorScheme: "dark" }}
+    >
+      <option value="" style={{ background: "#0b0b12", color: "#fff" }}>
+        Select year
+      </option>
+      {ACADEMIC_YEARS.map((o) => (
+        <option key={o} value={o} style={{ background: "#0b0b12", color: "#fff" }}>
           {o}
         </option>
       ))}
