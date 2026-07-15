@@ -148,6 +148,8 @@ function RegistrationCard({ r }: { r: RegistrationDetail }) {
         <Row label="Email status" value={r.email_status} />
       </dl>
 
+      <ScorecardSection eventId={r.event.id} registrationId={r.registration_id} />
+
       <div className="mt-6 rounded-xl border border-emerald-400/30 bg-emerald-400/5 p-4 text-center text-xs text-muted-foreground">
         Attendance is marked <strong>per member</strong>. Each teammate must show their own QR at the venue — only members whose attendance is marked will receive a certificate.
       </div>
@@ -161,6 +163,41 @@ function RegistrationCard({ r }: { r: RegistrationDetail }) {
         ))}
       </div>
     </article>
+  );
+}
+
+function ScorecardSection({ eventId, registrationId }: { eventId: string; registrationId: string }) {
+  const { data } = useQuery({
+    queryKey: ["public-scorecard", registrationId],
+    queryFn: async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data: result } = await supabase
+        .from("results")
+        .select("status")
+        .eq("event_id", eventId)
+        .maybeSingle();
+      if (result?.status !== "published") return null;
+      const { data: sc } = await supabase
+        .from("scorecards")
+        .select("total_score, percentage, overall_rank, department_rank, snapshot")
+        .eq("registration_id", registrationId)
+        .maybeSingle();
+      return sc;
+    },
+    staleTime: 60_000,
+  });
+
+  if (!data) return null;
+  return (
+    <div className="mt-6 rounded-xl border border-accent/30 bg-accent/5 p-4">
+      <h4 className="font-display text-sm uppercase tracking-widest text-accent">Your score</h4>
+      <div className="mt-3 grid gap-3 text-sm sm:grid-cols-4">
+        <Row label="Total" value={String(data.total_score ?? "—")} mono />
+        <Row label="Percentage" value={data.percentage != null ? `${data.percentage}%` : "—"} mono />
+        <Row label="Overall rank" value={data.overall_rank != null ? `#${data.overall_rank}` : "—"} mono />
+        <Row label="Dept rank" value={data.department_rank != null ? `#${data.department_rank}` : "—"} mono />
+      </div>
+    </div>
   );
 }
 
