@@ -36,20 +36,16 @@ export const Route = createFileRoute("/admin")({
     const isIedcAdmin = roleSet.has("iedc_admin");
     const isEcell = roleSet.has("ecell_member");
     const path = location.pathname;
-    const isEvaluationPath = path === "/admin/evaluation" || path.startsWith("/admin/evaluation/");
 
     // Super admin: full access
-    if (isAdmin) return { user: session.user, isAdmin, isJury, isIedcAdmin: false };
+    if (isAdmin) return { user: session.user, isAdmin, isJury: false, isIedcAdmin: false };
 
-    // Jury: only evaluation
-    if (isJury) {
-      if (!isEvaluationPath) throw redirect({ to: "/admin/evaluation" });
-      return { user: session.user, isAdmin: false, isJury: true, isIedcAdmin: false };
-    }
+    // Jury never enters the admin console — they use /jury
+    if (isJury) throw redirect({ to: "/jury" });
 
-    // IEDC admin: everything except evaluation and system settings
+    // IEDC admin: everything except evaluation, user management, and system settings
     if (isIedcAdmin) {
-      const blocked = isEvaluationPath
+      const blocked = path === "/admin/evaluation" || path.startsWith("/admin/evaluation/")
         || path.startsWith("/admin/audit-logs")
         || path.startsWith("/admin/settings")
         || path.startsWith("/admin/db-health")
@@ -62,9 +58,6 @@ export const Route = createFileRoute("/admin")({
 
     // E-cell members should go to /ecell-attendance
     if (isEcell) throw redirect({ to: "/ecell-attendance" });
-
-    // Participants → their dashboard
-    if (roleSet.has("participant")) throw redirect({ to: "/my-dashboard" });
 
     await supabase.auth.signOut();
     throw redirect({ to: "/auth", search: { redirect: location.href } });

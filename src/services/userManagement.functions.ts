@@ -20,7 +20,6 @@ export const listAllUsers = createServerFn({ method: "GET" })
 
     const users: Array<{ id: string; email: string | null; created_at: string; last_sign_in_at: string | null }> = [];
     let page = 1;
-    // paginate up to 10 pages of 200 = 2000 users
     for (let i = 0; i < 10; i++) {
       const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
       if (error) throw error;
@@ -50,7 +49,7 @@ export const listAllUsers = createServerFn({ method: "GET" })
     return users.map((u) => ({ ...u, roles: roleMap.get(u.id) ?? [] }));
   });
 
-const roleSchema = z.enum(["admin", "iedc_admin", "ecell_member", "participant", "jury"]);
+const roleSchema = z.enum(["admin", "iedc_admin", "ecell_member", "jury"]);
 
 export const grantRoleByEmail = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -58,7 +57,6 @@ export const grantRoleByEmail = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    // Find user by email
     let userId: string | null = null;
     let page = 1;
     for (let i = 0; i < 10; i++) {
@@ -90,10 +88,73 @@ export const deleteUser = createServerFn({ method: "POST" })
       throw new Response("You cannot delete your own account.", { status: 400 });
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    // Clear role rows first (FK cascade may or may not be set)
     await supabaseAdmin.from("user_roles").delete().eq("user_id", data.userId);
     await supabaseAdmin.from("ecell_event_assignments").delete().eq("user_id", data.userId);
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
     if (error) throw new Response(error.message, { status: 500 });
+    return { ok: true };
+  });
+
+// Super Admin creates a new admin/jury/ecell/IEDC account with instant access.
+export const createUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data) =>
+    z.object({
+      email: z.string().email(),
+      password: z.string().min(8),
+      role: roleSchema,
+    }).parse(data),
+  )
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true, // instant access — skip email verification
+    });
+    if (error || !created?.user) {
+      throw new Response(error?.message ?? "Failed to create user", { status: 400 });
+    }
+
+    const { error: rErr } = await supabaseAdmin
+      .from("user_roles")
+      .insert({ user_id: created.user.id, role: data.role });
+    if (rErr && !rErr.message.includes("duplicate")) {
+      throw new Response(rErr.message, { status: 500 });
+    }
+
+    // If jury, link to existing jury_members by email
+    if (data.role === "jury") {
+      await supabaseAdmin
+        .from("jury_members")
+        .update({ user_id: created.user.id })
+        .ilike("email", data.email);
+    }
+
+    return { userId: created.user.id };
+  });
+
+// Super Admin can rotate an existing user's email or password.
+export const updateUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data) =>
+    z.object({
+      userId: z.string().uuid(),
+      email: z.string().email().optional(),
+      password: z.string().min(8).optional(),
+    }).parse(data),
+  )
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const patch: Record<string, unknown> = { email_confirm: true };
+    if (data.email) patch.email = data.email;
+    if (data.password) patch.password = data.password;
+
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, patch as never);
+    if (error) throw new Response(error.message, { status: 400 });
     return { ok: true };
   });

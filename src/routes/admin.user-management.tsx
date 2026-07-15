@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Trash2, Plus, UserPlus } from "lucide-react";
+import { Trash2, Plus, UserPlus, KeyRound } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ConfirmButton } from "@/components/admin/ConfirmButton";
 import { writeAuditLog } from "@/services/admin";
-import { listAllUsers, grantRoleByEmail, deleteUser } from "@/services/userManagement.functions";
+import { listAllUsers, grantRoleByEmail, deleteUser, createUser, updateUser } from "@/services/userManagement.functions";
 
 export const Route = createFileRoute("/admin/user-management")({
   head: () => ({ meta: [{ title: "User Management — SPARK TANK 4.0" }, { name: "robots", content: "noindex, nofollow" }] }),
@@ -19,7 +19,6 @@ export const Route = createFileRoute("/admin/user-management")({
 });
 
 type RoleName = "admin" | "iedc_admin" | "ecell_member" | "participant" | "jury";
-// Participant is auto-granted on signup when the email matches a team registration — not grantable here.
 const GRANTABLE_ROLES: RoleName[] = ["admin", "iedc_admin", "ecell_member", "jury"];
 
 function UserManagementPage() {
@@ -27,11 +26,16 @@ function UserManagementPage() {
   const listUsersFn = useServerFn(listAllUsers);
   const grantByEmailFn = useServerFn(grantRoleByEmail);
   const deleteUserFn = useServerFn(deleteUser);
+  const createUserFn = useServerFn(createUser);
+  const updateUserFn = useServerFn(updateUser);
   const [emailToPromote, setEmailToPromote] = useState("");
   const [roleToGrant, setRoleToGrant] = useState<RoleName>("iedc_admin");
   const [assignUserId, setAssignUserId] = useState("");
   const [assignEventId, setAssignEventId] = useState("");
   const [search, setSearch] = useState("");
+  const [newUser, setNewUser] = useState({ email: "", password: "", role: "iedc_admin" as RoleName });
+  const [editUser, setEditUser] = useState<{ id: string; email: string; password: string } | null>(null);
+
 
   const { data: users, isLoading: usersLoading } = useQuery({
     queryKey: ["admin", "all-users"],
@@ -127,9 +131,53 @@ function UserManagementPage() {
       />
 
       <Card className="p-4">
+        <h2 className="mb-3 font-display text-lg">Create a new admin/jury account</h2>
+        <p className="mb-3 text-sm text-muted-foreground">
+          Instantly provisions the account (email is auto-confirmed). The user can sign in immediately at <code>/auth</code>.
+        </p>
+        <div className="grid gap-2 sm:grid-cols-4">
+          <Input
+            type="email"
+            placeholder="user@example.com"
+            value={newUser.email}
+            onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+          />
+          <Input
+            type="text"
+            placeholder="Password (min 8)"
+            value={newUser.password}
+            onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+          />
+          <select
+            className="rounded-md border border-input bg-transparent px-3 py-2 text-sm"
+            value={newUser.role}
+            onChange={(e) => setNewUser({ ...newUser, role: e.target.value as RoleName })}
+          >
+            {GRANTABLE_ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+          </select>
+          <Button
+            onClick={async () => {
+              try {
+                await createUserFn({ data: { email: newUser.email.trim().toLowerCase(), password: newUser.password, role: newUser.role } });
+                toast.success("User created");
+                void writeAuditLog({ action: "user_create", module: "user-management", description: `${newUser.email} + ${newUser.role}` });
+                setNewUser({ email: "", password: "", role: "iedc_admin" });
+                await qc.invalidateQueries({ queryKey: ["admin", "all-users"] });
+              } catch (e) {
+                const msg = e instanceof Response ? await e.text() : (e as Error).message;
+                toast.error(msg || "Failed to create user");
+              }
+            }}
+          >
+            <UserPlus className="mr-1 h-4 w-4" /> Create user
+          </Button>
+        </div>
+      </Card>
+
+      <Card className="p-4">
         <h2 className="mb-3 font-display text-lg">Grant a role by email</h2>
         <p className="mb-3 text-sm text-muted-foreground">
-          The user must have signed up at <code>/auth</code> first. Then enter their email here to grant a role directly.
+          For users who signed up on their own — enter their email to grant an additional role.
         </p>
         <div className="flex flex-wrap gap-2">
           <Input
@@ -151,6 +199,7 @@ function UserManagementPage() {
           <Button onClick={grantByEmail}><UserPlus className="mr-1 h-4 w-4" /> Grant role</Button>
         </div>
       </Card>
+
 
       <Card className="p-4">
         <div className="mb-3 flex items-center justify-between gap-3">
@@ -211,23 +260,33 @@ function UserManagementPage() {
                     </div>
                   </td>
                   <td className="p-2 text-right">
-                    <ConfirmButton
-                      label="Delete"
-                      variant="destructive"
-                      message={`Permanently delete ${u.email ?? u.id}? This removes their login and role assignments. This cannot be undone.`}
-                      onConfirm={async () => {
-                        try {
-                          await deleteUserFn({ data: { userId: u.id } });
-                          toast.success("User deleted");
-                          void writeAuditLog({ action: "user_delete", module: "user-management", description: u.email ?? u.id });
-                          await qc.invalidateQueries({ queryKey: ["admin", "all-users"] });
-                          await qc.invalidateQueries({ queryKey: ["admin", "ecell-assignments"] });
-                        } catch (e) {
-                          const msg = e instanceof Response ? await e.text() : (e as Error).message;
-                          toast.error(msg || "Failed to delete user");
-                        }
-                      }}
-                    />
+                    <div className="flex justify-end gap-1">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setEditUser({ id: u.id, email: u.email ?? "", password: "" })}
+                        title="Edit email / reset password"
+                      >
+                        <KeyRound className="h-3.5 w-3.5" />
+                      </Button>
+                      <ConfirmButton
+                        label="Delete"
+                        variant="destructive"
+                        message={`Permanently delete ${u.email ?? u.id}? This removes their login and role assignments. This cannot be undone.`}
+                        onConfirm={async () => {
+                          try {
+                            await deleteUserFn({ data: { userId: u.id } });
+                            toast.success("User deleted");
+                            void writeAuditLog({ action: "user_delete", module: "user-management", description: u.email ?? u.id });
+                            await qc.invalidateQueries({ queryKey: ["admin", "all-users"] });
+                            await qc.invalidateQueries({ queryKey: ["admin", "ecell-assignments"] });
+                          } catch (e) {
+                            const msg = e instanceof Response ? await e.text() : (e as Error).message;
+                            toast.error(msg || "Failed to delete user");
+                          }
+                        }}
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -286,6 +345,51 @@ function UserManagementPage() {
           </table>
         </div>
       </Card>
+
+      {editUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <Card className="w-full max-w-md p-6">
+            <h3 className="mb-2 font-display text-lg">Edit user</h3>
+            <p className="mb-4 text-xs text-muted-foreground">Leave a field blank to keep it unchanged.</p>
+            <div className="space-y-3">
+              <Input
+                type="email"
+                placeholder="Email"
+                value={editUser.email}
+                onChange={(e) => setEditUser({ ...editUser, email: e.target.value })}
+              />
+              <Input
+                type="text"
+                placeholder="New password (min 8)"
+                value={editUser.password}
+                onChange={(e) => setEditUser({ ...editUser, password: e.target.value })}
+              />
+            </div>
+            <div className="mt-4 flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setEditUser(null)}>Cancel</Button>
+              <Button
+                onClick={async () => {
+                  try {
+                    const patch: { userId: string; email?: string; password?: string } = { userId: editUser.id };
+                    if (editUser.email.trim()) patch.email = editUser.email.trim().toLowerCase();
+                    if (editUser.password.trim()) patch.password = editUser.password;
+                    await updateUserFn({ data: patch });
+                    toast.success("User updated");
+                    void writeAuditLog({ action: "user_update", module: "user-management", description: editUser.id });
+                    setEditUser(null);
+                    await qc.invalidateQueries({ queryKey: ["admin", "all-users"] });
+                  } catch (e) {
+                    const msg = e instanceof Response ? await e.text() : (e as Error).message;
+                    toast.error(msg || "Failed to update user");
+                  }
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

@@ -4,7 +4,6 @@ import { Plus, Trash2, Loader2 } from "lucide-react";
 import type { EventWithDepartment } from "@/services/events";
 import type { Department } from "@/models/db";
 import type {
-  ProjectTrack,
   RegisterTeamInput,
   RegistrationMemberInput,
 } from "@/services/registration";
@@ -33,9 +32,7 @@ const memberSchema = z.object({
 const teamSchema = z.object({
   name: z.string().trim().min(2, "Team name is too short").max(120),
   academic_year: z.string().trim().min(1, "Academic year is required").max(40),
-  project_track: z.enum(["software", "hardware"], {
-    message: "Select Software or Hardware",
-  }),
+  project_track: z.string().trim().min(1, "Select a sub-track"),
 });
 
 const ideaSchema = z.object({
@@ -64,10 +61,16 @@ export function RegistrationForm({
   submitError,
   onSubmit,
 }: Props) {
+  const subTracks = useMemo<string[]>(() => {
+    const raw = (event as unknown as { sub_tracks?: string[] | null }).sub_tracks;
+    const list = Array.isArray(raw) && raw.length > 0 ? raw : ["software", "hardware"];
+    return list.map((s) => String(s).trim()).filter(Boolean);
+  }, [event]);
+
   const [team, setTeam] = useState<{
     name: string;
     academic_year: string;
-    project_track: ProjectTrack | "";
+    project_track: string;
   }>({
     name: "",
     academic_year: "",
@@ -220,17 +223,18 @@ export function RegistrationForm({
               onChange={(v) => setTeam({ ...team, academic_year: v })}
             />
           </Field>
-          <Field label="Track" required error={errors["team.project_track"]}>
+          <Field label="Sub-track" required error={errors["team.project_track"]}>
             <select
               value={team.project_track}
               onChange={(e) =>
-                setTeam({ ...team, project_track: e.target.value as ProjectTrack | "" })
+                setTeam({ ...team, project_track: e.target.value })
               }
               className={inputCls}
             >
-              <option value="">Select track</option>
-              <option value="software">Software</option>
-              <option value="hardware">Hardware</option>
+              <option value="">Select sub-track</option>
+              {subTracks.map((t) => (
+                <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+              ))}
             </select>
           </Field>
         </div>

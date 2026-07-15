@@ -131,8 +131,7 @@ async function destinationForUser(userId: string): Promise<string> {
   const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
   const roles = new Set((data ?? []).map((r) => r.role));
   if (roles.has("admin") || roles.has("iedc_admin")) return "/admin";
-  if (roles.has("jury")) return "/admin/evaluation";
+  if (roles.has("jury")) return "/jury";
   if (roles.has("ecell_member")) return "/ecell-attendance";
-  if (roles.has("participant")) return "/my-dashboard";
   return "/";
 }

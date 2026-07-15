@@ -530,6 +530,54 @@ export type Database = {
           },
         ]
       }
+      evaluation_score_changes: {
+        Row: {
+          changed_at: string
+          changed_by: string | null
+          criterion_id: string
+          evaluation_id: string
+          id: string
+          new_marks: number
+          old_marks: number | null
+          reason: string
+        }
+        Insert: {
+          changed_at?: string
+          changed_by?: string | null
+          criterion_id: string
+          evaluation_id: string
+          id?: string
+          new_marks: number
+          old_marks?: number | null
+          reason: string
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string | null
+          criterion_id?: string
+          evaluation_id?: string
+          id?: string
+          new_marks?: number
+          old_marks?: number | null
+          reason?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evaluation_score_changes_criterion_id_fkey"
+            columns: ["criterion_id"]
+            isOneToOne: false
+            referencedRelation: "evaluation_criteria"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evaluation_score_changes_evaluation_id_fkey"
+            columns: ["evaluation_id"]
+            isOneToOne: false
+            referencedRelation: "evaluations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evaluation_scores: {
         Row: {
           created_at: string
@@ -689,6 +737,7 @@ export type Database = {
           registration_start: string | null
           slug: string
           status: Database["public"]["Enums"]["event_status"]
+          sub_tracks: string[]
           updated_at: string
           venue: string | null
         }
@@ -710,6 +759,7 @@ export type Database = {
           registration_start?: string | null
           slug: string
           status?: Database["public"]["Enums"]["event_status"]
+          sub_tracks?: string[]
           updated_at?: string
           venue?: string | null
         }
@@ -731,6 +781,7 @@ export type Database = {
           registration_start?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["event_status"]
+          sub_tracks?: string[]
           updated_at?: string
           venue?: string | null
         }
@@ -871,7 +922,7 @@ export type Database = {
           id: string
           jury_id: string
           round: string
-          track: Database["public"]["Enums"]["project_track"] | null
+          track: string | null
         }
         Insert: {
           created_at?: string
@@ -880,7 +931,7 @@ export type Database = {
           id?: string
           jury_id: string
           round?: string
-          track?: Database["public"]["Enums"]["project_track"] | null
+          track?: string | null
         }
         Update: {
           created_at?: string
@@ -889,7 +940,7 @@ export type Database = {
           id?: string
           jury_id?: string
           round?: string
-          track?: Database["public"]["Enums"]["project_track"] | null
+          track?: string | null
         }
         Relationships: [
           {
@@ -1167,7 +1218,7 @@ export type Database = {
           id: string
           idea_title: string | null
           metadata: Json
-          project_track: Database["public"]["Enums"]["project_track"] | null
+          project_track: string | null
           qr_token: string | null
           registered_at: string
           registration_code: string | null
@@ -1183,7 +1234,7 @@ export type Database = {
           id?: string
           idea_title?: string | null
           metadata?: Json
-          project_track?: Database["public"]["Enums"]["project_track"] | null
+          project_track?: string | null
           qr_token?: string | null
           registered_at?: string
           registration_code?: string | null
@@ -1199,7 +1250,7 @@ export type Database = {
           id?: string
           idea_title?: string | null
           metadata?: Json
-          project_track?: Database["public"]["Enums"]["project_track"] | null
+          project_track?: string | null
           qr_token?: string | null
           registered_at?: string
           registration_code?: string | null
@@ -1783,12 +1834,17 @@ export type Database = {
         Returns: undefined
       }
       register_team: { Args: { payload: Json }; Returns: Json }
+      registration_scorecard: {
+        Args: { _registration_code: string }
+        Returns: Json
+      }
       registration_trends: { Args: { _days?: number }; Returns: Json }
       save_evaluation_score: {
         Args: {
           _criterion_id: string
           _evaluation_id: string
           _marks: number
+          _reason?: string
           _remarks?: string
         }
         Returns: Json

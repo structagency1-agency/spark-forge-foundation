@@ -237,12 +237,14 @@ export async function saveEvaluationScore(input: {
   criterion_id: string;
   marks: number;
   remarks?: string | null;
+  reason?: string | null;
 }) {
   const { error } = await supabase.rpc("save_evaluation_score", {
     _evaluation_id: input.evaluation_id,
     _criterion_id: input.criterion_id,
     _marks: input.marks,
     _remarks: input.remarks ?? null,
+    _reason: input.reason ?? null,
   } as never);
   if (error) throw error;
 }

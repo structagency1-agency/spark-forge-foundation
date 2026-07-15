@@ -88,13 +88,13 @@ export function AdminSidebar() {
     ? items
     : isIedcAdmin
       ? items.filter((i) => !iedcBlocked.has(i.url))
-      : items.filter((i) => i.url === "/admin/evaluation");
+      : [];
 
   const sidebarLabel = isAdmin
     ? "SPARK TANK 4.0 Admin"
     : isIedcAdmin
       ? "SPARK TANK 4.0 · IEDC"
-      : "SPARK TANK 4.0 Jury";
+      : "SPARK TANK 4.0";
   const isActive = (url: string, exact?: boolean) =>
     exact ? pathname === url : pathname === url || pathname.startsWith(url + "/");
 
