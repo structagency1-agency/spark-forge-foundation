@@ -131,9 +131,53 @@ function UserManagementPage() {
       />
 
       <Card className="p-4">
+        <h2 className="mb-3 font-display text-lg">Create a new admin/jury account</h2>
+        <p className="mb-3 text-sm text-muted-foreground">
+          Instantly provisions the account (email is auto-confirmed). The user can sign in immediately at <code>/auth</code>.
+        </p>
+        <div className="grid gap-2 sm:grid-cols-4">
+          <Input
+            type="email"
+            placeholder="user@example.com"
+            value={newUser.email}
+            onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+          />
+          <Input
+            type="text"
+            placeholder="Password (min 8)"
+            value={newUser.password}
+            onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+          />
+          <select
+            className="rounded-md border border-input bg-transparent px-3 py-2 text-sm"
+            value={newUser.role}
+            onChange={(e) => setNewUser({ ...newUser, role: e.target.value as RoleName })}
+          >
+            {GRANTABLE_ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+          </select>
+          <Button
+            onClick={async () => {
+              try {
+                await createUserFn({ data: { email: newUser.email.trim().toLowerCase(), password: newUser.password, role: newUser.role } });
+                toast.success("User created");
+                void writeAuditLog({ action: "user_create", module: "user-management", description: `${newUser.email} + ${newUser.role}` });
+                setNewUser({ email: "", password: "", role: "iedc_admin" });
+                await qc.invalidateQueries({ queryKey: ["admin", "all-users"] });
+              } catch (e) {
+                const msg = e instanceof Response ? await e.text() : (e as Error).message;
+                toast.error(msg || "Failed to create user");
+              }
+            }}
+          >
+            <UserPlus className="mr-1 h-4 w-4" /> Create user
+          </Button>
+        </div>
+      </Card>
+
+      <Card className="p-4">
         <h2 className="mb-3 font-display text-lg">Grant a role by email</h2>
         <p className="mb-3 text-sm text-muted-foreground">
-          The user must have signed up at <code>/auth</code> first. Then enter their email here to grant a role directly.
+          For users who signed up on their own — enter their email to grant an additional role.
         </p>
         <div className="flex flex-wrap gap-2">
           <Input
@@ -155,6 +199,7 @@ function UserManagementPage() {
           <Button onClick={grantByEmail}><UserPlus className="mr-1 h-4 w-4" /> Grant role</Button>
         </div>
       </Card>
+
 
       <Card className="p-4">
         <div className="mb-3 flex items-center justify-between gap-3">
