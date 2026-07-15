@@ -260,23 +260,33 @@ function UserManagementPage() {
                     </div>
                   </td>
                   <td className="p-2 text-right">
-                    <ConfirmButton
-                      label="Delete"
-                      variant="destructive"
-                      message={`Permanently delete ${u.email ?? u.id}? This removes their login and role assignments. This cannot be undone.`}
-                      onConfirm={async () => {
-                        try {
-                          await deleteUserFn({ data: { userId: u.id } });
-                          toast.success("User deleted");
-                          void writeAuditLog({ action: "user_delete", module: "user-management", description: u.email ?? u.id });
-                          await qc.invalidateQueries({ queryKey: ["admin", "all-users"] });
-                          await qc.invalidateQueries({ queryKey: ["admin", "ecell-assignments"] });
-                        } catch (e) {
-                          const msg = e instanceof Response ? await e.text() : (e as Error).message;
-                          toast.error(msg || "Failed to delete user");
-                        }
-                      }}
-                    />
+                    <div className="flex justify-end gap-1">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setEditUser({ id: u.id, email: u.email ?? "", password: "" })}
+                        title="Edit email / reset password"
+                      >
+                        <KeyRound className="h-3.5 w-3.5" />
+                      </Button>
+                      <ConfirmButton
+                        label="Delete"
+                        variant="destructive"
+                        message={`Permanently delete ${u.email ?? u.id}? This removes their login and role assignments. This cannot be undone.`}
+                        onConfirm={async () => {
+                          try {
+                            await deleteUserFn({ data: { userId: u.id } });
+                            toast.success("User deleted");
+                            void writeAuditLog({ action: "user_delete", module: "user-management", description: u.email ?? u.id });
+                            await qc.invalidateQueries({ queryKey: ["admin", "all-users"] });
+                            await qc.invalidateQueries({ queryKey: ["admin", "ecell-assignments"] });
+                          } catch (e) {
+                            const msg = e instanceof Response ? await e.text() : (e as Error).message;
+                            toast.error(msg || "Failed to delete user");
+                          }
+                        }}
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}
