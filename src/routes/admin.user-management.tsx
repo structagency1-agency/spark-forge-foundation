@@ -11,7 +11,14 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ConfirmButton } from "@/components/admin/ConfirmButton";
 import { writeAuditLog } from "@/services/admin";
-import { listAllUsers, grantRoleByEmail, deleteUser, createUser, updateUser } from "@/services/userManagement.functions";
+import {
+  listAllUsers,
+  grantRoleByEmail,
+  deleteUser,
+  createUser,
+  updateUser,
+  listParticipantRegistrations,
+} from "@/services/userManagement.functions";
 
 export const Route = createFileRoute("/admin/user-management")({
   head: () => ({ meta: [{ title: "User Management — SPARK TANK 4.0" }, { name: "robots", content: "noindex, nofollow" }] }),
@@ -28,6 +35,7 @@ function UserManagementPage() {
   const deleteUserFn = useServerFn(deleteUser);
   const createUserFn = useServerFn(createUser);
   const updateUserFn = useServerFn(updateUser);
+  const listParticipantRegistrationsFn = useServerFn(listParticipantRegistrations);
   const [emailToPromote, setEmailToPromote] = useState("");
   const [roleToGrant, setRoleToGrant] = useState<RoleName>("iedc_admin");
   const [assignUserId, setAssignUserId] = useState("");
@@ -61,6 +69,11 @@ function UserManagementPage() {
       if (error) throw error;
       return data ?? [];
     },
+  });
+
+  const { data: participantRegistrations, isLoading: participantsLoading } = useQuery({
+    queryKey: ["admin", "participant-registrations"],
+    queryFn: () => listParticipantRegistrationsFn(),
   });
 
   const filtered = useMemo(() => {
@@ -139,7 +152,7 @@ function UserManagementPage() {
     <div className="space-y-6">
       <AdminPageHeader
         title="User Management"
-        description="Grant roles (IEDC Admin, E-Cell Member, Participant, Jury) and assign E-Cell members to events."
+        description="Manage portal login accounts and review participant registrations. Team registration does not create a login account automatically."
       />
 
       <Card className="p-4">
@@ -183,6 +196,55 @@ function UserManagementPage() {
           >
             <UserPlus className="mr-1 h-4 w-4" /> Create user
           </Button>
+        </div>
+      </Card>
+
+      <Card className="p-4">
+        <div className="mb-3">
+          <h2 className="font-display text-lg">Participant registrations</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            These rows come from the public event registration form. They are registration records, not portal login accounts.
+          </p>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="text-left text-xs uppercase text-muted-foreground">
+              <tr>
+                <th className="p-2">Participant</th>
+                <th className="p-2">Reg. no.</th>
+                <th className="p-2">Team</th>
+                <th className="p-2">Event</th>
+                <th className="p-2">Code</th>
+                <th className="p-2">Registered</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {participantsLoading && (
+                <tr><td colSpan={6} className="p-3 text-muted-foreground">Loading participant registrations…</td></tr>
+              )}
+              {!participantsLoading && (participantRegistrations ?? []).length === 0 && (
+                <tr><td colSpan={6} className="p-3 text-muted-foreground">No participant registrations found.</td></tr>
+              )}
+              {(participantRegistrations ?? []).map((row) => (
+                <tr key={row.member_id}>
+                  <td className="p-2">
+                    <div className="font-medium">{row.full_name}</div>
+                    <div className="text-xs text-muted-foreground">{row.email}</div>
+                  </td>
+                  <td className="p-2 font-mono text-xs">{row.registration_number ?? "—"}</td>
+                  <td className="p-2">
+                    <div>{row.team_name}</div>
+                    <div className="text-xs text-muted-foreground">{row.role}</div>
+                  </td>
+                  <td className="p-2">{row.event_name}</td>
+                  <td className="p-2 font-mono text-xs">{row.registration_code}</td>
+                  <td className="p-2 text-xs">
+                    {new Date(row.registered_at).toLocaleString("en-GB", { timeZone: "Asia/Kolkata" })}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </Card>
 
