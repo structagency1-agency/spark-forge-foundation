@@ -392,13 +392,13 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <label className="block">
+    <div className="block">
       <span className="mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
         {label} {required && <span className="text-accent">*</span>}
       </span>
       {children}
       {error && <span className="mt-1 block text-xs text-destructive-foreground">{error}</span>}
-    </label>
+    </div>
   );
 }
 
@@ -470,20 +470,49 @@ function MemberFields({
 const ACADEMIC_YEARS = ["1st Year", "2nd Year", "3rd Year", "4th Year"] as const;
 
 function YearSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className={inputCls}
-      style={{ colorScheme: "dark" }}
-    >
-      <option value="">Select year</option>
-      {ACADEMIC_YEARS.map((o) => (
-        <option key={o} value={o}>
-          {o}
-        </option>
-      ))}
-    </select>
+    <div className="relative">
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen((next) => !next)}
+        className={`${inputCls} flex min-h-10 items-center justify-between text-left`}
+      >
+        <span className={value ? "text-foreground" : "text-muted-foreground"}>
+          {value || "Select year"}
+        </span>
+        <span aria-hidden="true" className="text-xs text-accent">
+          {open ? "▲" : "▼"}
+        </span>
+      </button>
+      {open && (
+        <div
+          role="listbox"
+          className="mt-2 overflow-hidden rounded-lg border border-border bg-popover shadow-[var(--shadow-elevated)]"
+        >
+          {ACADEMIC_YEARS.map((o) => (
+            <button
+              key={o}
+              type="button"
+              role="option"
+              aria-selected={value === o}
+              onClick={() => {
+                onChange(o);
+                setOpen(false);
+              }}
+              className={`block w-full px-3 py-3 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground ${
+                value === o ? "bg-accent/20 text-accent" : "bg-popover text-popover-foreground"
+              }`}
+            >
+              {o}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
