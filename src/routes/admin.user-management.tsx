@@ -87,7 +87,19 @@ function UserManagementPage() {
     }
   }
 
-  async function grantRoleById(userId: string, role: RoleName) {
+  async function grantRoleById(userId: string, role: RoleName, email?: string | null) {
+    if (role === "jury" && email) {
+      try {
+        await grantByEmailFn({ data: { email: email.toLowerCase(), role } });
+        toast.success("Granted jury");
+        void writeAuditLog({ action: "role_grant", module: "user-management", description: `${email} + ${role}` });
+        await qc.invalidateQueries({ queryKey: ["admin", "all-users"] });
+      } catch (e) {
+        const msg = e instanceof Response ? await e.text() : (e as Error).message;
+        toast.error(msg || "Failed");
+      }
+      return;
+    }
     const { error } = await supabase.from("user_roles").insert({ user_id: userId, role });
     if (error) return toast.error(error.message);
     toast.success(`Granted ${role}`);
@@ -254,7 +266,7 @@ function UserManagementPage() {
                           label={`+ ${r}`}
                           variant="outline"
                           message={`Grant the ${r} role to ${u.email ?? u.id}?`}
-                          onConfirm={() => grantRoleById(u.id, r)}
+                          onConfirm={() => grantRoleById(u.id, r, u.email)}
                         />
                       ))}
                     </div>

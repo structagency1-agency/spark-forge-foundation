@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { ensureJuryMemberForUser } from "@/services/jury-admin.server";
 
 export interface JuryPortalMember {
   id: string;
@@ -60,38 +61,10 @@ export const getJuryPortalData = createServerFn({ method: "POST" })
       tokenEmail = authUser.user?.email?.toLowerCase() ?? "";
     }
 
-    let juryMember: JuryPortalMember | null = null;
-    const { data: byUser, error: byUserError } = await supabaseAdmin
-      .from("jury_members")
-      .select("id, full_name, email, status, user_id")
-      .eq("user_id", context.userId)
-      .eq("status", "active")
-      .maybeSingle();
-    if (byUserError) throw byUserError;
-    juryMember = (byUser as JuryPortalMember | null) ?? null;
-
-    if (!juryMember && tokenEmail) {
-      const { data: byEmail, error: byEmailError } = await supabaseAdmin
-        .from("jury_members")
-        .select("id, full_name, email, status, user_id")
-        .ilike("email", tokenEmail)
-        .eq("status", "active")
-        .maybeSingle();
-      if (byEmailError) throw byEmailError;
-
-      if (byEmail && (!(byEmail as JuryPortalMember).user_id || (byEmail as JuryPortalMember).user_id === context.userId)) {
-        juryMember = byEmail as JuryPortalMember;
-        if (!juryMember.user_id) {
-          const { error: linkError } = await supabaseAdmin
-            .from("jury_members")
-            .update({ user_id: context.userId })
-            .eq("id", juryMember.id)
-            .is("user_id", null);
-          if (linkError) throw linkError;
-          juryMember = { ...juryMember, user_id: context.userId };
-        }
-      }
-    }
+    const juryMember = await ensureJuryMemberForUser(supabaseAdmin, {
+      userId: context.userId,
+      email: tokenEmail,
+    });
 
     if (!juryMember) {
       return { juryMember: null, events: [] as JuryPortalEvent[], teams: [] as JuryPortalTeam[] };
