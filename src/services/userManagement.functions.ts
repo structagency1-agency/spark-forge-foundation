@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { ensureJuryMemberForUser } from "@/services/jury-admin.server";
 
 async function assertAdmin(ctx: { supabase: any; userId: string }) {
   const { data, error } = await ctx.supabase
@@ -76,6 +77,9 @@ export const grantRoleByEmail = createServerFn({ method: "POST" })
       .from("user_roles")
       .insert({ user_id: userId, role: data.role });
     if (error && !error.message.includes("duplicate")) throw error;
+    if (data.role === "jury") {
+      await ensureJuryMemberForUser(supabaseAdmin, { userId, email: data.email });
+    }
     return { userId };
   });
 
@@ -125,12 +129,11 @@ export const createUser = createServerFn({ method: "POST" })
       throw new Response(rErr.message, { status: 500 });
     }
 
-    // If jury, link to existing jury_members by email
     if (data.role === "jury") {
-      await supabaseAdmin
-        .from("jury_members")
-        .update({ user_id: created.user.id })
-        .ilike("email", data.email);
+      await ensureJuryMemberForUser(supabaseAdmin, {
+        userId: created.user.id,
+        email: data.email,
+      });
     }
 
     return { userId: created.user.id };
