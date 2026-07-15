@@ -62,10 +62,16 @@ export function RegistrationForm({
   submitError,
   onSubmit,
 }: Props) {
+  const subTracks = useMemo<string[]>(() => {
+    const raw = (event as unknown as { sub_tracks?: string[] | null }).sub_tracks;
+    const list = Array.isArray(raw) && raw.length > 0 ? raw : ["software", "hardware"];
+    return list.map((s) => String(s).trim()).filter(Boolean);
+  }, [event]);
+
   const [team, setTeam] = useState<{
     name: string;
     academic_year: string;
-    project_track: ProjectTrack | "";
+    project_track: string;
   }>({
     name: "",
     academic_year: "",
