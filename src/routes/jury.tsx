@@ -1,6 +1,6 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Loader2, LogOut, Search as SearchIcon } from "lucide-react";
@@ -76,6 +76,10 @@ function JuryPortal() {
       assigned_tracks: e.assigned_tracks,
     }));
   }, [events]);
+
+  useEffect(() => {
+    if (!eventId && eventOptions.length === 1) setEventId(eventOptions[0].id);
+  }, [eventId, eventOptions]);
 
   const trackOptions = useMemo(() => {
     if (!eventId) return [] as string[];
