@@ -90,20 +90,41 @@ function JuryPortal() {
   }, [eventId, eventOptions]);
 
   const { data: assignments, isLoading: loadingAssignments } = useQuery({
-    queryKey: ["jury", "assignments", juryMember?.id, eventId, track],
+    queryKey: ["jury", "teams-in-event", juryMember?.id, eventId, track],
     enabled: !!juryMember?.id && !!eventId,
     queryFn: async () => {
-      let q = supabase
-        .from("jury_team_assignments")
+      // Source of truth = registrations for events the juror is assigned to.
+      // Explicit per-team assignments are created lazily when they open Evaluate.
+      const { data, error } = await supabase
+        .from("registrations")
         .select(
-          "id, team_id, event_id, status, registrations(registration_code, project_track), teams(id, name, department_id, departments(name))",
+          "id, registration_code, project_track, team_id, event_id, teams(id, name, department_id, departments(name))",
         )
+        .eq("event_id", eventId)
+        .neq("status", "cancelled");
+      if (error) throw error;
+      let rows = (data ?? []) as any[];
+      if (track) rows = rows.filter((r) => (r.project_track ?? "") === track);
+
+      // Overlay evaluation status for this juror to drive the UI badge.
+      const { data: evs } = await supabase
+        .from("evaluations")
+        .select("team_id, status")
         .eq("jury_id", juryMember!.id)
         .eq("event_id", eventId);
-      const { data, error } = await q;
-      if (error) throw error;
-      const rows = (data ?? []) as any[];
-      return track ? rows.filter((r) => (r.registrations?.project_track ?? "") === track) : rows;
+      const statusByTeam = new Map<string, string>();
+      for (const e of evs ?? []) statusByTeam.set((e as any).team_id, (e as any).status);
+
+      return rows.map((r) => ({
+        id: r.id,
+        team_id: r.team_id,
+        event_id: r.event_id,
+        registration_code: r.registration_code,
+        project_track: r.project_track,
+        team_name: r.teams?.name ?? "—",
+        department_name: r.teams?.departments?.name ?? "—",
+        status: statusByTeam.get(r.team_id) ?? "pending",
+      }));
     },
   });
 
@@ -111,7 +132,7 @@ function JuryPortal() {
     const q = search.trim().toLowerCase();
     if (!q) return assignments ?? [];
     return (assignments ?? []).filter((r: any) =>
-      `${r.teams?.name ?? ""} ${r.registrations?.registration_code ?? ""}`.toLowerCase().includes(q),
+      `${r.team_name} ${r.registration_code ?? ""}`.toLowerCase().includes(q),
     );
   }, [assignments, search]);
 
@@ -222,10 +243,10 @@ function JuryPortal() {
                 <tbody className="divide-y divide-border">
                   {filtered.map((r: any) => (
                     <tr key={r.id}>
-                      <td className="p-2 font-mono text-xs">{r.registrations?.registration_code ?? "—"}</td>
-                      <td className="p-2 font-medium">{r.teams?.name ?? "—"}</td>
-                      <td className="p-2">{r.teams?.departments?.name ?? "—"}</td>
-                      <td className="p-2 uppercase text-xs">{r.registrations?.project_track ?? "—"}</td>
+                      <td className="p-2 font-mono text-xs">{r.registration_code ?? "—"}</td>
+                      <td className="p-2 font-medium">{r.team_name}</td>
+                      <td className="p-2">{r.department_name}</td>
+                      <td className="p-2 uppercase text-xs">{r.project_track ?? "—"}</td>
                       <td className="p-2 text-xs uppercase">{r.status}</td>
                       <td className="p-2 text-right">
                         <Button
@@ -234,9 +255,9 @@ function JuryPortal() {
                             setActive({
                               assignment_id: r.id,
                               team_id: r.team_id,
-                              team_name: r.teams?.name ?? "Team",
-                              registration_code: r.registrations?.registration_code ?? null,
-                              track: r.registrations?.project_track ?? null,
+                              team_name: r.team_name,
+                              registration_code: r.registration_code ?? null,
+                              track: r.project_track ?? null,
                             })
                           }
                         >
