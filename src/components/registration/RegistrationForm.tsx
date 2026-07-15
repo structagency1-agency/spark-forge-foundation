@@ -474,20 +474,19 @@ function YearSelect({ value, onChange }: { value: string; onChange: (v: string) 
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className={`${inputCls} appearance-none bg-background text-foreground`}
+      className={inputCls}
       style={{ colorScheme: "dark" }}
     >
-      <option value="" style={{ background: "#0b0b12", color: "#fff" }}>
-        Select year
-      </option>
+      <option value="">Select year</option>
       {ACADEMIC_YEARS.map((o) => (
-        <option key={o} value={o} style={{ background: "#0b0b12", color: "#fff" }}>
+        <option key={o} value={o}>
           {o}
         </option>
       ))}
     </select>
   );
 }
+
 
 const inputCls =
   "w-full rounded-lg border border-border/60 bg-background/60 px-3 py-2 text-sm text-foreground outline-none focus:border-accent";
