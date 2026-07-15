@@ -53,7 +53,12 @@ export const getJuryPortalData = createServerFn({ method: "POST" })
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const tokenEmail = typeof context.claims.email === "string" ? context.claims.email.toLowerCase() : "";
+    let tokenEmail = typeof context.claims.email === "string" ? context.claims.email.toLowerCase() : "";
+    if (!tokenEmail) {
+      const { data: authUser, error: authUserError } = await supabaseAdmin.auth.admin.getUserById(context.userId);
+      if (authUserError) throw authUserError;
+      tokenEmail = authUser.user?.email?.toLowerCase() ?? "";
+    }
 
     let juryMember: JuryPortalMember | null = null;
     const { data: byUser, error: byUserError } = await supabaseAdmin
