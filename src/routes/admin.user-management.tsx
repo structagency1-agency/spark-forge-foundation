@@ -345,6 +345,51 @@ function UserManagementPage() {
           </table>
         </div>
       </Card>
+
+      {editUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <Card className="w-full max-w-md p-6">
+            <h3 className="mb-2 font-display text-lg">Edit user</h3>
+            <p className="mb-4 text-xs text-muted-foreground">Leave a field blank to keep it unchanged.</p>
+            <div className="space-y-3">
+              <Input
+                type="email"
+                placeholder="Email"
+                value={editUser.email}
+                onChange={(e) => setEditUser({ ...editUser, email: e.target.value })}
+              />
+              <Input
+                type="text"
+                placeholder="New password (min 8)"
+                value={editUser.password}
+                onChange={(e) => setEditUser({ ...editUser, password: e.target.value })}
+              />
+            </div>
+            <div className="mt-4 flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setEditUser(null)}>Cancel</Button>
+              <Button
+                onClick={async () => {
+                  try {
+                    const patch: { userId: string; email?: string; password?: string } = { userId: editUser.id };
+                    if (editUser.email.trim()) patch.email = editUser.email.trim().toLowerCase();
+                    if (editUser.password.trim()) patch.password = editUser.password;
+                    await updateUserFn({ data: patch });
+                    toast.success("User updated");
+                    void writeAuditLog({ action: "user_update", module: "user-management", description: editUser.id });
+                    setEditUser(null);
+                    await qc.invalidateQueries({ queryKey: ["admin", "all-users"] });
+                  } catch (e) {
+                    const msg = e instanceof Response ? await e.text() : (e as Error).message;
+                    toast.error(msg || "Failed to update user");
+                  }
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
