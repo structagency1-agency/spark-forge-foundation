@@ -1772,6 +1772,10 @@ export type Database = {
       attendance_analytics: { Args: never; Returns: Json }
       attendance_stats: { Args: { _event_id?: string }; Returns: Json }
       auto_assign_teams: { Args: { _event_id: string }; Returns: Json }
+      can_manage_event_attendance: {
+        Args: { _event_id: string }
+        Returns: boolean
+      }
       certificate_analytics: { Args: never; Returns: Json }
       current_jury_member_id: { Args: never; Returns: string }
       current_user_roles: {
@@ -1818,7 +1822,16 @@ export type Database = {
         }
         Returns: Json
       }
+      mark_attendance_member_manual: {
+        Args: {
+          _event_id: string
+          _method?: Database["public"]["Enums"]["attendance_method"]
+          _team_member_id: string
+        }
+        Returns: Json
+      }
       next_certificate_code: { Args: never; Returns: string }
+      normalize_attendance_qr_token: { Args: { _raw: string }; Returns: string }
       public_results: { Args: { _query?: string }; Returns: Json }
       public_winners: { Args: { _event_id?: string }; Returns: Json }
       publish_event_evaluations: {

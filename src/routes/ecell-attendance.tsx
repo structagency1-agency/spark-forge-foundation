@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { QRScanner } from "@/components/admin/QRScanner";
 import {
   markAttendanceByQr,
+  markAttendanceMemberManual,
   markAttendanceManual,
   eventRegistrationsQueryOptions,
   attendanceStatsQueryOptions,
@@ -105,7 +106,12 @@ function EcellAttendancePage() {
           (r.registration_code ?? "").toLowerCase().includes(q) ||
           (r.teams?.name ?? "").toLowerCase().includes(q) ||
           (leader?.participants?.full_name ?? "").toLowerCase().includes(q) ||
-          (leader?.participants?.email ?? "").toLowerCase().includes(q)
+          (leader?.participants?.email ?? "").toLowerCase().includes(q) ||
+          (r.teams?.team_members ?? []).some((m) =>
+            `${m.participants?.full_name ?? ""} ${m.participants?.email ?? ""} ${m.registration_number ?? ""}`
+              .toLowerCase()
+              .includes(q),
+          )
         );
       })
       .slice(0, 12);
@@ -142,6 +148,24 @@ function EcellAttendancePage() {
       setLast({ ...res, at: Date.now() });
       if (res.ok) {
         toast.success(`Marked: ${res.team_name}`);
+        setManualQ("");
+        await refresh();
+      } else toast.error(res.message ?? "Rejected");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onManualMember(teamMemberId: string) {
+    if (!eventId) return toast.error("Select an event first");
+    setBusy(true);
+    try {
+      const res = await markAttendanceMemberManual(teamMemberId, eventId);
+      setLast({ ...res, at: Date.now() });
+      if (res.ok) {
+        toast.success(`Marked: ${res.participant_name ?? res.team_name}`);
         setManualQ("");
         await refresh();
       } else toast.error(res.message ?? "Rejected");
@@ -210,12 +234,12 @@ function EcellAttendancePage() {
         {eventId && (
           <div className="grid gap-4 lg:grid-cols-2">
             <Card className="p-4">
-              <h2 className="mb-3 font-display text-lg">QR Scanner</h2>
-              <QRScanner onDecode={onScan} paused={busy} />
+              <h2 className="mb-3 font-display text-lg">Member QR Scanner</h2>
+              <QRScanner onDecode={onScan} />
               {last && (
                 <div className={`mt-3 rounded-md border p-3 text-sm ${last.ok ? "border-emerald-500/40 bg-emerald-500/10" : "border-red-500/40 bg-red-500/10"}`}>
                   {last.ok ? <CheckCircle2 className="mr-1 inline h-4 w-4" /> : <XCircle className="mr-1 inline h-4 w-4" />}
-                  <strong>{last.team_name ?? "—"}</strong> · {last.registration_code ?? last.message}
+                  <strong>{last.participant_name ?? last.team_name ?? "—"}</strong> · {last.registration_code ?? last.message}
                 </div>
               )}
             </Card>
@@ -236,15 +260,29 @@ function EcellAttendancePage() {
               <ul className="mt-3 max-h-80 divide-y divide-border overflow-y-auto rounded-md border border-border/60">
                 {matches.map((r) => {
                   const leader = r.teams?.team_members?.find((m) => m.role === "leader") ?? r.teams?.team_members?.[0];
+                  const members = r.teams?.team_members ?? [];
                   return (
-                    <li key={r.id} className="flex items-center justify-between gap-2 p-3 text-sm">
+                    <li key={r.id} className="p-3 text-sm">
                       <div>
                         <div className="font-medium">{r.teams?.name}</div>
                         <div className="text-xs text-muted-foreground">
                           {r.registration_code} · {leader?.participants?.full_name} · {leader?.participants?.email}
                         </div>
                       </div>
-                      <Button size="sm" disabled={busy} onClick={() => onManual(r.id)}>Mark</Button>
+                      <div className="mt-3 space-y-2">
+                        {members.map((m) => (
+                          <div key={m.id} className="flex items-center justify-between gap-2 rounded-md border border-border/60 p-2">
+                            <div className="min-w-0">
+                              <div className="truncate font-medium">{m.participants?.full_name ?? "Member"}</div>
+                              <div className="truncate text-xs text-muted-foreground">{m.registration_number ?? "—"} · {m.participants?.email ?? "—"}</div>
+                            </div>
+                            <Button size="sm" disabled={busy || r.status === "cancelled"} onClick={() => onManualMember(m.id)}>Mark</Button>
+                          </div>
+                        ))}
+                        {members.length === 0 ? (
+                          <Button size="sm" disabled={busy || r.status === "cancelled"} onClick={() => onManual(r.id)}>Mark leader</Button>
+                        ) : null}
+                      </div>
                     </li>
                   );
                 })}

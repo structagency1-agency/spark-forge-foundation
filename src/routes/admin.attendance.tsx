@@ -36,6 +36,7 @@ import {
   attendanceStatsQueryOptions,
   eventRegistrationsQueryOptions,
   markAttendanceByQr,
+  markAttendanceMemberManual,
   markAttendanceManual,
   type AttendanceRow,
   type EventRegistrationRow,
@@ -58,6 +59,14 @@ type ScanResult = Awaited<ReturnType<typeof markAttendanceByQr>>;
 
 function leaderOf<T extends { role: string | null; participants: { full_name: string; email: string } | null }>(members: T[]) {
   return members.find((m) => m.role === "leader") ?? members[0];
+}
+
+function attendedParticipantIds(logs: AttendanceRow[]) {
+  return new Set(
+    logs
+      .filter((l) => l.status === "attended" && l.participant_id)
+      .map((l) => l.participant_id as string),
+  );
 }
 
 function AttendanceAdmin() {
@@ -85,11 +94,13 @@ function AttendanceAdmin() {
   );
 
   const eventRegSummary = useMemo(() => {
-    const attendedIds = new Set(
-      logs.filter((l) => l.status === "attended").map((l) => l.registration_id ?? ""),
+    const attendedIds = attendedParticipantIds(logs);
+    const active = eventRegs.filter((r) => r.status !== "cancelled");
+    const total = active.reduce((sum, r) => sum + (r.teams?.team_members?.length ?? 0), 0);
+    const attended = active.reduce(
+      (sum, r) => sum + (r.teams?.team_members ?? []).filter((m) => attendedIds.has(m.participant_id)).length,
+      0,
     );
-    const total = eventRegs.filter((r) => r.status !== "cancelled").length;
-    const attended = eventRegs.filter((r) => attendedIds.has(r.id)).length;
     return { total, attended, pending: Math.max(0, total - attended) };
   }, [eventRegs, logs]);
 
@@ -119,12 +130,15 @@ function AttendanceAdmin() {
     if (!q) return [] as EventRegistrationRow[];
     return eventRegs
       .filter((r) => {
-        const l = leaderOf(r.teams?.team_members ?? []);
+        const members = r.teams?.team_members ?? [];
         return (
           (r.registration_code ?? "").toLowerCase().includes(q) ||
           (r.teams?.name ?? "").toLowerCase().includes(q) ||
-          (l?.participants?.full_name ?? "").toLowerCase().includes(q) ||
-          (l?.participants?.email ?? "").toLowerCase().includes(q)
+          members.some((m) =>
+            `${m.participants?.full_name ?? ""} ${m.participants?.email ?? ""} ${m.registration_number ?? ""}`
+              .toLowerCase()
+              .includes(q),
+          )
         );
       })
       .slice(0, 15);
@@ -169,6 +183,31 @@ function AttendanceAdmin() {
           action: "attendance_manual",
           module: "attendance",
           description: `${res.registration_code} → attended`,
+        });
+        setManualQuery("");
+        await refreshAll();
+      } else {
+        toast.error(res.message ?? "Failed");
+      }
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleManualMember(teamMemberId: string) {
+    if (busy || !eventId) return;
+    setBusy(true);
+    try {
+      const res = await markAttendanceMemberManual(teamMemberId, eventId);
+      setScanResult({ ...res, at: Date.now() });
+      if (res.ok) {
+        toast.success(`Attendance marked: ${res.participant_name ?? res.team_name}`);
+        void writeAuditLog({
+          action: "attendance_manual_member",
+          module: "attendance",
+          description: `${res.registration_code} → ${res.participant_name ?? "member"}`,
         });
         setManualQuery("");
         await refreshAll();
@@ -345,13 +384,13 @@ function AttendanceAdmin() {
         <TabsContent value="scan" className="mt-4">
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="rounded-lg border border-border bg-card p-4">
-              <h2 className="mb-3 font-display text-lg">Scan Team QR</h2>
+              <h2 className="mb-3 font-display text-lg">Scan Member QR</h2>
               {!eventId ? (
                 <p className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-500">
                   Select an event above to enable scanning.
                 </p>
               ) : (
-                <QRScanner onDecode={handleScan} paused={busy} />
+                <QRScanner onDecode={handleScan} />
               )}
             </div>
             <div className="rounded-lg border border-border bg-card p-4">
@@ -366,9 +405,9 @@ function AttendanceAdmin() {
                   </div>
                   <div className="rounded-md border border-border p-3 text-sm">
                     <div><strong>Team:</strong> {scanResult.team_name}</div>
+                    <div><strong>Participant:</strong> {scanResult.participant_name ?? "—"}</div>
                     <div><strong>Registration:</strong> <span className="font-mono">{scanResult.registration_code}</span></div>
-                    <div><strong>Leader:</strong> {scanResult.leader_name}</div>
-                    <div><strong>Members:</strong> {scanResult.member_count}</div>
+                    <div><strong>Checked in:</strong> {scanResult.attended_count ?? 0} / {scanResult.member_count ?? 0}</div>
                     <div><strong>Event:</strong> {scanResult.event_name}</div>
                     <div><strong>Time:</strong> {scanResult.checked_in_at ? new Date(scanResult.checked_in_at).toLocaleString() : ""}</div>
                   </div>
@@ -404,23 +443,37 @@ function AttendanceAdmin() {
             <ul className="divide-y divide-border/60">
               {manualMatches.map((r) => {
                 const l = leaderOf(r.teams?.team_members ?? []);
-                const attendedIds = new Set(logs.filter((x) => x.status === "attended").map((x) => x.registration_id));
-                const already = attendedIds.has(r.id);
+                const attendedIds = attendedParticipantIds(logs);
+                const members = r.teams?.team_members ?? [];
                 return (
-                  <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
+                  <li key={r.id} className="py-3 text-sm">
                     <div className="min-w-0">
                       <div className="font-medium">{r.teams?.name} · <span className="font-mono text-xs">{r.registration_code}</span></div>
                       <div className="text-xs text-muted-foreground">
                         {l?.participants?.full_name} · {l?.participants?.email} · {r.teams?.departments?.name ?? "—"} · {r.status}
                       </div>
                     </div>
-                    <Button
-                      size="sm"
-                      onClick={() => handleManual(r.id)}
-                      disabled={busy || already || r.status === "cancelled"}
-                    >
-                      {already ? "Already attended" : r.status === "cancelled" ? "Cancelled" : "Mark Attended"}
-                    </Button>
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                      {members.map((m) => {
+                        const already = attendedIds.has(m.participant_id);
+                        return (
+                          <div key={m.id} className="flex items-center justify-between gap-2 rounded-md border border-border/60 p-2">
+                            <div className="min-w-0">
+                              <div className="truncate font-medium">{m.participants?.full_name ?? "Member"}</div>
+                              <div className="truncate text-xs text-muted-foreground">{m.registration_number ?? "—"} · {m.participants?.email ?? "—"}</div>
+                            </div>
+                            <Button size="sm" onClick={() => handleManualMember(m.id)} disabled={busy || already || r.status === "cancelled"}>
+                              {already ? "Done" : r.status === "cancelled" ? "Cancelled" : "Mark"}
+                            </Button>
+                          </div>
+                        );
+                      })}
+                      {members.length === 0 ? (
+                        <Button size="sm" onClick={() => handleManual(r.id)} disabled={busy || r.status === "cancelled"}>
+                          Mark leader
+                        </Button>
+                      ) : null}
+                    </div>
                   </li>
                 );
               })}
@@ -456,6 +509,9 @@ function AttendanceAdmin() {
               { key: "when", header: "When", render: (r) => new Date(r.checked_in_at).toLocaleString() },
               { key: "code", header: "Registration", render: (r) => <span className="font-mono text-xs">{r.registrations?.registration_code ?? "—"}</span> },
               { key: "team", header: "Team", render: (r) => r.teams?.name ?? "—" },
+              { key: "participant", header: "Participant", render: (r) => (
+                <div><div className="font-medium">{r.participants?.full_name ?? "—"}</div><div className="text-xs text-muted-foreground">{r.participants?.email ?? ""}</div></div>
+              ) },
               { key: "leader", header: "Leader", render: (r) => {
                 const l = leaderOf(r.teams?.team_members ?? []);
                 return l?.participants ? (
@@ -503,7 +559,7 @@ function AttendanceAdmin() {
                   <div><strong>Method:</strong> {detail.method}</div>
                   <div><strong>Status:</strong> {detail.status}</div>
                   <div><strong>Department:</strong> {detail.teams?.departments?.name ?? "—"}</div>
-                  <div><strong>QR Token:</strong> <span className="font-mono text-xs">{detail.registrations?.qr_token}</span></div>
+                  <div><strong>Participant:</strong> {detail.participants?.full_name ?? "—"}</div>
                 </div>
                 <div>
                   <h3 className="mb-2 font-display text-sm uppercase tracking-wide text-muted-foreground">Members</h3>
@@ -534,12 +590,13 @@ function EventSummary({
   regs: EventRegistrationRow[];
   logs: AttendanceRow[];
 }) {
-  const attendedIds = new Set(
-    logs.filter((l) => l.status === "attended").map((l) => l.registration_id),
-  );
+  const attendedIds = attendedParticipantIds(logs);
   const active = regs.filter((r) => r.status !== "cancelled");
-  const total = active.length;
-  const attended = active.filter((r) => attendedIds.has(r.id)).length;
+  const total = active.reduce((sum, r) => sum + (r.teams?.team_members?.length ?? 0), 0);
+  const attended = active.reduce(
+    (sum, r) => sum + (r.teams?.team_members ?? []).filter((m) => attendedIds.has(m.participant_id)).length,
+    0,
+  );
   const pending = Math.max(0, total - attended);
   const pct = total === 0 ? 0 : Math.round((attended / total) * 1000) / 10;
 
@@ -547,8 +604,9 @@ function EventSummary({
   for (const r of active) {
     const name = r.teams?.departments?.name ?? "Unassigned";
     const cur = byDept.get(name) ?? { total: 0, attended: 0 };
-    cur.total += 1;
-    if (attendedIds.has(r.id)) cur.attended += 1;
+    const members = r.teams?.team_members ?? [];
+    cur.total += members.length;
+    cur.attended += members.filter((m) => attendedIds.has(m.participant_id)).length;
     byDept.set(name, cur);
   }
 

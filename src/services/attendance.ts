@@ -30,6 +30,7 @@ export type AttendanceRow = {
   id: string;
   registration_id: string | null;
   team_id: string | null;
+  participant_id: string | null;
   event_id: string;
   method: "qr" | "manual" | "import";
   status: string;
@@ -41,12 +42,15 @@ export type AttendanceRow = {
     qr_token: string | null;
     status: string;
   } | null;
+  participants: { id: string; full_name: string; email: string } | null;
   teams: {
     id: string;
     name: string;
     department_id: string | null;
     departments: { name: string } | null;
     team_members: Array<{
+      id: string;
+      participant_id: string;
       role: string | null;
       participants: { full_name: string; email: string } | null;
     }>;
@@ -61,7 +65,7 @@ export const attendanceLogsQueryOptions = (eventId: string | null) =>
       let q = supabase
         .from("attendance")
         .select(
-          "id, registration_id, team_id, event_id, method, status, checked_in_at, remarks, registrations(id, registration_code, qr_token, status), teams(id, name, department_id, departments(name), team_members(role, participants(full_name, email))), events(id, name, slug)",
+          "id, registration_id, team_id, participant_id, event_id, method, status, checked_in_at, remarks, registrations(id, registration_code, qr_token, status), participants(id, full_name, email), teams(id, name, department_id, departments(name), team_members(id, participant_id, role, participants(full_name, email))), events(id, name, slug)",
         )
         .order("checked_in_at", { ascending: false })
         .limit(500);
@@ -86,7 +90,13 @@ export type EventRegistrationRow = {
     name: string;
     departments: { id: string; name: string } | null;
     team_members: Array<{
+      id: string;
+      participant_id: string;
+      qr_token: string | null;
       role: string | null;
+      branch: string | null;
+      academic_year: string | null;
+      registration_number: string | null;
       participants: { full_name: string; email: string; phone: string | null } | null;
     }>;
   } | null;
@@ -100,7 +110,7 @@ export const eventRegistrationsQueryOptions = (eventId: string | null) =>
       const { data, error } = await supabase
         .from("registrations")
         .select(
-          "id, registration_code, status, qr_token, registered_at, event_id, teams(id, name, departments(id, name), team_members(role, participants(full_name, email, phone)))",
+          "id, registration_code, status, qr_token, registered_at, event_id, teams(id, name, departments(id, name), team_members(id, participant_id, qr_token, role, branch, academic_year, registration_number, participants(full_name, email, phone)))",
         )
         .eq("event_id", eventId)
         .order("registered_at", { ascending: false });
@@ -136,6 +146,16 @@ function extractQrToken(scannedValue: string) {
     // Existing/manual QR values may already be the raw token.
   }
 
+  try {
+    const url = new URL(value);
+    const token = url.searchParams.get("t") ?? url.searchParams.get("qr_token") ?? url.searchParams.get("token");
+    if (token?.trim()) return token.trim();
+  } catch {
+    // Not a URL payload.
+  }
+
+  if (value.toUpperCase().startsWith("ST4:")) return value.slice(4).trim();
+
   return value;
 }
 
@@ -155,10 +175,24 @@ export async function markAttendanceByQr(qrToken: string, eventId: string) {
     registration_code?: string;
     team_name?: string;
     leader_name?: string;
+    participant_id?: string;
+    participant_name?: string;
     member_count?: number;
+    attended_count?: number;
+    all_members_attended?: boolean;
     checked_in_at?: string;
     event_name?: string;
   };
+}
+
+export async function markAttendanceMemberManual(teamMemberId: string, eventId: string) {
+  const { data, error } = await supabase.rpc("mark_attendance_member_manual", {
+    _team_member_id: teamMemberId,
+    _event_id: eventId,
+    _method: "manual",
+  });
+  if (error) throw error;
+  return data as unknown as Awaited<ReturnType<typeof markAttendanceByQr>>;
 }
 
 export async function markAttendanceManual(registrationId: string) {
