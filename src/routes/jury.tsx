@@ -1,4 +1,5 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -9,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Toaster } from "@/components/ui/sonner";
 import { saveEvaluationScore, submitEvaluation, upsertEvaluation } from "@/services/evaluation";
+import { getJuryPortalData, type JuryPortalTeam } from "@/services/jury.functions";
 
 /**
  * Standalone Jury Portal. Signed-in jurors land here directly (never enter /admin).
@@ -41,6 +43,7 @@ export const Route = createFileRoute("/jury")({
 
 function JuryPortal() {
   const navigate = useNavigate();
+  const getPortalData = useServerFn(getJuryPortalData);
   const [eventId, setEventId] = useState<string>("");
   const [track, setTrack] = useState<string>("");
   const [search, setSearch] = useState("");
@@ -52,86 +55,41 @@ function JuryPortal() {
     track: string | null;
   } | null>(null);
 
-  const { data: juryMember } = useQuery({
-    queryKey: ["jury", "me"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("jury_members").select("*").maybeSingle();
-      if (error) throw error;
-      return data;
-    },
+  const {
+    data: portalData,
+    isLoading: portalLoading,
+    isError: portalFailed,
+    error: portalError,
+  } = useQuery({
+    queryKey: ["jury", "portal", eventId || null, track || null],
+    queryFn: () => getPortalData({ data: { eventId: eventId || null, track: track || null } }),
   });
 
-  const { data: events } = useQuery({
-    queryKey: ["jury", "events", juryMember?.id],
-    enabled: !!juryMember?.id,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("jury_event_assignments")
-        .select("event_id, track, events(id, name, sub_tracks, event_date, status)")
-        .eq("jury_id", juryMember!.id);
-      if (error) throw error;
-      return data ?? [];
-    },
-  });
+  const juryMember = portalData?.juryMember ?? null;
+  const events = portalData?.events ?? [];
 
   const eventOptions = useMemo(() => {
-    const map = new Map<string, { id: string; name: string; sub_tracks: string[] }>();
-    for (const row of events ?? []) {
-      const ev = (row as unknown as { events: { id: string; name: string; sub_tracks: string[] | null } | null }).events;
-      if (ev && !map.has(ev.id)) map.set(ev.id, { id: ev.id, name: ev.name, sub_tracks: ev.sub_tracks ?? [] });
-    }
-    return Array.from(map.values());
+    return events.map((e) => ({
+      id: e.id,
+      name: e.name,
+      sub_tracks: e.sub_tracks,
+      assigned_tracks: e.assigned_tracks,
+    }));
   }, [events]);
 
   const trackOptions = useMemo(() => {
     if (!eventId) return [] as string[];
     const ev = eventOptions.find((e) => e.id === eventId);
-    return ev?.sub_tracks?.length ? ev.sub_tracks : ["software", "hardware"];
+    return ev?.assigned_tracks?.length ? ev.assigned_tracks : ev?.sub_tracks?.length ? ev.sub_tracks : ["software", "hardware"];
   }, [eventId, eventOptions]);
 
-  const { data: assignments, isLoading: loadingAssignments } = useQuery({
-    queryKey: ["jury", "teams-in-event", juryMember?.id, eventId, track],
-    enabled: !!juryMember?.id && !!eventId,
-    queryFn: async () => {
-      // Source of truth = registrations for events the juror is assigned to.
-      // Explicit per-team assignments are created lazily when they open Evaluate.
-      const { data, error } = await supabase
-        .from("registrations")
-        .select(
-          "id, registration_code, project_track, team_id, event_id, teams(id, name, department_id, departments(name))",
-        )
-        .eq("event_id", eventId)
-        .neq("status", "cancelled");
-      if (error) throw error;
-      let rows = (data ?? []) as any[];
-      if (track) rows = rows.filter((r) => (r.project_track ?? "") === track);
-
-      // Overlay evaluation status for this juror to drive the UI badge.
-      const { data: evs } = await supabase
-        .from("evaluations")
-        .select("team_id, status")
-        .eq("jury_id", juryMember!.id)
-        .eq("event_id", eventId);
-      const statusByTeam = new Map<string, string>();
-      for (const e of evs ?? []) statusByTeam.set((e as any).team_id, (e as any).status);
-
-      return rows.map((r) => ({
-        id: r.id,
-        team_id: r.team_id,
-        event_id: r.event_id,
-        registration_code: r.registration_code,
-        project_track: r.project_track,
-        team_name: r.teams?.name ?? "—",
-        department_name: r.teams?.departments?.name ?? "—",
-        status: statusByTeam.get(r.team_id) ?? "pending",
-      }));
-    },
-  });
+  const assignments = portalData?.teams ?? [];
+  const loadingAssignments = portalLoading && !!eventId;
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return assignments ?? [];
-    return (assignments ?? []).filter((r: any) =>
+    return (assignments ?? []).filter((r: JuryPortalTeam) =>
       `${r.team_name} ${r.registration_code ?? ""}`.toLowerCase().includes(q),
     );
   }, [assignments, search]);
@@ -158,7 +116,13 @@ function JuryPortal() {
       </header>
 
       <main className="mx-auto max-w-7xl space-y-6 p-6">
-        {!juryMember && (
+        {portalFailed && (
+          <Card className="border-destructive/40 p-4 text-sm text-destructive">
+            {(portalError as Error)?.message || "Unable to load jury portal data."}
+          </Card>
+        )}
+
+        {!portalLoading && !portalFailed && !juryMember && (
           <Card className="p-4 text-sm text-muted-foreground">
             No jury profile is linked to your account yet. Ask the Super Admin to add you as a
             jury member with this exact email.
@@ -178,7 +142,7 @@ function JuryPortal() {
                 }}
               >
                 <option value="">— pick event —</option>
-                {eventOptions.map((e) => (
+                  {eventOptions.map((e) => (
                   <option key={e.id} value={e.id}>{e.name}</option>
                 ))}
               </select>
@@ -241,7 +205,7 @@ function JuryPortal() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {filtered.map((r: any) => (
+                  {filtered.map((r: JuryPortalTeam) => (
                     <tr key={r.id}>
                       <td className="p-2 font-mono text-xs">{r.registration_code ?? "—"}</td>
                       <td className="p-2 font-medium">{r.team_name}</td>
