@@ -922,7 +922,7 @@ export type Database = {
           id: string
           jury_id: string
           round: string
-          track: Database["public"]["Enums"]["project_track"] | null
+          track: string | null
         }
         Insert: {
           created_at?: string
@@ -931,7 +931,7 @@ export type Database = {
           id?: string
           jury_id: string
           round?: string
-          track?: Database["public"]["Enums"]["project_track"] | null
+          track?: string | null
         }
         Update: {
           created_at?: string
@@ -940,7 +940,7 @@ export type Database = {
           id?: string
           jury_id?: string
           round?: string
-          track?: Database["public"]["Enums"]["project_track"] | null
+          track?: string | null
         }
         Relationships: [
           {
@@ -1218,7 +1218,7 @@ export type Database = {
           id: string
           idea_title: string | null
           metadata: Json
-          project_track: Database["public"]["Enums"]["project_track"] | null
+          project_track: string | null
           qr_token: string | null
           registered_at: string
           registration_code: string | null
@@ -1234,7 +1234,7 @@ export type Database = {
           id?: string
           idea_title?: string | null
           metadata?: Json
-          project_track?: Database["public"]["Enums"]["project_track"] | null
+          project_track?: string | null
           qr_token?: string | null
           registered_at?: string
           registration_code?: string | null
@@ -1250,7 +1250,7 @@ export type Database = {
           id?: string
           idea_title?: string | null
           metadata?: Json
-          project_track?: Database["public"]["Enums"]["project_track"] | null
+          project_track?: string | null
           qr_token?: string | null
           registered_at?: string
           registration_code?: string | null
