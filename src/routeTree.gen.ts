@@ -19,6 +19,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProblemStatementsRouteImport } from './routes/problem-statements'
 import { Route as MyRegistrationRouteImport } from './routes/my-registration'
 import { Route as MyDashboardRouteImport } from './routes/my-dashboard'
+import { Route as JuryRouteImport } from './routes/jury'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as EcellAttendanceRouteImport } from './routes/ecell-attendance'
@@ -108,6 +109,11 @@ const MyRegistrationRoute = MyRegistrationRouteImport.update({
 const MyDashboardRoute = MyDashboardRouteImport.update({
   id: '/my-dashboard',
   path: '/my-dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JuryRoute = JuryRouteImport.update({
+  id: '/jury',
+  path: '/jury',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalleryRoute = GalleryRouteImport.update({
@@ -321,6 +327,7 @@ export interface FileRoutesByFullPath {
   '/ecell-attendance': typeof EcellAttendanceRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
+  '/jury': typeof JuryRoute
   '/my-dashboard': typeof MyDashboardRoute
   '/my-registration': typeof MyRegistrationRoute
   '/problem-statements': typeof ProblemStatementsRoute
@@ -372,6 +379,7 @@ export interface FileRoutesByTo {
   '/ecell-attendance': typeof EcellAttendanceRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
+  '/jury': typeof JuryRoute
   '/my-dashboard': typeof MyDashboardRoute
   '/my-registration': typeof MyRegistrationRoute
   '/problem-statements': typeof ProblemStatementsRoute
@@ -424,6 +432,7 @@ export interface FileRoutesById {
   '/ecell-attendance': typeof EcellAttendanceRoute
   '/events': typeof EventsRouteWithChildren
   '/gallery': typeof GalleryRoute
+  '/jury': typeof JuryRoute
   '/my-dashboard': typeof MyDashboardRoute
   '/my-registration': typeof MyRegistrationRoute
   '/problem-statements': typeof ProblemStatementsRoute
@@ -478,6 +487,7 @@ export interface FileRouteTypes {
     | '/ecell-attendance'
     | '/events'
     | '/gallery'
+    | '/jury'
     | '/my-dashboard'
     | '/my-registration'
     | '/problem-statements'
@@ -529,6 +539,7 @@ export interface FileRouteTypes {
     | '/ecell-attendance'
     | '/events'
     | '/gallery'
+    | '/jury'
     | '/my-dashboard'
     | '/my-registration'
     | '/problem-statements'
@@ -580,6 +591,7 @@ export interface FileRouteTypes {
     | '/ecell-attendance'
     | '/events'
     | '/gallery'
+    | '/jury'
     | '/my-dashboard'
     | '/my-registration'
     | '/problem-statements'
@@ -633,6 +645,7 @@ export interface RootRouteChildren {
   EcellAttendanceRoute: typeof EcellAttendanceRoute
   EventsRoute: typeof EventsRouteWithChildren
   GalleryRoute: typeof GalleryRoute
+  JuryRoute: typeof JuryRoute
   MyDashboardRoute: typeof MyDashboardRoute
   MyRegistrationRoute: typeof MyRegistrationRoute
   ProblemStatementsRoute: typeof ProblemStatementsRoute
@@ -717,6 +730,13 @@ declare module '@tanstack/react-router' {
       path: '/my-dashboard'
       fullPath: '/my-dashboard'
       preLoaderRoute: typeof MyDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jury': {
+      id: '/jury'
+      path: '/jury'
+      fullPath: '/jury'
+      preLoaderRoute: typeof JuryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gallery': {
@@ -1106,6 +1126,7 @@ const rootRouteChildren: RootRouteChildren = {
   EcellAttendanceRoute: EcellAttendanceRoute,
   EventsRoute: EventsRouteWithChildren,
   GalleryRoute: GalleryRoute,
+  JuryRoute: JuryRoute,
   MyDashboardRoute: MyDashboardRoute,
   MyRegistrationRoute: MyRegistrationRoute,
   ProblemStatementsRoute: ProblemStatementsRoute,

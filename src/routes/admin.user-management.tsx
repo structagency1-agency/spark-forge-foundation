@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Trash2, Plus, UserPlus } from "lucide-react";
+import { Trash2, Plus, UserPlus, KeyRound } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ConfirmButton } from "@/components/admin/ConfirmButton";
 import { writeAuditLog } from "@/services/admin";
-import { listAllUsers, grantRoleByEmail, deleteUser } from "@/services/userManagement.functions";
+import { listAllUsers, grantRoleByEmail, deleteUser, createUser, updateUser } from "@/services/userManagement.functions";
 
 export const Route = createFileRoute("/admin/user-management")({
   head: () => ({ meta: [{ title: "User Management — SPARK TANK 4.0" }, { name: "robots", content: "noindex, nofollow" }] }),
@@ -19,7 +19,6 @@ export const Route = createFileRoute("/admin/user-management")({
 });
 
 type RoleName = "admin" | "iedc_admin" | "ecell_member" | "participant" | "jury";
-// Participant is auto-granted on signup when the email matches a team registration — not grantable here.
 const GRANTABLE_ROLES: RoleName[] = ["admin", "iedc_admin", "ecell_member", "jury"];
 
 function UserManagementPage() {
@@ -27,11 +26,16 @@ function UserManagementPage() {
   const listUsersFn = useServerFn(listAllUsers);
   const grantByEmailFn = useServerFn(grantRoleByEmail);
   const deleteUserFn = useServerFn(deleteUser);
+  const createUserFn = useServerFn(createUser);
+  const updateUserFn = useServerFn(updateUser);
   const [emailToPromote, setEmailToPromote] = useState("");
   const [roleToGrant, setRoleToGrant] = useState<RoleName>("iedc_admin");
   const [assignUserId, setAssignUserId] = useState("");
   const [assignEventId, setAssignEventId] = useState("");
   const [search, setSearch] = useState("");
+  const [newUser, setNewUser] = useState({ email: "", password: "", role: "iedc_admin" as RoleName });
+  const [editUser, setEditUser] = useState<{ id: string; email: string; password: string } | null>(null);
+
 
   const { data: users, isLoading: usersLoading } = useQuery({
     queryKey: ["admin", "all-users"],
