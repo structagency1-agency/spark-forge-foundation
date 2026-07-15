@@ -10,7 +10,7 @@ export interface RegistrationMemberInput {
   academic_year: string;
 }
 
-export type ProjectTrack = "software" | "hardware";
+export type ProjectTrack = string;
 
 export interface RegisterTeamInput {
   event_id: string;
@@ -19,7 +19,7 @@ export interface RegisterTeamInput {
   team: {
     name: string;
     academic_year: string;
-    project_track: ProjectTrack | "";
+    project_track: ProjectTrack;
     department_id?: string | null;
   };
   leader: RegistrationMemberInput;
