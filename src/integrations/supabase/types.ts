@@ -1839,26 +1839,16 @@ export type Database = {
         Returns: Json
       }
       registration_trends: { Args: { _days?: number }; Returns: Json }
-      save_evaluation_score:
-        | {
-            Args: {
-              _criterion_id: string
-              _evaluation_id: string
-              _marks: number
-              _remarks?: string
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              _criterion_id: string
-              _evaluation_id: string
-              _marks: number
-              _reason?: string
-              _remarks?: string
-            }
-            Returns: Json
-          }
+      save_evaluation_score: {
+        Args: {
+          _criterion_id: string
+          _evaluation_id: string
+          _marks: number
+          _reason?: string
+          _remarks?: string
+        }
+        Returns: Json
+      }
       set_evaluation_lock: {
         Args: { _evaluation_id: string; _locked: boolean; _reason?: string }
         Returns: Json
