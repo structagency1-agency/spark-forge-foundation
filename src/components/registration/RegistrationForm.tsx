@@ -33,9 +33,7 @@ const memberSchema = z.object({
 const teamSchema = z.object({
   name: z.string().trim().min(2, "Team name is too short").max(120),
   academic_year: z.string().trim().min(1, "Academic year is required").max(40),
-  project_track: z.enum(["software", "hardware"], {
-    message: "Select Software or Hardware",
-  }),
+  project_track: z.string().trim().min(1, "Select a sub-track"),
 });
 
 const ideaSchema = z.object({
