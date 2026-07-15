@@ -2,16 +2,26 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { ensureJuryMemberForUser } from "@/services/jury-admin.server";
+import { assertAdmin } from "@/services/admin-auth.server";
 
-async function assertAdmin(ctx: { supabase: any; userId: string }) {
-  const { data, error } = await ctx.supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", ctx.userId)
-    .eq("role", "admin")
-    .maybeSingle();
-  if (error || !data) throw new Response("Forbidden", { status: 403 });
-}
+export type ParticipantRegistrationRow = {
+  registration_id: string;
+  registration_code: string;
+  registered_at: string;
+  status: string;
+  event_name: string;
+  event_slug: string | null;
+  team_id: string;
+  team_name: string;
+  member_id: string;
+  role: string;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  registration_number: string | null;
+  academic_year: string | null;
+  branch: string | null;
+};
 
 export const listAllUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -48,6 +58,116 @@ export const listAllUsers = createServerFn({ method: "GET" })
     });
 
     return users.map((u) => ({ ...u, roles: roleMap.get(u.id) ?? [] }));
+  });
+
+export const listParticipantRegistrations = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: registrations, error: registrationsError } = await supabaseAdmin
+      .from("registrations")
+      .select("id, registration_code, registered_at, status, event_id, team_id")
+      .order("registered_at", { ascending: false })
+      .limit(100);
+    if (registrationsError) throw registrationsError;
+
+    const regs = (registrations ?? []) as Array<{
+      id: string;
+      registration_code: string;
+      registered_at: string;
+      status: string;
+      event_id: string;
+      team_id: string;
+    }>;
+    if (regs.length === 0) return [] as ParticipantRegistrationRow[];
+
+    const teamIds = Array.from(new Set(regs.map((r) => r.team_id)));
+    const eventIds = Array.from(new Set(regs.map((r) => r.event_id)));
+
+    const [teamsResult, eventsResult, membersResult] = await Promise.all([
+      supabaseAdmin.from("teams").select("id, name").in("id", teamIds),
+      supabaseAdmin.from("events").select("id, name, slug").in("id", eventIds),
+      supabaseAdmin
+        .from("team_members")
+        .select("id, team_id, participant_id, role, registration_number, academic_year, branch")
+        .in("team_id", teamIds),
+    ]);
+
+    if (teamsResult.error) throw teamsResult.error;
+    if (eventsResult.error) throw eventsResult.error;
+    if (membersResult.error) throw membersResult.error;
+
+    const members = (membersResult.data ?? []) as Array<{
+      id: string;
+      team_id: string;
+      participant_id: string;
+      role: string;
+      registration_number: string | null;
+      academic_year: string | null;
+      branch: string | null;
+    }>;
+    const participantIds = Array.from(new Set(members.map((m) => m.participant_id)));
+    const participantsResult = participantIds.length
+      ? await supabaseAdmin
+          .from("participants")
+          .select("id, full_name, email, phone")
+          .in("id", participantIds)
+      : { data: [], error: null };
+    if (participantsResult.error) throw participantsResult.error;
+
+    const teamMap = new Map(
+      ((teamsResult.data ?? []) as Array<{ id: string; name: string }>).map((t) => [t.id, t]),
+    );
+    const eventMap = new Map(
+      ((eventsResult.data ?? []) as Array<{ id: string; name: string; slug: string | null }>).map((e) => [e.id, e]),
+    );
+    const participantMap = new Map(
+      ((participantsResult.data ?? []) as Array<{
+        id: string;
+        full_name: string;
+        email: string;
+        phone: string | null;
+      }>).map((p) => [p.id, p]),
+    );
+    const membersByTeam = new Map<string, typeof members>();
+    members.forEach((member) => {
+      const list = membersByTeam.get(member.team_id) ?? [];
+      list.push(member);
+      membersByTeam.set(member.team_id, list);
+    });
+
+    return regs.flatMap((reg) => {
+      const team = teamMap.get(reg.team_id);
+      const event = eventMap.get(reg.event_id);
+      const list = (membersByTeam.get(reg.team_id) ?? []).sort((a, b) => {
+        if (a.role === b.role) return 0;
+        return a.role === "leader" ? -1 : 1;
+      });
+
+      return list.map((member) => {
+        const participant = participantMap.get(member.participant_id);
+        return {
+          registration_id: reg.id,
+          registration_code: reg.registration_code,
+          registered_at: reg.registered_at,
+          status: reg.status,
+          event_name: event?.name ?? "—",
+          event_slug: event?.slug ?? null,
+          team_id: reg.team_id,
+          team_name: team?.name ?? "—",
+          member_id: member.id,
+          role: member.role,
+          full_name: participant?.full_name ?? "—",
+          email: participant?.email ?? "—",
+          phone: participant?.phone ?? null,
+          registration_number: member.registration_number,
+          academic_year: member.academic_year,
+          branch: member.branch,
+        } satisfies ParticipantRegistrationRow;
+      });
+    });
   });
 
 const roleSchema = z.enum(["admin", "iedc_admin", "ecell_member", "jury"]);
