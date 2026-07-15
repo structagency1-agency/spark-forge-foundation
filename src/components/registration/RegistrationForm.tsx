@@ -491,7 +491,7 @@ function YearSelect({ value, onChange }: { value: string; onChange: (v: string) 
       {open && (
         <div
           role="listbox"
-          className="absolute left-0 right-0 top-[calc(100%+0.35rem)] z-50 overflow-hidden rounded-lg border border-border bg-popover shadow-[var(--shadow-soft)]"
+          className="mt-2 overflow-hidden rounded-lg border border-border bg-popover shadow-[var(--shadow-elevated)]"
         >
           {ACADEMIC_YEARS.map((o) => (
             <button
