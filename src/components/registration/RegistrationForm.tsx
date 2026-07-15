@@ -224,17 +224,18 @@ export function RegistrationForm({
               onChange={(v) => setTeam({ ...team, academic_year: v })}
             />
           </Field>
-          <Field label="Track" required error={errors["team.project_track"]}>
+          <Field label="Sub-track" required error={errors["team.project_track"]}>
             <select
               value={team.project_track}
               onChange={(e) =>
-                setTeam({ ...team, project_track: e.target.value as ProjectTrack | "" })
+                setTeam({ ...team, project_track: e.target.value })
               }
               className={inputCls}
             >
-              <option value="">Select track</option>
-              <option value="software">Software</option>
-              <option value="hardware">Hardware</option>
+              <option value="">Select sub-track</option>
+              {subTracks.map((t) => (
+                <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+              ))}
             </select>
           </Field>
         </div>
