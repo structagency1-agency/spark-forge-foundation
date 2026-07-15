@@ -1,109 +1,88 @@
+## Goal
+Rebuild the auth + role workflow end-to-end so every persona lands in the right place with the right permissions, and the jury/scoring/publish/lookup loop works cleanly.
 
-# SPARK TANK 4.0 — Stage 1 Foundation
+## 1. Roles & login redirect
 
-Reference site ecellvitb.in is a dark, black-background portfolio with white typography and warm gold/amber accents (the owl-on-books mark with white + amber arcs). I'll adopt that same design language: black canvas, generous negative space, a bold display font paired with a clean sans body, subtle motion, gold accent for CTAs/highlights.
+Roles (unchanged names): `admin` (Super Admin), `iedc_admin`, `ecell_member`, `jury`. Drop `participant` — no participant login at all.
 
-This stage builds ONLY the foundation. No auth, no admin, no evaluations, no QR — just architecture the later stages plug into.
+After sign-in at `/auth`, redirect by role:
+- `admin` → `/admin`
+- `iedc_admin` → `/admin`
+- `jury` → `/jury` (new dedicated portal, not the admin console)
+- `ecell_member` → `/ecell-attendance`
+- No role → sign out with "This account has no access" message.
 
-## 1. Backend (Lovable Cloud)
+Score viewing stays fully public via `/my-registration` (code or leader email lookup) — no participant account needed.
 
-Enable Lovable Cloud and create a single normalized migration with all 20 tables. Every table gets `id uuid PK`, `created_at`, `updated_at`, proper FKs, indexes on FK columns and slugs, RLS enabled, and public `SELECT` grants only where the site needs to read (events, homepage_content, sponsors, timeline, gallery, results, winner_list, problem_statements, settings, departments). Write tables (registrations, attendance, evaluations, jury_assignments, certificates, email_logs, reports, audit_logs) get RLS enabled with no public policies yet — Stage 2 adds auth-scoped policies.
+## 2. User Management (Super Admin only)
 
-Tables and key fields:
+`/admin/user-management` gets:
+- **Create user** form: email + password + role → server fn calls `supabaseAdmin.auth.admin.createUser({ email_confirm: true })` then inserts role. Instant sign-in.
+- **Edit user**: change email / reset password / change role.
+- **Delete user** (already exists).
+- IEDC Admin cannot see this page.
 
-- `departments` — name, code, slug (seeded with the 9 departments incl. ALL)
-- `events` — name, slug, description, department_id FK, banner_url, venue, event_date, registration_start, registration_close, min_team_size, max_team_size, max_participants, status enum
-- `teams` — name, event_id FK, leader_participant_id FK
-- `participants` — name, email, phone, department_id FK, year
-- `registrations` — team_id FK, event_id FK, status, registered_at
-- `attendance` — participant_id FK, event_id FK, checked_in_at, method
-- `evaluations` — team_id FK, event_id FK, jury_id, round, scores jsonb, total
-- `jury_assignments` — jury_name, jury_email, event_id FK, round
-- `certificate_templates` — name, template_url, fields jsonb
-- `certificates` — participant_id FK, event_id FK, template_id FK, type, url, issued_at
-- `problem_statements` — event_id FK, title, description, document_url, uploaded_at
-- `gallery` — event_id FK, media_type, url, title, caption, uploaded_at
-- `sponsors` — name, logo_url, website, priority, status
-- `homepage_content` — section key (hero/about/highlights/cta/…), content jsonb, is_active, order
-- `timeline` — title, description, date, icon, sequence, status
-- `results` — event_id FK, published_at, summary
-- `winner_list` — event_id FK, team_id FK, position enum (winner/runner_up/second_runner_up/special_mention)
-- `email_logs` — recipient, subject, template_key, status, payload jsonb, sent_at
-- `reports` — type enum (registrations/attendance/evaluations/certificates/results), generated_at, data jsonb
-- `settings` — key, value jsonb (site name, logo, favicon, footer, contact, socials, SEO defaults, email templates)
-- `audit_logs` — action, module, description, actor, metadata jsonb, timestamp
+## 3. Event / sub-track
 
-Enums: `event_status`, `winner_position`, `report_type`, `email_status`, `media_type`.
+Events already have `project_track` on registrations (software/hardware). Add an optional `sub_tracks text[]` column on `events` so Super Admin can define the tracks per event; if empty, fall back to `[software, hardware]`. Registration form's track selector reads from the event.
 
-Seed data: the 9 departments, default `settings` rows (site_name="SPARK TANK 4.0", empty logo/favicon, default SEO), and one `homepage_content` row per section with sensible copy so the homepage renders on first load. No fake events / sponsors / winners.
+## 4. Jury portal (`/jury`)
 
-## 2. Frontend architecture
+Standalone route, jury-only. Layout:
+1. Select **event** (only events they are jury-assigned to via `jury_event_assignments`).
+2. Select **sub-track** (from event's tracks).
+3. Table of **all teams** in that event+track (no per-team assignment step). Search box filters by team name / registration code.
+4. Click team → scoring dialog with criteria the Super Admin defined.
+5. First submit is free. After submission, marks are locked; editing requires a **reason** (stored in `evaluation_score_changes` audit table with old/new value, reason, jury_id, timestamp).
 
-```
-src/
-  routes/                 # TanStack Start file-based routes
-    __root.tsx            # shell + SiteHeader + SiteFooter + <Outlet/>
-    index.tsx             # Home (dynamic sections)
-    about.tsx
-    events.tsx            # list
-    events.$slug.tsx      # detail placeholder
-    gallery.tsx
-    problem-statements.tsx
-    results.tsx
-    sponsors.tsx
-    contact.tsx
-    register.tsx          # placeholder ("opens in Stage 2")
-    sitemap[.]xml.ts
-  components/
-    layout/               # SiteHeader, SiteFooter, PageShell, SectionHeading
-    home/                 # Hero, About, Highlights, Stats, Countdown, TimelinePreview, SponsorsStrip, GalleryPreview, CTA
-    ui/                   # shadcn primitives
-    common/               # SEO helpers, EmptyState, Loader
-  services/               # one file per domain: events.ts, homepage.ts, sponsors.ts, timeline.ts, settings.ts, gallery.ts, results.ts, problemStatements.ts
-                          # each exports queryOptions + typed fetchers using the browser Supabase client
-  lib/                    # utils, date, status (computeEventStatus), seo (buildMeta)
-  models/                 # TS types mirroring DB rows + enums
-  config/                 # site.ts (nav items, route metadata), seo defaults
-  assets/                 # logo, og image
-  styles.css              # design tokens
-```
+Drop the `jury_team_assignments` gating for visibility — keep the table for compatibility but ignore it for read scope. RLS: jury can read teams for events they're assigned to.
 
-Data flow (canonical): loaders call `context.queryClient.ensureQueryData(queryOptions)`, components read via `useSuspenseQuery`. Settings is fetched once in `__root` loader so header/footer/SEO defaults are available everywhere.
+## 5. IEDC Admin
 
-## 3. Design system (src/styles.css)
+Reuses `/admin/*` sidebar with two items hidden: **User Management** and **Evaluation** (Jury Portal). Everything else visible.
 
-- Palette: `--background` near-black, `--foreground` near-white, `--accent` warm amber/gold (matches reference arc), `--muted` deep grey. Semantic tokens only — no hardcoded colors in components.
-- Fonts: display = Space Grotesk (bold, tight), body = Inter. Loaded via `<link>` in `__root` head.
-- Motion: subtle fade-up + accent underline sweeps via `tw-animate-css` + a couple of custom `@utility` classes.
-- Reusable variants: `Button` gets `hero` and `outline-accent` variants; `Card` gets a `glass` variant.
+## 6. Attendance → Certificates (already correct)
 
-## 4. Homepage
+Per-member QR → E-Cell scans → attendance row → `generate_certificates` only issues for attended members. Keep as-is, verify end-to-end.
 
-Renders sections from `homepage_content` in `order`, each keyed to a component (Hero, About, Highlights, Stats, Countdown, TimelinePreview, SponsorsStrip, GalleryPreview, CTA). If a section is inactive or its data source is empty, the section is skipped — no placeholder cards, no fake logos.
+## 7. Publish scores → `/my-registration`
 
-Countdown reads the nearest upcoming event's `event_date`.
+Super Admin "Publish results" for an event already exists. Extend `/my-registration` (public lookup) to show, per member, their evaluation totals and rank **only when the event's results are published**.
 
-## 5. Navigation & placeholder pages
+## Technical changes
 
-`SiteHeader` renders nav from `config/site.ts`. Every route file exists with its own `head()` (unique title, description, og:title/description, canonical, og:url) and a real `PageShell` component that queries the relevant table and shows a proper empty state when the table is empty. No lorem-ipsum bodies.
+**Migration:**
+- `events.sub_tracks text[] default '{software,hardware}'`
+- `evaluation_score_changes` table (evaluation_id, criterion_id, old_marks, new_marks, reason, changed_by, changed_at) + GRANTs + RLS.
+- Trigger on `evaluation_scores` UPDATE: if parent evaluation `submitted_at IS NOT NULL`, require a session var `app.change_reason` set via `save_evaluation_score(_reason)` — RPC signature gains `_reason text`.
+- Drop `participant` from `app_role` usage (keep enum value for back-compat, stop granting).
+- RLS on `teams`/`registrations`: allow SELECT to jurors assigned to the event.
 
-## 6. SEO
+**Server fns (`src/services/userManagement.functions.ts`):**
+- `createUser({ email, password, role })`
+- `updateUser({ userId, email?, password?, role? })`
+- Existing `deleteUser`, `listAllUsers`.
 
-- Per-route `head()` metadata driven by `settings` + route-specific overrides via `lib/seo.ts`.
-- `public/robots.txt` (Allow: /).
-- Dynamic `sitemap.xml` server route enumerating static routes + published event slugs.
-- JSON-LD Organization on `__root`, Event schema on `events.$slug`.
-- Semantic HTML, single H1 per page, alt text on all images.
+**Frontend:**
+- `/auth`: post-login redirect logic keyed on role (already partly there — reroute jury to `/jury`, no participant flow).
+- New `/jury.tsx` + `/jury.$eventId.tsx` (event picker + team list + scoring dialog).
+- `/admin/user-management.tsx`: add Create + Edit dialogs.
+- `AdminSidebar.tsx`: hide User Management + Evaluation for iedc_admin; hide everything except attendance for ecell_member (already done); jury no longer uses admin sidebar.
+- `RegistrationForm.tsx`: track dropdown reads `event.sub_tracks`.
+- `admin.events.tsx`: sub-tracks input (comma-separated tags).
+- `/my-registration.tsx`: show per-member scores when published.
+- Drop `/my-dashboard` and participant role assignment in `grant_roles_on_signup`.
 
-## 7. Explicitly NOT in this stage
+## Out of scope
+- No third-party OAuth (Google/Apple) — email+password only, as requested.
+- No password-reset email flow (Super Admin resets via User Management).
 
-Authentication, admin dashboard, registration form logic, QR/attendance, jury/evaluation, certificates, analytics, email sending, reports generation, leaderboards. Their tables exist; UI comes later.
+## Sequence
+1. Migration (sub_tracks, score-change audit, RLS, drop participant auto-grant).
+2. User management server fns + UI.
+3. Auth redirect logic + new `/jury` portal.
+4. Registration form track wiring + event admin sub-tracks.
+5. Publish → my-registration scores.
+6. End-to-end test each persona with Playwright.
 
-## Technical notes
-
-- Stack stays TanStack Start + Tailwind v4 + shadcn as scaffolded.
-- All Supabase reads use the browser client (`@/integrations/supabase/client`) inside `queryOptions`; RLS-permitted tables only.
-- `computeEventStatus(event, now)` in `lib/status.ts` derives status from dates on read, so status is always correct without a cron; the DB column is kept for manual overrides.
-- No secrets or external services needed this stage.
-
-Approve and I'll enable Lovable Cloud, ship the migration, and build the foundation in one pass.
+Approve and I'll build it in that order.
