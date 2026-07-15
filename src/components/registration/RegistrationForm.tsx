@@ -4,7 +4,6 @@ import { Plus, Trash2, Loader2 } from "lucide-react";
 import type { EventWithDepartment } from "@/services/events";
 import type { Department } from "@/models/db";
 import type {
-  ProjectTrack,
   RegisterTeamInput,
   RegistrationMemberInput,
 } from "@/services/registration";
