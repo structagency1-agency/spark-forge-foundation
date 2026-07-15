@@ -20,11 +20,17 @@ export function QRScanner({
 }) {
   const containerId = "qr-scanner-region";
   const scannerRef = useRef<Html5Qrcode | null>(null);
+  const onDecodeRef = useRef(onDecode);
   const lastRef = useRef<{ text: string; at: number }>({ text: "", at: 0 });
   const [cameras, setCameras] = useState<CameraDevice[]>([]);
   const [cameraId, setCameraId] = useState<string>("");
   const [running, setRunning] = useState(false);
+  const [starting, setStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    onDecodeRef.current = onDecode;
+  }, [onDecode]);
 
   useEffect(() => {
     return () => {
@@ -53,7 +59,9 @@ export function QRScanner({
   }
 
   async function start() {
+    if (running || starting) return;
     setError(null);
+    setStarting(true);
     try {
       let devs = cameras;
       if (devs.length === 0) devs = await ensureCameras();
@@ -71,13 +79,15 @@ export function QRScanner({
           const now = Date.now();
           if (decoded === lastRef.current.text && now - lastRef.current.at < 2000) return;
           lastRef.current = { text: decoded, at: now };
-          onDecode(decoded);
+          onDecodeRef.current(decoded);
         },
         () => {},
       );
       setRunning(true);
     } catch (e) {
       setError((e as Error).message ?? "Failed to start camera");
+    } finally {
+      setStarting(false);
     }
   }
 
@@ -113,15 +123,15 @@ export function QRScanner({
             <CameraOff className="mr-1 h-4 w-4" /> Stop
           </Button>
         ) : (
-          <Button size="sm" onClick={start}>
-            <Camera className="mr-1 h-4 w-4" /> Start Camera
+          <Button size="sm" onClick={start} disabled={starting}>
+            <Camera className="mr-1 h-4 w-4" /> {starting ? "Opening…" : "Start Camera"}
           </Button>
         )}
       </div>
       <div
         id={containerId}
         className="mx-auto max-w-md overflow-hidden rounded-lg border border-border bg-black/40"
-        style={{ minHeight: running ? 260 : 0 }}
+        style={{ minHeight: running || starting ? 280 : 160 }}
       />
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
       {!secureContext ? (

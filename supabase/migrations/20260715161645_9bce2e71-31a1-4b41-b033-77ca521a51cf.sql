@@ -1,0 +1,2 @@
+REVOKE EXECUTE ON FUNCTION public.mark_attendance_member_manual(uuid, uuid, attendance_method) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.mark_attendance_member_manual(uuid, uuid, attendance_method) TO authenticated, service_role;
