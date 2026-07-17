@@ -55,7 +55,7 @@ const registrationsAdminQueryOptions = queryOptions({
     const { data, error } = await supabase
       .from("registrations")
       .select(
-        "id, registration_code, status, email_status, registered_at, qr_token, idea_title, abstract, project_track, events(id, name, slug), teams(id, name, academic_year, team_members(role, branch, academic_year, registration_number, participants(full_name, email, phone)))",
+        "id, registration_code, status, email_status, registered_at, qr_token, idea_title, abstract, project_track, mentor_name, mentor_email, mentor_phone, mentor_branch, events(id, name, slug), teams(id, name, academic_year, team_members(role, branch, academic_year, registration_number, participants(full_name, email, phone)))",
       )
       .order("registered_at", { ascending: false });
     if (error) throw error;
