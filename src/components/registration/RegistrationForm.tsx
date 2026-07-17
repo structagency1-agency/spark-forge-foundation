@@ -95,7 +95,9 @@ export function RegistrationForm({
       ? Array.from({ length: event.min_team_size - 1 }, () => ({ ...defaultMember }))
       : [],
   );
+  const [mentor, setMentor] = useState({ name: "", branch: "", email: "", phone: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
 
   const totalSize = 1 + members.length;
   const canAdd = totalSize < event.max_team_size;
