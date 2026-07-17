@@ -298,6 +298,50 @@ export function RegistrationForm({
         </div>
       </Section>
 
+      <Section
+        title="Mentor details"
+        hint="Faculty/industry mentor guiding your team."
+      >
+        <div className="grid gap-4 md:grid-cols-2">
+          <Field label="Mentor name" required error={errors["mentor.name"]}>
+            <input
+              value={mentor.name}
+              onChange={(e) => setMentor({ ...mentor, name: e.target.value })}
+              maxLength={120}
+              className={inputCls}
+            />
+          </Field>
+          <Field label="Branch / Department" required error={errors["mentor.branch"]}>
+            <input
+              value={mentor.branch}
+              onChange={(e) => setMentor({ ...mentor, branch: e.target.value })}
+              maxLength={120}
+              className={inputCls}
+            />
+          </Field>
+          <Field label="Mentor email" required error={errors["mentor.email"]}>
+            <input
+              type="email"
+              value={mentor.email}
+              onChange={(e) => setMentor({ ...mentor, email: e.target.value })}
+              maxLength={255}
+              className={inputCls}
+            />
+          </Field>
+          <Field label="Mentor phone" required error={errors["mentor.phone"]}>
+            <input
+              type="tel"
+              value={mentor.phone}
+              onChange={(e) => setMentor({ ...mentor, phone: e.target.value })}
+              maxLength={30}
+              className={inputCls}
+            />
+          </Field>
+        </div>
+      </Section>
+
+
+
 
       <Section
         title="Team leader"
