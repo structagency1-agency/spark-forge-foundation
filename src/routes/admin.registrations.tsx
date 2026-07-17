@@ -29,7 +29,12 @@ type RegistrationRow = {
   idea_title: string | null;
   abstract: string | null;
   project_track: string | null;
+  mentor_name: string | null;
+  mentor_email: string | null;
+  mentor_phone: string | null;
+  mentor_branch: string | null;
   events: { id: string; name: string; slug: string } | null;
+
   teams: {
     id: string;
     name: string;
@@ -50,7 +55,7 @@ const registrationsAdminQueryOptions = queryOptions({
     const { data, error } = await supabase
       .from("registrations")
       .select(
-        "id, registration_code, status, email_status, registered_at, qr_token, idea_title, abstract, project_track, events(id, name, slug), teams(id, name, academic_year, team_members(role, branch, academic_year, registration_number, participants(full_name, email, phone)))",
+        "id, registration_code, status, email_status, registered_at, qr_token, idea_title, abstract, project_track, mentor_name, mentor_email, mentor_phone, mentor_branch, events(id, name, slug), teams(id, name, academic_year, team_members(role, branch, academic_year, registration_number, participants(full_name, email, phone)))",
       )
       .order("registered_at", { ascending: false });
     if (error) throw error;
@@ -203,6 +208,12 @@ function RegistrationsAdmin() {
                   <div className="mt-2 text-xs font-semibold uppercase tracking-wider text-accent">Abstract</div>
                   <p className="whitespace-pre-wrap text-sm text-muted-foreground">{detail.abstract ?? "—"}</p>
                 </div>
+                <div className="rounded-md border border-border p-3 text-sm">
+                  <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-accent">Mentor</div>
+                  <div className="font-medium text-foreground">{detail.mentor_name ?? "—"} <span className="text-xs text-muted-foreground">· {detail.mentor_branch ?? "—"}</span></div>
+                  <div className="text-xs text-muted-foreground">{detail.mentor_email ?? "—"} · {detail.mentor_phone ?? "—"}</div>
+                </div>
+
                 <div>
                   <h3 className="mb-2 text-sm font-semibold">Members ({detail.teams?.team_members.length ?? 0})</h3>
                   <div className="space-y-2">

@@ -44,6 +44,18 @@ const ideaSchema = z.object({
     .max(2000, "Abstract is too long (max 2000 chars)"),
 });
 
+const mentorSchema = z.object({
+  name: z.string().trim().min(2, "Mentor name is required").max(120),
+  branch: z.string().trim().min(1, "Mentor branch is required").max(120),
+  email: z.string().trim().email("Enter a valid mentor email").max(255),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^[+]?[0-9\s()-]{7,20}$/u, "Enter a valid mentor phone number")
+    .max(30),
+});
+
+
 interface Props {
   event: EventWithDepartment;
   departments: Department[];
@@ -83,7 +95,9 @@ export function RegistrationForm({
       ? Array.from({ length: event.min_team_size - 1 }, () => ({ ...defaultMember }))
       : [],
   );
+  const [mentor, setMentor] = useState({ name: "", branch: "", email: "", phone: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
 
   const totalSize = 1 + members.length;
   const canAdd = totalSize < event.max_team_size;
@@ -110,12 +124,19 @@ export function RegistrationForm({
         next[`idea.${String(issue.path[0])}`] = issue.message;
       }
     }
+    const mentorRes = mentorSchema.safeParse(mentor);
+    if (!mentorRes.success) {
+      for (const issue of mentorRes.error.issues) {
+        next[`mentor.${String(issue.path[0])}`] = issue.message;
+      }
+    }
     const leaderRes = memberSchema.safeParse(leader);
     if (!leaderRes.success) {
       for (const issue of leaderRes.error.issues) {
         next[`leader.${String(issue.path[0])}`] = issue.message;
       }
     }
+
     members.forEach((m, i) => {
       const res = memberSchema.safeParse(m);
       if (!res.success) {
@@ -171,6 +192,12 @@ export function RegistrationForm({
     onSubmit({
       idea_title: idea.idea_title.trim(),
       abstract: idea.abstract.trim(),
+      mentor: {
+        name: mentor.name.trim(),
+        branch: mentor.branch.trim(),
+        email: mentor.email.trim(),
+        phone: mentor.phone.trim(),
+      },
       team: {
         name: team.name,
         academic_year: team.academic_year,
@@ -181,6 +208,7 @@ export function RegistrationForm({
       members,
     });
   }
+
 
   const errorCount = Object.keys(errors).length;
   const errorList = buildErrorList(errors);
@@ -269,6 +297,50 @@ export function RegistrationForm({
           </Field>
         </div>
       </Section>
+
+      <Section
+        title="Mentor details"
+        hint="Faculty/industry mentor guiding your team."
+      >
+        <div className="grid gap-4 md:grid-cols-2">
+          <Field label="Mentor name" required error={errors["mentor.name"]}>
+            <input
+              value={mentor.name}
+              onChange={(e) => setMentor({ ...mentor, name: e.target.value })}
+              maxLength={120}
+              className={inputCls}
+            />
+          </Field>
+          <Field label="Branch / Department" required error={errors["mentor.branch"]}>
+            <input
+              value={mentor.branch}
+              onChange={(e) => setMentor({ ...mentor, branch: e.target.value })}
+              maxLength={120}
+              className={inputCls}
+            />
+          </Field>
+          <Field label="Mentor email" required error={errors["mentor.email"]}>
+            <input
+              type="email"
+              value={mentor.email}
+              onChange={(e) => setMentor({ ...mentor, email: e.target.value })}
+              maxLength={255}
+              className={inputCls}
+            />
+          </Field>
+          <Field label="Mentor phone" required error={errors["mentor.phone"]}>
+            <input
+              type="tel"
+              value={mentor.phone}
+              onChange={(e) => setMentor({ ...mentor, phone: e.target.value })}
+              maxLength={30}
+              className={inputCls}
+            />
+          </Field>
+        </div>
+      </Section>
+
+
 
 
       <Section
@@ -541,6 +613,8 @@ function labelForKey(key: string): string {
   if (parts[0] === "team") return `Team — ${fieldLabel}`;
   if (parts[0] === "idea") return fieldLabel;
   if (parts[0] === "leader") return `Team leader — ${fieldLabel}`;
+  if (parts[0] === "mentor") return `Mentor — ${fieldLabel}`;
+
   if (parts[0] === "member") {
     const idx = Number(parts[1] ?? "0");
     return `Member ${idx + 2} — ${fieldLabel}`;

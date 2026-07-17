@@ -1217,6 +1217,10 @@ export type Database = {
           event_id: string
           id: string
           idea_title: string | null
+          mentor_branch: string | null
+          mentor_email: string | null
+          mentor_name: string | null
+          mentor_phone: string | null
           metadata: Json
           project_track: string | null
           qr_token: string | null
@@ -1233,6 +1237,10 @@ export type Database = {
           event_id: string
           id?: string
           idea_title?: string | null
+          mentor_branch?: string | null
+          mentor_email?: string | null
+          mentor_name?: string | null
+          mentor_phone?: string | null
           metadata?: Json
           project_track?: string | null
           qr_token?: string | null
@@ -1249,6 +1257,10 @@ export type Database = {
           event_id?: string
           id?: string
           idea_title?: string | null
+          mentor_branch?: string | null
+          mentor_email?: string | null
+          mentor_name?: string | null
+          mentor_phone?: string | null
           metadata?: Json
           project_track?: string | null
           qr_token?: string | null
