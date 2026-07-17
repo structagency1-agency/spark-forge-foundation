@@ -124,12 +124,19 @@ export function RegistrationForm({
         next[`idea.${String(issue.path[0])}`] = issue.message;
       }
     }
+    const mentorRes = mentorSchema.safeParse(mentor);
+    if (!mentorRes.success) {
+      for (const issue of mentorRes.error.issues) {
+        next[`mentor.${String(issue.path[0])}`] = issue.message;
+      }
+    }
     const leaderRes = memberSchema.safeParse(leader);
     if (!leaderRes.success) {
       for (const issue of leaderRes.error.issues) {
         next[`leader.${String(issue.path[0])}`] = issue.message;
       }
     }
+
     members.forEach((m, i) => {
       const res = memberSchema.safeParse(m);
       if (!res.success) {
