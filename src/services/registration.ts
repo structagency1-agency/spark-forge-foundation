@@ -48,9 +48,12 @@ export interface RegisterTeamResult {
  */
 export const REGISTRATION_ERROR_MESSAGES: Record<string, string> = {
   invalid_event: "This event is no longer available for registration.",
-  invalid_project_track: "Please select Software or Hardware.",
+  invalid_project_track: "Please select a valid sub-track.",
   invalid_idea_title: "Please provide a valid idea title.",
   invalid_abstract: "Abstract should be at least 30 characters.",
+  invalid_mentor_details: "Please fill in all mentor details.",
+  invalid_mentor_email: "Please enter a valid mentor email address.",
+  invalid_mentor_phone: "Please enter a valid mentor phone number.",
   registration_not_started: "Registration hasn't opened yet for this event.",
   registration_closed: "Registration for this event has closed.",
   event_full: "This event is fully booked. Try another arena.",
@@ -58,6 +61,7 @@ export const REGISTRATION_ERROR_MESSAGES: Record<string, string> = {
   invalid_team_name: "Please choose a valid team name.",
   duplicate_team_name: "That team name is already taken for this event.",
   duplicate_email: "Each teammate needs a unique email address.",
+
   duplicate_registration_number:
     "Each teammate needs a unique registration number.",
   email_already_registered_for_event:
