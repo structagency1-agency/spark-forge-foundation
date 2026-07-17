@@ -613,6 +613,8 @@ function labelForKey(key: string): string {
   if (parts[0] === "team") return `Team — ${fieldLabel}`;
   if (parts[0] === "idea") return fieldLabel;
   if (parts[0] === "leader") return `Team leader — ${fieldLabel}`;
+  if (parts[0] === "mentor") return `Mentor — ${fieldLabel}`;
+
   if (parts[0] === "member") {
     const idx = Number(parts[1] ?? "0");
     return `Member ${idx + 2} — ${fieldLabel}`;
