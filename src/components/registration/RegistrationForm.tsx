@@ -192,6 +192,12 @@ export function RegistrationForm({
     onSubmit({
       idea_title: idea.idea_title.trim(),
       abstract: idea.abstract.trim(),
+      mentor: {
+        name: mentor.name.trim(),
+        branch: mentor.branch.trim(),
+        email: mentor.email.trim(),
+        phone: mentor.phone.trim(),
+      },
       team: {
         name: team.name,
         academic_year: team.academic_year,
@@ -202,6 +208,7 @@ export function RegistrationForm({
       members,
     });
   }
+
 
   const errorCount = Object.keys(errors).length;
   const errorList = buildErrorList(errors);
