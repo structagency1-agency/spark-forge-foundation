@@ -12,10 +12,18 @@ export interface RegistrationMemberInput {
 
 export type ProjectTrack = string;
 
+export interface MentorInput {
+  name: string;
+  email: string;
+  phone: string;
+  branch: string;
+}
+
 export interface RegisterTeamInput {
   event_id: string;
   idea_title: string;
   abstract: string;
+  mentor: MentorInput;
   team: {
     name: string;
     academic_year: string;
@@ -25,6 +33,7 @@ export interface RegisterTeamInput {
   leader: RegistrationMemberInput;
   members: RegistrationMemberInput[];
 }
+
 
 export interface RegisterTeamResult {
   registration_id: string;
