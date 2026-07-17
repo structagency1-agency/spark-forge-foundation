@@ -29,7 +29,12 @@ type RegistrationRow = {
   idea_title: string | null;
   abstract: string | null;
   project_track: string | null;
+  mentor_name: string | null;
+  mentor_email: string | null;
+  mentor_phone: string | null;
+  mentor_branch: string | null;
   events: { id: string; name: string; slug: string } | null;
+
   teams: {
     id: string;
     name: string;
