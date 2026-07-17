@@ -44,6 +44,18 @@ const ideaSchema = z.object({
     .max(2000, "Abstract is too long (max 2000 chars)"),
 });
 
+const mentorSchema = z.object({
+  name: z.string().trim().min(2, "Mentor name is required").max(120),
+  branch: z.string().trim().min(1, "Mentor branch is required").max(120),
+  email: z.string().trim().email("Enter a valid mentor email").max(255),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^[+]?[0-9\s()-]{7,20}$/u, "Enter a valid mentor phone number")
+    .max(30),
+});
+
+
 interface Props {
   event: EventWithDepartment;
   departments: Department[];
