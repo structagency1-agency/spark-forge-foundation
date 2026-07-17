@@ -1,0 +1,5 @@
+UPDATE public.settings SET value = jsonb_set(jsonb_set(jsonb_set(value, '{email}', '"innovations@ecellvitb.in"'), '{phone}', '"+91 85558 90435"'), '{address}', '"Vishnu Institute of Technology, Bhimavaram, Andhra Pradesh"') WHERE key = 'contact';
+
+UPDATE public.settings SET value = jsonb_set(value, '{body}', to_jsonb('SPARK TANK 4.0 is the flagship inter-departmental innovation platform of Vishnu Institute of Technology, Bhimavaram (VITB). Over multiple rounds — ideation, prototyping, semifinals and grand finals — student teams pitch their solutions to industry mentors, faculty jurors and investors.'::text)) WHERE key = 'about';
+
+UPDATE public.settings SET value = jsonb_set(value, '{copyright}', to_jsonb(('© ' || extract(year from now())::text || ' SPARK TANK 4.0 · Vishnu Institute of Technology, Bhimavaram. All rights reserved.')::text)) WHERE key = 'footer';
