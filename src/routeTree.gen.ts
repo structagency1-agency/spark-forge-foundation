@@ -9,146 +9,61 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as DownloadsRouteImport } from './routes/downloads'
-import { Route as EcellAttendanceRouteImport } from './routes/ecell-attendance'
-import { Route as EventsRouteImport } from './routes/events'
-import { Route as GalleryRouteImport } from './routes/gallery'
-import { Route as JuryRouteImport } from './routes/jury'
-import { Route as MyDashboardRouteImport } from './routes/my-dashboard'
-import { Route as MyRegistrationRouteImport } from './routes/my-registration'
-import { Route as ProblemStatementsRouteImport } from './routes/problem-statements'
-import { Route as RegisterRouteImport } from './routes/register'
-import { Route as ResultsRouteImport } from './routes/results'
-import { Route as SearchRouteImport } from './routes/search'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SponsorsRouteImport } from './routes/sponsors'
-import { Route as VerifyCertificateRouteImport } from './routes/verify-certificate'
 import { Route as WinnersRouteImport } from './routes/winners'
-import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
-import { Route as AdminAnnouncementsRouteImport } from './routes/admin.announcements'
-import { Route as AdminAttendanceRouteImport } from './routes/admin.attendance'
-import { Route as AdminAuditLogsRouteImport } from './routes/admin.audit-logs'
-import { Route as AdminCertificatesRouteImport } from './routes/admin.certificates'
-import { Route as AdminContactMessagesRouteImport } from './routes/admin.contact-messages'
-import { Route as AdminDbHealthRouteImport } from './routes/admin.db-health'
-import { Route as AdminDepartmentsRouteImport } from './routes/admin.departments'
-import { Route as AdminEmailTemplatesRouteImport } from './routes/admin.email-templates'
-import { Route as AdminEvaluationRouteImport } from './routes/admin.evaluation'
-import { Route as AdminEventsRouteImport } from './routes/admin.events'
-import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
-import { Route as AdminHomepageRouteImport } from './routes/admin.homepage'
-import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
-import { Route as AdminProblemStatementsRouteImport } from './routes/admin.problem-statements'
-import { Route as AdminRegistrationsRouteImport } from './routes/admin.registrations'
-import { Route as AdminReportsRouteImport } from './routes/admin.reports'
-import { Route as AdminResultsRouteImport } from './routes/admin.results'
-import { Route as AdminScorecardsRouteImport } from './routes/admin.scorecards'
-import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
-import { Route as AdminTimelineRouteImport } from './routes/admin.timeline'
-import { Route as AdminUserManagementRouteImport } from './routes/admin.user-management'
-import { Route as AdminWebsiteRouteImport } from './routes/admin.website'
-import { Route as AdminWinnersRouteImport } from './routes/admin.winners'
-import { Route as CertificateCodeRouteImport } from './routes/certificate.$code'
-import { Route as EventsSlugRouteImport } from './routes/events.$slug'
+import { Route as VerifyCertificateRouteImport } from './routes/verify-certificate'
+import { Route as SponsorsRouteImport } from './routes/sponsors'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as ResultsRouteImport } from './routes/results'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ProblemStatementsRouteImport } from './routes/problem-statements'
+import { Route as MyRegistrationRouteImport } from './routes/my-registration'
+import { Route as MyDashboardRouteImport } from './routes/my-dashboard'
+import { Route as JuryRouteImport } from './routes/jury'
+import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as EventsRouteImport } from './routes/events'
+import { Route as EcellAttendanceRouteImport } from './routes/ecell-attendance'
+import { Route as DownloadsRouteImport } from './routes/downloads'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as RegisterIndexRouteImport } from './routes/register.index'
-import { Route as RegisterSlugRouteImport } from './routes/register.$slug'
-import { Route as ScorecardCodeRouteImport } from './routes/scorecard.$code'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as VerifyCertificateCodeRouteImport } from './routes/verify-certificate.$code'
+import { Route as ScorecardCodeRouteImport } from './routes/scorecard.$code'
+import { Route as RegisterSlugRouteImport } from './routes/register.$slug'
+import { Route as EventsSlugRouteImport } from './routes/events.$slug'
+import { Route as CertificateCodeRouteImport } from './routes/certificate.$code'
+import { Route as AdminWinnersRouteImport } from './routes/admin.winners'
+import { Route as AdminWebsiteRouteImport } from './routes/admin.website'
+import { Route as AdminUserManagementRouteImport } from './routes/admin.user-management'
+import { Route as AdminTimelineRouteImport } from './routes/admin.timeline'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminScorecardsRouteImport } from './routes/admin.scorecards'
+import { Route as AdminResultsRouteImport } from './routes/admin.results'
+import { Route as AdminReportsRouteImport } from './routes/admin.reports'
+import { Route as AdminRegistrationsRouteImport } from './routes/admin.registrations'
+import { Route as AdminProblemStatementsRouteImport } from './routes/admin.problem-statements'
+import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
+import { Route as AdminHomepageRouteImport } from './routes/admin.homepage'
+import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
+import { Route as AdminEventsRouteImport } from './routes/admin.events'
+import { Route as AdminEvaluationRouteImport } from './routes/admin.evaluation'
+import { Route as AdminEmailTemplatesRouteImport } from './routes/admin.email-templates'
+import { Route as AdminDepartmentsRouteImport } from './routes/admin.departments'
+import { Route as AdminDbHealthRouteImport } from './routes/admin.db-health'
+import { Route as AdminContactMessagesRouteImport } from './routes/admin.contact-messages'
+import { Route as AdminCertificatesRouteImport } from './routes/admin.certificates'
+import { Route as AdminAuditLogsRouteImport } from './routes/admin.audit-logs'
+import { Route as AdminAttendanceRouteImport } from './routes/admin.attendance'
+import { Route as AdminAnnouncementsRouteImport } from './routes/admin.announcements'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DownloadsRoute = DownloadsRouteImport.update({
-  id: '/downloads',
-  path: '/downloads',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EcellAttendanceRoute = EcellAttendanceRouteImport.update({
-  id: '/ecell-attendance',
-  path: '/ecell-attendance',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EventsRoute = EventsRouteImport.update({
-  id: '/events',
-  path: '/events',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GalleryRoute = GalleryRouteImport.update({
-  id: '/gallery',
-  path: '/gallery',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const JuryRoute = JuryRouteImport.update({
-  id: '/jury',
-  path: '/jury',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MyDashboardRoute = MyDashboardRouteImport.update({
-  id: '/my-dashboard',
-  path: '/my-dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MyRegistrationRoute = MyRegistrationRouteImport.update({
-  id: '/my-registration',
-  path: '/my-registration',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProblemStatementsRoute = ProblemStatementsRouteImport.update({
-  id: '/problem-statements',
-  path: '/problem-statements',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResultsRoute = ResultsRouteImport.update({
-  id: '/results',
-  path: '/results',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SearchRoute = SearchRouteImport.update({
-  id: '/search',
-  path: '/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SponsorsRoute = SponsorsRouteImport.update({
-  id: '/sponsors',
-  path: '/sponsors',
+const WinnersRoute = WinnersRouteImport.update({
+  id: '/winners',
+  path: '/winners',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VerifyCertificateRoute = VerifyCertificateRouteImport.update({
@@ -156,124 +71,134 @@ const VerifyCertificateRoute = VerifyCertificateRouteImport.update({
   path: '/verify-certificate',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WinnersRoute = WinnersRouteImport.update({
-  id: '/winners',
-  path: '/winners',
+const SponsorsRoute = SponsorsRouteImport.update({
+  id: '/sponsors',
+  path: '/sponsors',
   getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResultsRoute = ResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProblemStatementsRoute = ProblemStatementsRouteImport.update({
+  id: '/problem-statements',
+  path: '/problem-statements',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyRegistrationRoute = MyRegistrationRouteImport.update({
+  id: '/my-registration',
+  path: '/my-registration',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyDashboardRoute = MyDashboardRouteImport.update({
+  id: '/my-dashboard',
+  path: '/my-dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JuryRoute = JuryRouteImport.update({
+  id: '/jury',
+  path: '/jury',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryRoute = GalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EcellAttendanceRoute = EcellAttendanceRouteImport.update({
+  id: '/ecell-attendance',
+  path: '/ecell-attendance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DownloadsRoute = DownloadsRouteImport.update({
+  id: '/downloads',
+  path: '/downloads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterIndexRoute = RegisterIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RegisterRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
-  getParentRoute: () => AdminRoute,
+const VerifyCertificateCodeRoute = VerifyCertificateCodeRouteImport.update({
+  id: '/$code',
+  path: '/$code',
+  getParentRoute: () => VerifyCertificateRoute,
 } as any)
-const AdminAnnouncementsRoute = AdminAnnouncementsRouteImport.update({
-  id: '/announcements',
-  path: '/announcements',
-  getParentRoute: () => AdminRoute,
+const ScorecardCodeRoute = ScorecardCodeRouteImport.update({
+  id: '/scorecard/$code',
+  path: '/scorecard/$code',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminAttendanceRoute = AdminAttendanceRouteImport.update({
-  id: '/attendance',
-  path: '/attendance',
-  getParentRoute: () => AdminRoute,
+const RegisterSlugRoute = RegisterSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => RegisterRoute,
 } as any)
-const AdminAuditLogsRoute = AdminAuditLogsRouteImport.update({
-  id: '/audit-logs',
-  path: '/audit-logs',
-  getParentRoute: () => AdminRoute,
+const EventsSlugRoute = EventsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => EventsRoute,
 } as any)
-const AdminCertificatesRoute = AdminCertificatesRouteImport.update({
-  id: '/certificates',
-  path: '/certificates',
-  getParentRoute: () => AdminRoute,
+const CertificateCodeRoute = CertificateCodeRouteImport.update({
+  id: '/certificate/$code',
+  path: '/certificate/$code',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminContactMessagesRoute = AdminContactMessagesRouteImport.update({
-  id: '/contact-messages',
-  path: '/contact-messages',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDbHealthRoute = AdminDbHealthRouteImport.update({
-  id: '/db-health',
-  path: '/db-health',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDepartmentsRoute = AdminDepartmentsRouteImport.update({
-  id: '/departments',
-  path: '/departments',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEmailTemplatesRoute = AdminEmailTemplatesRouteImport.update({
-  id: '/email-templates',
-  path: '/email-templates',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEvaluationRoute = AdminEvaluationRouteImport.update({
-  id: '/evaluation',
-  path: '/evaluation',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEventsRoute = AdminEventsRouteImport.update({
-  id: '/events',
-  path: '/events',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminGalleryRoute = AdminGalleryRouteImport.update({
-  id: '/gallery',
-  path: '/gallery',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminHomepageRoute = AdminHomepageRouteImport.update({
-  id: '/homepage',
-  path: '/homepage',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminProblemStatementsRoute = AdminProblemStatementsRouteImport.update({
-  id: '/problem-statements',
-  path: '/problem-statements',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRegistrationsRoute = AdminRegistrationsRouteImport.update({
-  id: '/registrations',
-  path: '/registrations',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminReportsRoute = AdminReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminResultsRoute = AdminResultsRouteImport.update({
-  id: '/results',
-  path: '/results',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminScorecardsRoute = AdminScorecardsRouteImport.update({
-  id: '/scorecards',
-  path: '/scorecards',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminSettingsRoute = AdminSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminTimelineRoute = AdminTimelineRouteImport.update({
-  id: '/timeline',
-  path: '/timeline',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminUserManagementRoute = AdminUserManagementRouteImport.update({
-  id: '/user-management',
-  path: '/user-management',
+const AdminWinnersRoute = AdminWinnersRouteImport.update({
+  id: '/winners',
+  path: '/winners',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminWebsiteRoute = AdminWebsiteRouteImport.update({
@@ -281,40 +206,115 @@ const AdminWebsiteRoute = AdminWebsiteRouteImport.update({
   path: '/website',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminWinnersRoute = AdminWinnersRouteImport.update({
-  id: '/winners',
-  path: '/winners',
+const AdminUserManagementRoute = AdminUserManagementRouteImport.update({
+  id: '/user-management',
+  path: '/user-management',
   getParentRoute: () => AdminRoute,
 } as any)
-const CertificateCodeRoute = CertificateCodeRouteImport.update({
-  id: '/certificate/$code',
-  path: '/certificate/$code',
-  getParentRoute: () => rootRouteImport,
+const AdminTimelineRoute = AdminTimelineRouteImport.update({
+  id: '/timeline',
+  path: '/timeline',
+  getParentRoute: () => AdminRoute,
 } as any)
-const EventsSlugRoute = EventsSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => EventsRoute,
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
 } as any)
-const RegisterIndexRoute = RegisterIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => RegisterRoute,
+const AdminScorecardsRoute = AdminScorecardsRouteImport.update({
+  id: '/scorecards',
+  path: '/scorecards',
+  getParentRoute: () => AdminRoute,
 } as any)
-const RegisterSlugRoute = RegisterSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => RegisterRoute,
+const AdminResultsRoute = AdminResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => AdminRoute,
 } as any)
-const ScorecardCodeRoute = ScorecardCodeRouteImport.update({
-  id: '/scorecard/$code',
-  path: '/scorecard/$code',
-  getParentRoute: () => rootRouteImport,
+const AdminReportsRoute = AdminReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AdminRoute,
 } as any)
-const VerifyCertificateCodeRoute = VerifyCertificateCodeRouteImport.update({
-  id: '/$code',
-  path: '/$code',
-  getParentRoute: () => VerifyCertificateRoute,
+const AdminRegistrationsRoute = AdminRegistrationsRouteImport.update({
+  id: '/registrations',
+  path: '/registrations',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProblemStatementsRoute = AdminProblemStatementsRouteImport.update({
+  id: '/problem-statements',
+  path: '/problem-statements',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminHomepageRoute = AdminHomepageRouteImport.update({
+  id: '/homepage',
+  path: '/homepage',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminGalleryRoute = AdminGalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEventsRoute = AdminEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEvaluationRoute = AdminEvaluationRouteImport.update({
+  id: '/evaluation',
+  path: '/evaluation',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEmailTemplatesRoute = AdminEmailTemplatesRouteImport.update({
+  id: '/email-templates',
+  path: '/email-templates',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDepartmentsRoute = AdminDepartmentsRouteImport.update({
+  id: '/departments',
+  path: '/departments',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDbHealthRoute = AdminDbHealthRouteImport.update({
+  id: '/db-health',
+  path: '/db-health',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContactMessagesRoute = AdminContactMessagesRouteImport.update({
+  id: '/contact-messages',
+  path: '/contact-messages',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCertificatesRoute = AdminCertificatesRouteImport.update({
+  id: '/certificates',
+  path: '/certificates',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAuditLogsRoute = AdminAuditLogsRouteImport.update({
+  id: '/audit-logs',
+  path: '/audit-logs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAttendanceRoute = AdminAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAnnouncementsRoute = AdminAnnouncementsRouteImport.update({
+  id: '/announcements',
+  path: '/announcements',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdminRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -662,130 +662,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/downloads': {
-      id: '/downloads'
-      path: '/downloads'
-      fullPath: '/downloads'
-      preLoaderRoute: typeof DownloadsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ecell-attendance': {
-      id: '/ecell-attendance'
-      path: '/ecell-attendance'
-      fullPath: '/ecell-attendance'
-      preLoaderRoute: typeof EcellAttendanceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/events': {
-      id: '/events'
-      path: '/events'
-      fullPath: '/events'
-      preLoaderRoute: typeof EventsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/gallery': {
-      id: '/gallery'
-      path: '/gallery'
-      fullPath: '/gallery'
-      preLoaderRoute: typeof GalleryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/jury': {
-      id: '/jury'
-      path: '/jury'
-      fullPath: '/jury'
-      preLoaderRoute: typeof JuryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/my-dashboard': {
-      id: '/my-dashboard'
-      path: '/my-dashboard'
-      fullPath: '/my-dashboard'
-      preLoaderRoute: typeof MyDashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/my-registration': {
-      id: '/my-registration'
-      path: '/my-registration'
-      fullPath: '/my-registration'
-      preLoaderRoute: typeof MyRegistrationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/problem-statements': {
-      id: '/problem-statements'
-      path: '/problem-statements'
-      fullPath: '/problem-statements'
-      preLoaderRoute: typeof ProblemStatementsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/results': {
-      id: '/results'
-      path: '/results'
-      fullPath: '/results'
-      preLoaderRoute: typeof ResultsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/search': {
-      id: '/search'
-      path: '/search'
-      fullPath: '/search'
-      preLoaderRoute: typeof SearchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sponsors': {
-      id: '/sponsors'
-      path: '/sponsors'
-      fullPath: '/sponsors'
-      preLoaderRoute: typeof SponsorsRouteImport
+    '/winners': {
+      id: '/winners'
+      path: '/winners'
+      fullPath: '/winners'
+      preLoaderRoute: typeof WinnersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/verify-certificate': {
@@ -795,12 +676,138 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyCertificateRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/winners': {
-      id: '/winners'
-      path: '/winners'
-      fullPath: '/winners'
-      preLoaderRoute: typeof WinnersRouteImport
+    '/sponsors': {
+      id: '/sponsors'
+      path: '/sponsors'
+      fullPath: '/sponsors'
+      preLoaderRoute: typeof SponsorsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/results': {
+      id: '/results'
+      path: '/results'
+      fullPath: '/results'
+      preLoaderRoute: typeof ResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/problem-statements': {
+      id: '/problem-statements'
+      path: '/problem-statements'
+      fullPath: '/problem-statements'
+      preLoaderRoute: typeof ProblemStatementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-registration': {
+      id: '/my-registration'
+      path: '/my-registration'
+      fullPath: '/my-registration'
+      preLoaderRoute: typeof MyRegistrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-dashboard': {
+      id: '/my-dashboard'
+      path: '/my-dashboard'
+      fullPath: '/my-dashboard'
+      preLoaderRoute: typeof MyDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jury': {
+      id: '/jury'
+      path: '/jury'
+      fullPath: '/jury'
+      preLoaderRoute: typeof JuryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gallery': {
+      id: '/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ecell-attendance': {
+      id: '/ecell-attendance'
+      path: '/ecell-attendance'
+      fullPath: '/ecell-attendance'
+      preLoaderRoute: typeof EcellAttendanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/downloads': {
+      id: '/downloads'
+      path: '/downloads'
+      fullPath: '/downloads'
+      preLoaderRoute: typeof DownloadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register/': {
+      id: '/register/'
+      path: '/'
+      fullPath: '/register/'
+      preLoaderRoute: typeof RegisterIndexRouteImport
+      parentRoute: typeof RegisterRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -809,158 +816,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/analytics': {
-      id: '/admin/analytics'
-      path: '/analytics'
-      fullPath: '/admin/analytics'
-      preLoaderRoute: typeof AdminAnalyticsRouteImport
-      parentRoute: typeof AdminRoute
+    '/verify-certificate/$code': {
+      id: '/verify-certificate/$code'
+      path: '/$code'
+      fullPath: '/verify-certificate/$code'
+      preLoaderRoute: typeof VerifyCertificateCodeRouteImport
+      parentRoute: typeof VerifyCertificateRoute
     }
-    '/admin/announcements': {
-      id: '/admin/announcements'
-      path: '/announcements'
-      fullPath: '/admin/announcements'
-      preLoaderRoute: typeof AdminAnnouncementsRouteImport
-      parentRoute: typeof AdminRoute
+    '/scorecard/$code': {
+      id: '/scorecard/$code'
+      path: '/scorecard/$code'
+      fullPath: '/scorecard/$code'
+      preLoaderRoute: typeof ScorecardCodeRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/attendance': {
-      id: '/admin/attendance'
-      path: '/attendance'
-      fullPath: '/admin/attendance'
-      preLoaderRoute: typeof AdminAttendanceRouteImport
-      parentRoute: typeof AdminRoute
+    '/register/$slug': {
+      id: '/register/$slug'
+      path: '/$slug'
+      fullPath: '/register/$slug'
+      preLoaderRoute: typeof RegisterSlugRouteImport
+      parentRoute: typeof RegisterRoute
     }
-    '/admin/audit-logs': {
-      id: '/admin/audit-logs'
-      path: '/audit-logs'
-      fullPath: '/admin/audit-logs'
-      preLoaderRoute: typeof AdminAuditLogsRouteImport
-      parentRoute: typeof AdminRoute
+    '/events/$slug': {
+      id: '/events/$slug'
+      path: '/$slug'
+      fullPath: '/events/$slug'
+      preLoaderRoute: typeof EventsSlugRouteImport
+      parentRoute: typeof EventsRoute
     }
-    '/admin/certificates': {
-      id: '/admin/certificates'
-      path: '/certificates'
-      fullPath: '/admin/certificates'
-      preLoaderRoute: typeof AdminCertificatesRouteImport
-      parentRoute: typeof AdminRoute
+    '/certificate/$code': {
+      id: '/certificate/$code'
+      path: '/certificate/$code'
+      fullPath: '/certificate/$code'
+      preLoaderRoute: typeof CertificateCodeRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/contact-messages': {
-      id: '/admin/contact-messages'
-      path: '/contact-messages'
-      fullPath: '/admin/contact-messages'
-      preLoaderRoute: typeof AdminContactMessagesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/db-health': {
-      id: '/admin/db-health'
-      path: '/db-health'
-      fullPath: '/admin/db-health'
-      preLoaderRoute: typeof AdminDbHealthRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/departments': {
-      id: '/admin/departments'
-      path: '/departments'
-      fullPath: '/admin/departments'
-      preLoaderRoute: typeof AdminDepartmentsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/email-templates': {
-      id: '/admin/email-templates'
-      path: '/email-templates'
-      fullPath: '/admin/email-templates'
-      preLoaderRoute: typeof AdminEmailTemplatesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/evaluation': {
-      id: '/admin/evaluation'
-      path: '/evaluation'
-      fullPath: '/admin/evaluation'
-      preLoaderRoute: typeof AdminEvaluationRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/events': {
-      id: '/admin/events'
-      path: '/events'
-      fullPath: '/admin/events'
-      preLoaderRoute: typeof AdminEventsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/gallery': {
-      id: '/admin/gallery'
-      path: '/gallery'
-      fullPath: '/admin/gallery'
-      preLoaderRoute: typeof AdminGalleryRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/homepage': {
-      id: '/admin/homepage'
-      path: '/homepage'
-      fullPath: '/admin/homepage'
-      preLoaderRoute: typeof AdminHomepageRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/notifications': {
-      id: '/admin/notifications'
-      path: '/notifications'
-      fullPath: '/admin/notifications'
-      preLoaderRoute: typeof AdminNotificationsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/problem-statements': {
-      id: '/admin/problem-statements'
-      path: '/problem-statements'
-      fullPath: '/admin/problem-statements'
-      preLoaderRoute: typeof AdminProblemStatementsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/registrations': {
-      id: '/admin/registrations'
-      path: '/registrations'
-      fullPath: '/admin/registrations'
-      preLoaderRoute: typeof AdminRegistrationsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/reports': {
-      id: '/admin/reports'
-      path: '/reports'
-      fullPath: '/admin/reports'
-      preLoaderRoute: typeof AdminReportsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/results': {
-      id: '/admin/results'
-      path: '/results'
-      fullPath: '/admin/results'
-      preLoaderRoute: typeof AdminResultsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/scorecards': {
-      id: '/admin/scorecards'
-      path: '/scorecards'
-      fullPath: '/admin/scorecards'
-      preLoaderRoute: typeof AdminScorecardsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/settings': {
-      id: '/admin/settings'
-      path: '/settings'
-      fullPath: '/admin/settings'
-      preLoaderRoute: typeof AdminSettingsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/timeline': {
-      id: '/admin/timeline'
-      path: '/timeline'
-      fullPath: '/admin/timeline'
-      preLoaderRoute: typeof AdminTimelineRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/user-management': {
-      id: '/admin/user-management'
-      path: '/user-management'
-      fullPath: '/admin/user-management'
-      preLoaderRoute: typeof AdminUserManagementRouteImport
+    '/admin/winners': {
+      id: '/admin/winners'
+      path: '/winners'
+      fullPath: '/admin/winners'
+      preLoaderRoute: typeof AdminWinnersRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/website': {
@@ -970,54 +865,159 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminWebsiteRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/winners': {
-      id: '/admin/winners'
-      path: '/winners'
-      fullPath: '/admin/winners'
-      preLoaderRoute: typeof AdminWinnersRouteImport
+    '/admin/user-management': {
+      id: '/admin/user-management'
+      path: '/user-management'
+      fullPath: '/admin/user-management'
+      preLoaderRoute: typeof AdminUserManagementRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/certificate/$code': {
-      id: '/certificate/$code'
-      path: '/certificate/$code'
-      fullPath: '/certificate/$code'
-      preLoaderRoute: typeof CertificateCodeRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/timeline': {
+      id: '/admin/timeline'
+      path: '/timeline'
+      fullPath: '/admin/timeline'
+      preLoaderRoute: typeof AdminTimelineRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/events/$slug': {
-      id: '/events/$slug'
-      path: '/$slug'
-      fullPath: '/events/$slug'
-      preLoaderRoute: typeof EventsSlugRouteImport
-      parentRoute: typeof EventsRoute
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/register/': {
-      id: '/register/'
-      path: '/'
-      fullPath: '/register/'
-      preLoaderRoute: typeof RegisterIndexRouteImport
-      parentRoute: typeof RegisterRoute
+    '/admin/scorecards': {
+      id: '/admin/scorecards'
+      path: '/scorecards'
+      fullPath: '/admin/scorecards'
+      preLoaderRoute: typeof AdminScorecardsRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/register/$slug': {
-      id: '/register/$slug'
-      path: '/$slug'
-      fullPath: '/register/$slug'
-      preLoaderRoute: typeof RegisterSlugRouteImport
-      parentRoute: typeof RegisterRoute
+    '/admin/results': {
+      id: '/admin/results'
+      path: '/results'
+      fullPath: '/admin/results'
+      preLoaderRoute: typeof AdminResultsRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/scorecard/$code': {
-      id: '/scorecard/$code'
-      path: '/scorecard/$code'
-      fullPath: '/scorecard/$code'
-      preLoaderRoute: typeof ScorecardCodeRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/reports': {
+      id: '/admin/reports'
+      path: '/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AdminReportsRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/verify-certificate/$code': {
-      id: '/verify-certificate/$code'
-      path: '/$code'
-      fullPath: '/verify-certificate/$code'
-      preLoaderRoute: typeof VerifyCertificateCodeRouteImport
-      parentRoute: typeof VerifyCertificateRoute
+    '/admin/registrations': {
+      id: '/admin/registrations'
+      path: '/registrations'
+      fullPath: '/admin/registrations'
+      preLoaderRoute: typeof AdminRegistrationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/problem-statements': {
+      id: '/admin/problem-statements'
+      path: '/problem-statements'
+      fullPath: '/admin/problem-statements'
+      preLoaderRoute: typeof AdminProblemStatementsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/notifications': {
+      id: '/admin/notifications'
+      path: '/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AdminNotificationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/homepage': {
+      id: '/admin/homepage'
+      path: '/homepage'
+      fullPath: '/admin/homepage'
+      preLoaderRoute: typeof AdminHomepageRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/gallery': {
+      id: '/admin/gallery'
+      path: '/gallery'
+      fullPath: '/admin/gallery'
+      preLoaderRoute: typeof AdminGalleryRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/events': {
+      id: '/admin/events'
+      path: '/events'
+      fullPath: '/admin/events'
+      preLoaderRoute: typeof AdminEventsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/evaluation': {
+      id: '/admin/evaluation'
+      path: '/evaluation'
+      fullPath: '/admin/evaluation'
+      preLoaderRoute: typeof AdminEvaluationRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/email-templates': {
+      id: '/admin/email-templates'
+      path: '/email-templates'
+      fullPath: '/admin/email-templates'
+      preLoaderRoute: typeof AdminEmailTemplatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/departments': {
+      id: '/admin/departments'
+      path: '/departments'
+      fullPath: '/admin/departments'
+      preLoaderRoute: typeof AdminDepartmentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/db-health': {
+      id: '/admin/db-health'
+      path: '/db-health'
+      fullPath: '/admin/db-health'
+      preLoaderRoute: typeof AdminDbHealthRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/contact-messages': {
+      id: '/admin/contact-messages'
+      path: '/contact-messages'
+      fullPath: '/admin/contact-messages'
+      preLoaderRoute: typeof AdminContactMessagesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/certificates': {
+      id: '/admin/certificates'
+      path: '/certificates'
+      fullPath: '/admin/certificates'
+      preLoaderRoute: typeof AdminCertificatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/audit-logs': {
+      id: '/admin/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/admin/audit-logs'
+      preLoaderRoute: typeof AdminAuditLogsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/attendance': {
+      id: '/admin/attendance'
+      path: '/attendance'
+      fullPath: '/admin/attendance'
+      preLoaderRoute: typeof AdminAttendanceRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/announcements': {
+      id: '/admin/announcements'
+      path: '/announcements'
+      fullPath: '/admin/announcements'
+      preLoaderRoute: typeof AdminAnnouncementsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
+      parentRoute: typeof AdminRoute
     }
   }
 }
@@ -1143,3 +1143,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
